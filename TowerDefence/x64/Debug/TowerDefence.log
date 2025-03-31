@@ -1,0 +1,16 @@
+﻿  Bullet.cpp
+  Enemie.cpp
+  Game.cpp
+  main.cpp
+  pch.cpp
+  Tower.cpp
+  TowerDefence.vcxproj -> C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\x64\Debug\TowerDefence.exe
+  C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\Libraries\SDLMain\SDL2-2.30.11\lib\x64\SDL2.dll
+  1 File(s) copied
+  C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\Libraries\SDLImage\SDL2_image-2.8.4\lib\x64\SDL2_image.dll
+  1 File(s) copied
+  C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\Libraries\SDLMixer\SDL2_mixer-2.8.0\lib\x64\SDL2_mixer.dll
+  1 File(s) copied
+  C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\Libraries\SDLTtf\SDL2_ttf-2.24.0\lib\x64\SDL2_ttf.dll
+  1 File(s) copied
+  0 File(s) copied
