@@ -33,13 +33,21 @@ Game::~Game()
 void Game::Initialize()
 {
    
-    float towerWidth = 30.f;
-    float towerHeight = 50.f;
+   
+    float towerWidth = 40.f;  
+    float towerHeight = 60.f; 
     float centerX = m_Width / 2.f - towerWidth / 2.f;
     float centerY = m_Height / 2.f - towerHeight / 2.f;
-    m_pTower = new Tower{ Rectf{centerX, centerY, towerWidth, towerHeight}, 150.f };
 
     
+    if (centerX < 0) centerX = 0;
+    if (centerY < 0) centerY = 0;
+    if (centerX + towerWidth > m_Width) centerX = m_Width - towerWidth;
+    if (centerY + towerHeight > m_Height) centerY = m_Height - towerHeight;
+
+    m_pTower = new Tower{ Rectf{centerX, centerY, towerWidth, towerHeight}, 150.f };
+
+   
     SetupUpgradeOptions();
 }
 
