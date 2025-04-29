@@ -1,6 +1,2 @@
-﻿  utils.cpp
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\Engine\utils.cpp(774,53): warning C5219: implicit conversion from 'int' to 'const float', possible loss of data
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\Engine\utils.cpp(775,53): warning C5219: implicit conversion from 'int' to 'const float', possible loss of data
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\Engine\utils.cpp(775,78): warning C5219: implicit conversion from 'int' to 'const float', possible loss of data
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\Engine\utils.cpp(776,65): warning C5219: implicit conversion from 'int' to 'const float', possible loss of data
+﻿  BaseGame.cpp
   Engine.vcxproj -> C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\x64\Debug\Engine.lib

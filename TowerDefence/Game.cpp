@@ -6,6 +6,8 @@
 #include "utils.h"
 #include <cmath>
 #include <sstream>
+#include <iostream>
+#include "Texture.h"
 
 Game::Game(const Window& window)
     : BaseGame{ window }
@@ -32,8 +34,7 @@ Game::~Game()
 
 void Game::Initialize()
 {
-   
-   
+
     float towerWidth = 40.f;  
     float towerHeight = 60.f; 
     float centerX = m_Width / 2.f - towerWidth / 2.f;
@@ -181,18 +182,20 @@ void Game::Draw() const
     {
         case GameState::Playing:
         {
-        // Draw wave information
         std::stringstream ss;
         ss << "Wave: " << m_CurrentWave << "   Enemies: " << m_EnemiesKilled << "/" << m_EnemiesRequiredForWave;
-        utils::SetColor(Color4f(1.0f, 1.0f, 1.0f, 1.0f));
-        utils::DrawString(Vector2f(10, m_Height - 20), ss.str());
-
-        // Draw tower stats
-        std::stringstream ts;
-        ts << "Damage: " << m_pTower->GetDamage()
-            << "   Attack Speed: " << m_pTower->GetAttackSpeed()
-            << "   Range: " << m_pTower->GetRange();
-        utils::DrawString(Vector2f(10, m_Height - 40), ts.str());
+        {
+            Texture waveText(ss.str(), "ShortBaby.ttf", 20, Color4f{ 1.0f, 1.0f, 1.0f, 1.0f });
+            waveText.Draw(Vector2f(10, m_Height - 20));
+        }
+        {
+            std::stringstream ts;
+            ts << "Damage: " << m_pTower->GetDamage()
+                << "   Attack Speed: " << m_pTower->GetAttackSpeed()
+                << "   Range: " << m_pTower->GetRange();
+            Texture statsText(ts.str(), "ShortBaby.ttf", 20, Color4f{ 1.0f, 1.0f, 1.0f, 1.0f });
+            statsText.Draw(Vector2f(10, m_Height - 40));
+        }
         break;
         }
 
@@ -212,12 +215,12 @@ void Game::Draw() const
 
 void Game::SpawnEnemy()
 {
-    // Random position around the edges of the window
+    
     float spawnX, spawnY;
     float radius = 15.f; // Enemy radius
 
-    // Decide which edge to spawn from
-    int edge = rand() % 4; // 0: top, 1: right, 2: bottom, 3: left
+  
+    int edge = rand() % 4;
 
     switch (edge)
     {
@@ -239,9 +242,9 @@ void Game::SpawnEnemy()
         break;
     }
 
-    // Create enemy with 1 HP (as requested)
+    
     int hp = 1;
-    // Scale speed with wave number
+    
     float speed = 40.f + (m_CurrentWave * 5);
     Enemie* enemy = new Enemie(Ellipsef(spawnX, spawnY, radius, radius), hp, speed);
     m_pEnemies.push_back(enemy);
@@ -262,31 +265,31 @@ void Game::ProcessKeyDownEvent(const SDL_KeyboardEvent& e)
             break;
         case SDLK_RETURN:
         case SDLK_SPACE:
-            // Apply selected upgrade
+           
             UpgradeOption& option = m_UpgradeOptions[m_SelectedUpgrade];
             (m_pTower->*(option.upgradeFunction))(option.upgradeAmount);
 
-            // Start next wave
+            
             StartNextWave();
             break;
         }
         break;
 
     case GameState::GameOver:
-        // Restart game with any key press
+        
         if (e.keysym.sym == SDLK_SPACE || e.keysym.sym == SDLK_RETURN)
         {
-            // Clean up
+            
             Cleanup();
 
-            // Reset game state
+            
             m_CurrentWave = 1;
             m_EnemiesKilled = 0;
             m_EnemiesRequiredForWave = 5;
             m_WaveInProgress = true;
             m_GameState = GameState::Playing;
 
-            // Create new tower
+            
             float towerWidth = 30.f;
             float towerHeight = 50.f;
             float centerX = m_Width / 2.f - towerWidth / 2.f;
@@ -311,12 +314,12 @@ void Game::ProcessMouseDownEvent(const SDL_MouseButtonEvent& e)
 {
     if (m_GameState == GameState::UpgradeMenu)
     {
-        // Calculate menu area
+        
         float menuTop = m_Height / 2.f + 100.f;
         float menuBottom = m_Height / 2.f - 100.f;
         float itemHeight = 40.f;
 
-        // Check if click is within menu area
+        
         if (e.y >= menuBottom && e.y <= menuTop)
         {
             int clickedItem = static_cast<int>((menuTop - e.y) / itemHeight);
@@ -324,14 +327,14 @@ void Game::ProcessMouseDownEvent(const SDL_MouseButtonEvent& e)
             {
                 m_SelectedUpgrade = clickedItem;
 
-                // Double click to select
+                
                 if (e.clicks == 2)
                 {
-                    // Apply selected upgrade
+                    
                     UpgradeOption& option = m_UpgradeOptions[m_SelectedUpgrade];
                     (m_pTower->*(option.upgradeFunction))(option.upgradeAmount);
 
-                    // Start next wave
+                    
                     StartNextWave();
                 }
             }
@@ -352,7 +355,7 @@ void Game::ClearBackground() const
 
 void Game::CleanupBullets()
 {
-    // Get bullets from tower and remove inactive ones
+    
     std::vector<Bullet>& bullets = m_pTower->GetBullets();
     bullets.erase(
         std::remove_if(bullets.begin(), bullets.end(),
@@ -368,21 +371,21 @@ bool Game::ProcessBulletCollisions(Enemie* enemy)
     std::vector<Bullet>& bullets = m_pTower->GetBullets();
     std::vector<size_t> bulletsToRemove;
 
-    // Check for collisions
+   
     for (size_t i = 0; i < bullets.size(); ++i)
     {
         if (bullets[i].CheckHit(enemy->GetShape()))
         {
-            // Apply damage to enemy
+            
             bool enemyKilled = enemy->TakeDamage(bullets[i].GetDamage());
 
-            // Mark bullet for removal
+            
             bulletsToRemove.push_back(i);
 
-            // If enemy was killed, report it
+            
             if (enemyKilled)
             {
-                // Remove bullets that hit (in reverse order to maintain indices)
+                
                 for (auto it = bulletsToRemove.rbegin(); it != bulletsToRemove.rend(); ++it)
                 {
                     bullets.erase(bullets.begin() + *it);
@@ -392,7 +395,7 @@ bool Game::ProcessBulletCollisions(Enemie* enemy)
         }
     }
 
-    // Remove bullets that hit (in reverse order to maintain indices)
+    //
     for (auto it = bulletsToRemove.rbegin(); it != bulletsToRemove.rend(); ++it)
     {
         bullets.erase(bullets.begin() + *it);
@@ -403,20 +406,27 @@ bool Game::ProcessBulletCollisions(Enemie* enemy)
 
 void Game::DrawUpgradeMenu() const
 {
-    // Draw semi-transparent background
+    
     utils::SetColor(Color4f(0.0f, 0.0f, 0.0f, 0.7f));
     utils::FillRect(Rectf(0, 0, m_Width, m_Height));
 
-    // Draw menu title
+    
     utils::SetColor(Color4f(1.0f, 1.0f, 1.0f, 1.0f));
-    utils::DrawString(Vector2f(m_Width / 2.f - 100.f, m_Height / 2.f + 150.f), "WAVE " + std::to_string(m_CurrentWave) + " COMPLETED!");
-    utils::DrawString(Vector2f(m_Width / 2.f - 100.f, m_Height / 2.f + 130.f), "Choose an upgrade:");
+    {
+        Texture titleText("WAVE " + std::to_string(m_CurrentWave) + " COMPLETED!", "ShortBaby.ttf", 20, Color4f{ 1.0f, 1.0f, 1.0f, 1.0f });
+        titleText.Draw(Vector2f(m_Width / 2.f - 100.f, m_Height / 2.f + 150.f));
+    }
+    {
+        Texture chooseText("Choose an upgrade:", "ShortBaby.ttf", 20, Color4f{ 1.0f, 1.0f, 1.0f, 1.0f });
+        chooseText.Draw(Vector2f(m_Width / 2.f - 100.f, m_Height / 2.f + 130.f));
+    }
 
-    // Draw menu options
+
+    
     float yPos = m_Height / 2.f + 100.f;
     for (size_t i = 0; i < m_UpgradeOptions.size(); ++i)
     {
-        // Highlight selected option
+        
         if (i == m_SelectedUpgrade)
         {
             utils::SetColor(Color4f(1.0f, 1.0f, 0.0f, 1.0f));
@@ -428,17 +438,21 @@ void Game::DrawUpgradeMenu() const
             utils::SetColor(Color4f(1.0f, 1.0f, 1.0f, 1.0f));
         }
 
-        // Draw option text
-        utils::DrawString(Vector2f(m_Width / 2.f - 140.f, yPos - 5.f), m_UpgradeOptions[i].name);
-        utils::DrawString(Vector2f(m_Width / 2.f - 140.f, yPos - 25.f), m_UpgradeOptions[i].description);
+        
+        Texture nameText(m_UpgradeOptions[i].name, "ShortBaby.ttf", 18, Color4f{ 0.0f, 0.0f, 0.0f, 1.0f });
+        nameText.Draw(Vector2f(m_Width / 2.f - 140.f, yPos - 5.f));
+        Texture descText(m_UpgradeOptions[i].description, "ShortBaby.ttf", 14, Color4f{ 0.0f, 0.0f, 0.0f, 1.0f });
+        descText.Draw(Vector2f(m_Width / 2.f - 140.f, yPos - 25.f));
 
         yPos -= 40.f;
     }
 
-    // Draw instructions
+    
     utils::SetColor(Color4f(1.0f, 1.0f, 1.0f, 0.7f));
-    utils::DrawString(Vector2f(m_Width / 2.f - 150.f, m_Height / 2.f - 130.f), "Use UP/DOWN arrows and ENTER to select");
-    utils::DrawString(Vector2f(m_Width / 2.f - 150.f, m_Height / 2.f - 150.f), "Or click/double-click to choose upgrade");
+    Texture instr1("Use UP/DOWN arrows and ENTER to select", "ShortBaby.ttf", 16, Color4f{ 1.0f, 1.0f, 1.0f, 0.7f });
+    instr1.Draw(Vector2f(m_Width / 2.f - 150.f, m_Height / 2.f - 130.f));
+    Texture instr2("Or click/double-click to choose upgrade", "ShortBaby.ttf", 16, Color4f{ 1.0f, 1.0f, 1.0f, 0.7f });
+    instr2.Draw(Vector2f(m_Width / 2.f - 150.f, m_Height / 2.f - 150.f));
 }
 
 void Game::CheckWaveComplete()
@@ -452,33 +466,41 @@ void Game::CheckWaveComplete()
 
 void Game::StartNextWave()
 {
-    // Increment wave counter
+  
     m_CurrentWave++;
 
-    // Reset enemy counters
+   
     m_EnemiesKilled = 0;
 
-    // Increase number of enemies for next wave
+
     m_EnemiesRequiredForWave = 5 + (m_CurrentWave * 2);
 
-    // Reduce spawn interval as waves progress (make it harder)
+    
     m_EnemySpawnInterval = std::max(0.5f, 2.0f - (m_CurrentWave * 0.1f));
 
-    // Set game state back to playing
+    
     m_GameState = GameState::Playing;
     m_WaveInProgress = true;
 }
 
 void Game::GameOver() const
 {
-    // Draw game over screen
+    
     utils::SetColor(Color4f(0.0f, 0.0f, 0.0f, 0.8f));
     utils::FillRect(Rectf(0, 0, m_Width, m_Height));
 
     utils::SetColor(Color4f(1.0f, 0.2f, 0.2f, 1.0f));
-    utils::DrawString(Vector2f(m_Width / 2.f - 60.f, m_Height / 2.f + 20.f), "GAME OVER");
+    {
+        Texture overText("GAME OVER", "ShortBaby.ttf", 32, Color4f{ 1.0f, 0.2f, 0.2f, 1.0f });
+        overText.Draw(Vector2f(m_Width / 2.f - 60.f, m_Height / 2.f + 20.f));
+    }
+    {
+        Texture reachedText("You reached wave: " + std::to_string(m_CurrentWave), "ShortBaby.ttf", 20, Color4f{ 1.0f, 1.0f, 1.0f, 1.0f });
+        reachedText.Draw(Vector2f(m_Width / 2.f - 120.f, m_Height / 2.f - 10.f));
+    }
+    {
+        Texture restartText("Press SPACE to restart", "ShortBaby.ttf", 20, Color4f{ 1.0f, 1.0f, 1.0f, 1.0f });
+        restartText.Draw(Vector2f(m_Width / 2.f - 100.f, m_Height / 2.f - 40.f));
+    }
 
-    utils::SetColor(Color4f(1.0f, 1.0f, 1.0f, 1.0f));
-    utils::DrawString(Vector2f(m_Width / 2.f - 120.f, m_Height / 2.f - 10.f), "You reached wave: " + std::to_string(m_CurrentWave));
-    utils::DrawString(Vector2f(m_Width / 2.f - 100.f, m_Height / 2.f - 40.f), "Press SPACE to restart");
 }
