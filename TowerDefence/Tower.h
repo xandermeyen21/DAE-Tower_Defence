@@ -20,8 +20,8 @@ public:
 private:
     float m_Range;
     float m_Damage;
-    float m_AttackSpeed; // Fire rate (bullets per second)
-    float m_AttackTimer; // Current timer for attacks
+    float m_AttackSpeed; 
+    float m_AttackTimer; 
     Rectf m_Tower;
     std::vector<Bullet> m_Bullets;
 };

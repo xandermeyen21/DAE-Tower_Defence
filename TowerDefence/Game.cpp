@@ -171,7 +171,8 @@ void Game::Draw() const
     
     switch (m_GameState)
     {
-    case GameState::Playing:
+        case GameState::Playing:
+        {
         // Draw wave information
         std::stringstream ss;
         ss << "Wave: " << m_CurrentWave << "   Enemies: " << m_EnemiesKilled << "/" << m_EnemiesRequiredForWave;
@@ -185,14 +186,19 @@ void Game::Draw() const
             << "   Range: " << m_pTower->GetRange();
         utils::DrawString(Vector2f(10, m_Height - 40), ts.str());
         break;
+        }
 
-    case GameState::UpgradeMenu:
+        case GameState::UpgradeMenu:
+        {
         DrawUpgradeMenu();
         break;
+        }
 
-    case GameState::GameOver:
+        case GameState::GameOver:
+        {
         GameOver();
         break;
+        }
     }
 }
 

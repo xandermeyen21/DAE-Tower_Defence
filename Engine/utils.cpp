@@ -1,9 +1,12 @@
 #include "base.h"
-//#define _USE_MATH_DEFINES
+#define _USE_MATH_DEFINES
 #include <cmath>
 #include <algorithm>
 #include <iostream>
 #include "utils.h"
+#include <SDL_ttf.h>
+#include <cstdarg>
+#include "string"
 
 
 #pragma region OpenGLDrawFunctionality
@@ -682,5 +685,116 @@ bool utils::IntersectRectLine(const Rectf& r, const Vector2f& p1, const Vector2f
 	intersectMax = tMax;
 	return true;
 }
+
+TTF_Font* g_Font = nullptr;
+
+bool utils::InitializeFont()
+{
+	// Initialize SDL_ttf
+	if (TTF_Init() == -1)
+	{
+		printf("SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
+		return false;
+	}
+
+	// Load font file - make sure this path is correct!
+	// You might need to bundle this with your application
+	g_Font = TTF_OpenFont("C:\\Windows\\Fonts\\arial.ttf", 16);
+	if (g_Font == nullptr)
+	{
+		printf("Failed to load font! SDL_ttf Error: %s\n", TTF_GetError());
+		return false;
+	}
+
+	return true;
+}
+
+void utils::CleanupFont()
+{
+	if (g_Font != nullptr)
+	{
+		TTF_CloseFont(g_Font);
+		g_Font = nullptr;
+	}
+	TTF_Quit();
+}
+
+void utils::DrawString(const Vector2f& position, const std::string& text)
+{
+	// Make sure font is initialized
+	if (g_Font == nullptr)
+	{
+		if (!InitializeFont())
+		{
+			return;
+		}
+	}
+
+	// Current color from OpenGL
+	GLfloat currentColor[4];
+	glGetFloatv(GL_CURRENT_COLOR, currentColor);
+
+	// Create SDL color from OpenGL color
+	SDL_Color color = {
+		static_cast<Uint8>(currentColor[0] * 255),
+		static_cast<Uint8>(currentColor[1] * 255),
+		static_cast<Uint8>(currentColor[2] * 255),
+		static_cast<Uint8>(currentColor[3] * 255)
+	};
+
+	// Render text to a surface, then create texture
+	SDL_Surface* surface = TTF_RenderText_Blended(g_Font, text.c_str(), color);
+	if (!surface)
+	{
+		printf("Unable to render text surface! SDL_ttf Error: %s\n", TTF_GetError());
+		return;
+	}
+
+	// Create texture from surface
+	GLuint texture;
+	glGenTextures(1, &texture);
+	glBindTexture(GL_TEXTURE_2D, texture);
+
+	// Set texture parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	// Setup texture
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->w, surface->h, 0,
+		GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels);
+
+	// Enable texturing and blending
+	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	// Draw textured quad
+	glBegin(GL_QUADS);
+	glTexCoord2f(0, 0); glVertex2f(position.x, position.y);
+	glTexCoord2f(1, 0); glVertex2f(position.x + surface->w, position.y);
+	glTexCoord2f(1, 1); glVertex2f(position.x + surface->w, position.y + surface->h);
+	glTexCoord2f(0, 1); glVertex2f(position.x, position.y + surface->h);
+	glEnd();
+
+	// Disable texturing and blending
+	glDisable(GL_BLEND);
+	glDisable(GL_TEXTURE_2D);
+
+	// Clean up
+	glDeleteTextures(1, &texture);
+	SDL_FreeSurface(surface);
+}
+
+void utils::DrawString(const Vector2f& position, const char* fmt, ...)
+{
+	char buffer[1024];
+	va_list args;
+	va_start(args, fmt);
+	vsprintf_s(buffer, fmt, args);
+	va_end(args);
+
+	DrawString(position, std::string(buffer));
+}
+#pragma endregion OpenGLDrawFunctionality
 
 #pragma endregion CollisionFunctionality

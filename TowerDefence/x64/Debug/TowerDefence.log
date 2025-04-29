@@ -1,56 +1,56 @@
 ﻿  Bullet.cpp
   Enemie.cpp
   Game.cpp
+C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(250,83): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.41.34120\include\xmemory(2218,25): error C2280: 'Bullet &Bullet::operator =(const Bullet &)': attempting to reference a deleted function
+  (compiling source file 'Game.cpp')
+      C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Bullet.h(20,1):
+      compiler has generated 'Bullet::operator =' here
+      C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Bullet.h(20,1):
+      'Bullet &Bullet::operator =(const Bullet &)': function was implicitly deleted because 'Bullet' has a data member 'Bullet::m_Radius' of const-qualified non-class type
+      C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Bullet.h(19,17):
+      see declaration of 'Bullet::m_Radius'
+      C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.41.34120\include\xmemory(2218,25):
+      the template instantiation context (the oldest one first) is
+          C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(350,14):
+          see reference to function template instantiation '_FwdIt std::remove_if<std::_Vector_iterator<std::_Vector_val<std::_Simple_types<_Ty>>>,Game::CleanupBullets::<lambda_1>>(_FwdIt,const _FwdIt,_Pr)' being compiled
+          with
+          [
+              _FwdIt=std::_Vector_iterator<std::_Vector_val<std::_Simple_types<Bullet>>>,
+              _Ty=Bullet,
+              _Pr=Game::CleanupBullets::<lambda_1>
+          ]
+  
+C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.41.34120\include\xutility(5023,20): error C2280: 'Bullet &Bullet::operator =(const Bullet &)': attempting to reference a deleted function
+  (compiling source file 'Game.cpp')
+      C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Bullet.h(20,1):
+      compiler has generated 'Bullet::operator =' here
+      C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Bullet.h(20,1):
+      'Bullet &Bullet::operator =(const Bullet &)': function was implicitly deleted because 'Bullet' has a data member 'Bullet::m_Radius' of const-qualified non-class type
+      C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Bullet.h(19,17):
+      see declaration of 'Bullet::m_Radius'
+      C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.41.34120\include\xutility(5023,20):
+      the template instantiation context (the oldest one first) is
+          C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.h(26,25):
+          see reference to class template instantiation 'std::vector<Bullet,std::allocator<Bullet>>' being compiled
+          C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.41.34120\include\vector(1740,27):
+          while compiling class template member function 'std::_Vector_iterator<std::_Vector_val<std::_Simple_types<_Ty>>> std::vector<_Ty,std::allocator<_Ty>>::erase(std::_Vector_const_iterator<std::_Vector_val<std::_Simple_types<_Ty>>>,std::_Vector_const_iterator<std::_Vector_val<std::_Simple_types<_Ty>>>) noexcept(false)'
+          with
+          [
+              _Ty=Bullet
+          ]
+              C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(349,18):
+              see the first reference to 'std::vector<Bullet,std::allocator<Bullet>>::erase' in 'Game::CleanupBullets'
+          C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.41.34120\include\vector(1756,43):
+          see reference to function template instantiation '_OutIt *std::_Move_unchecked<Bullet*,Bullet*>(_InIt,_InIt,_OutIt)' being compiled
+          with
+          [
+              _OutIt=Bullet *,
+              _InIt=Bullet *
+          ]
+  
+  main.cpp
   Tower.cpp
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(39,34): error C2440: 'initializing': cannot convert from 'std::vector<Bullet,std::allocator<Bullet>>' to 'std::vector<Bullet *,std::allocator<Bullet *>>'
-      C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(39,34):
-      No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
-  
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(81,28): error C3861: 'ProcessBulletCollisions': identifier not found
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(187,34): error C2440: 'initializing': cannot convert from 'std::vector<Bullet,std::allocator<Bullet>>' to 'std::vector<Bullet *,std::allocator<Bullet *>>'
-      C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(187,34):
-      No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
-  
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(193,21): error C2039: 'IsOutOfBounds': is not a member of 'Bullet'
-      C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Bullet.h(3,7):
-      see declaration of 'Bullet'
-  
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(203,19): error C2039: 'ClearBullet': is not a member of 'Tower'
-      C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.h(5,7):
-      see declaration of 'Tower'
-  
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(207,12): error C2039: 'ProcessBulletCollisions': is not a member of 'Game'
-      C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.h(8,7):
-      see declaration of 'Game'
-  
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(210,43): error C2065: 'm_pTower': undeclared identifier
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(210,41): error C2530: 'bullets': references must be initialized
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(216,28): error C2039: 'GetPosition': is not a member of 'Bullet'
-      C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Bullet.h(3,7):
-      see declaration of 'Bullet'
-  
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(216,53): error C2039: 'GetPosition': is not a member of 'Enemie'
-      C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Enemie.h(2,7):
-      see declaration of 'Enemie'
-  
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(217,28): error C2039: 'GetPosition': is not a member of 'Bullet'
-      C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Bullet.h(3,7):
-      see declaration of 'Bullet'
-  
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(217,53): error C2039: 'GetPosition': is not a member of 'Enemie'
-      C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Enemie.h(2,7):
-      see declaration of 'Enemie'
-  
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(220,33): error C2039: 'GetRadius': is not a member of 'Bullet'
-      C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Bullet.h(3,7):
-      see declaration of 'Bullet'
-  
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(220,54): error C2039: 'GetRadius': is not a member of 'Enemie'
-      C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Enemie.h(2,7):
-      see declaration of 'Enemie'
-  
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(234,21): error C2065: 'm_pTower': undeclared identifier
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(245,9): error C2065: 'm_pTower': undeclared identifier
 C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.h(10,53): error C2065: 'Enemie': undeclared identifier
   (compiling source file 'Tower.cpp')
   
