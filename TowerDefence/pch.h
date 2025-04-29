@@ -18,3 +18,6 @@
 
 #pragma warning(default : 26812)
 #include "structs.h"
+#include <vector>
+#include <algorithm>
+#include <string>

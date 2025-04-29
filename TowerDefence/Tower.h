@@ -1,6 +1,10 @@
 #pragma once
-#include "Bullet.h"
+#include "structs.h" 
 #include <vector>
+
+
+class Enemie;
+class Bullet;
 
 class Tower
 {
@@ -20,8 +24,8 @@ public:
 private:
     float m_Range;
     float m_Damage;
-    float m_AttackSpeed; 
-    float m_AttackTimer; 
+    float m_AttackSpeed;
+    float m_AttackTimer;
     Rectf m_Tower;
     std::vector<Bullet> m_Bullets;
 };

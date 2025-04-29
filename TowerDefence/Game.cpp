@@ -247,10 +247,10 @@ void Game::ProcessKeyDownEvent(const SDL_KeyboardEvent& e)
         switch (e.keysym.sym)
         {
         case SDLK_UP:
-            m_SelectedUpgrade = (m_SelectedUpgrade - 1 + m_UpgradeOptions.size()) % m_UpgradeOptions.size();
+            m_SelectedUpgrade = (m_SelectedUpgrade - 1 + static_cast<int>(m_UpgradeOptions.size())) % static_cast<int>(m_UpgradeOptions.size());
             break;
         case SDLK_DOWN:
-            m_SelectedUpgrade = (m_SelectedUpgrade + 1) % m_UpgradeOptions.size();
+            m_SelectedUpgrade = (m_SelectedUpgrade + 1) % static_cast<int>(m_UpgradeOptions.size());
             break;
         case SDLK_RETURN:
         case SDLK_SPACE:

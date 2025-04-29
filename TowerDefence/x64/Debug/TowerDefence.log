@@ -1,118 +1,12 @@
 ﻿  Bullet.cpp
   Enemie.cpp
   Game.cpp
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(250,83): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.41.34120\include\xmemory(2218,25): error C2280: 'Bullet &Bullet::operator =(const Bullet &)': attempting to reference a deleted function
-  (compiling source file 'Game.cpp')
-      C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Bullet.h(20,1):
-      compiler has generated 'Bullet::operator =' here
-      C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Bullet.h(20,1):
-      'Bullet &Bullet::operator =(const Bullet &)': function was implicitly deleted because 'Bullet' has a data member 'Bullet::m_Radius' of const-qualified non-class type
-      C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Bullet.h(19,17):
-      see declaration of 'Bullet::m_Radius'
-      C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.41.34120\include\xmemory(2218,25):
-      the template instantiation context (the oldest one first) is
-          C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(350,14):
-          see reference to function template instantiation '_FwdIt std::remove_if<std::_Vector_iterator<std::_Vector_val<std::_Simple_types<_Ty>>>,Game::CleanupBullets::<lambda_1>>(_FwdIt,const _FwdIt,_Pr)' being compiled
-          with
-          [
-              _FwdIt=std::_Vector_iterator<std::_Vector_val<std::_Simple_types<Bullet>>>,
-              _Ty=Bullet,
-              _Pr=Game::CleanupBullets::<lambda_1>
-          ]
-  
-C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.41.34120\include\xutility(5023,20): error C2280: 'Bullet &Bullet::operator =(const Bullet &)': attempting to reference a deleted function
-  (compiling source file 'Game.cpp')
-      C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Bullet.h(20,1):
-      compiler has generated 'Bullet::operator =' here
-      C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Bullet.h(20,1):
-      'Bullet &Bullet::operator =(const Bullet &)': function was implicitly deleted because 'Bullet' has a data member 'Bullet::m_Radius' of const-qualified non-class type
-      C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Bullet.h(19,17):
-      see declaration of 'Bullet::m_Radius'
-      C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.41.34120\include\xutility(5023,20):
-      the template instantiation context (the oldest one first) is
-          C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.h(26,25):
-          see reference to class template instantiation 'std::vector<Bullet,std::allocator<Bullet>>' being compiled
-          C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.41.34120\include\vector(1740,27):
-          while compiling class template member function 'std::_Vector_iterator<std::_Vector_val<std::_Simple_types<_Ty>>> std::vector<_Ty,std::allocator<_Ty>>::erase(std::_Vector_const_iterator<std::_Vector_val<std::_Simple_types<_Ty>>>,std::_Vector_const_iterator<std::_Vector_val<std::_Simple_types<_Ty>>>) noexcept(false)'
-          with
-          [
-              _Ty=Bullet
-          ]
-              C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(349,18):
-              see the first reference to 'std::vector<Bullet,std::allocator<Bullet>>::erase' in 'Game::CleanupBullets'
-          C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.41.34120\include\vector(1756,43):
-          see reference to function template instantiation '_OutIt *std::_Move_unchecked<Bullet*,Bullet*>(_InIt,_InIt,_OutIt)' being compiled
-          with
-          [
-              _OutIt=Bullet *,
-              _InIt=Bullet *
-          ]
-  
   main.cpp
+  pch.cpp
   Tower.cpp
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.h(10,53): error C2065: 'Enemie': undeclared identifier
-  (compiling source file 'Tower.cpp')
-  
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.h(10,60): error C2059: syntax error: '>'
-  (compiling source file 'Tower.cpp')
-  
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.h(10,35): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
-  (compiling source file 'Tower.cpp')
-  
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.h(10,41): error C2144: syntax error: 'unknown-type' should be preceded by ')'
-  (compiling source file 'Tower.cpp')
-  
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.h(10,41): error C2144: syntax error: 'unknown-type' should be preceded by ';'
-  (compiling source file 'Tower.cpp')
-  
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.h(10,70): error C2059: syntax error: ')'
-  (compiling source file 'Tower.cpp')
-  
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.cpp(13,1): error C2530: 'Tower::enemies': references must be initialized
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.cpp(33,13): error C2511: 'void Tower::Update(float,const std::vector<Enemie *,std::allocator<Enemie *>> &)': overloaded member function not found in 'Tower'
-      C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.h(5,7):
-      see declaration of 'Tower'
-  
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.cpp(38,9): error C2597: illegal reference to non-static member 'Tower::m_Bullets'
-      C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.cpp(38,9):
-      see declaration of 'Tower::m_Bullets'
-  
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.cpp(38,9): error C3867: 'Tower::m_Bullets': non-standard syntax; use '&' to create a pointer to member
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.cpp(38,9): error C2568: '[': unable to resolve function overload
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.cpp(43,14): error C2672: 'std::remove_if': no matching overloaded function found
-      C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.41.34120\include\xmemory(2208,43):
-      could be '_FwdIt std::remove_if(_FwdIt,const _FwdIt,_Pr)'
-          C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.cpp(43,14):
-          '_FwdIt std::remove_if(_FwdIt,const _FwdIt,_Pr)': expects 3 arguments - 2 provided
-  
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.cpp(48,5): error C2597: illegal reference to non-static member 'Tower::m_AttackTimer'
-      C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.h(24,11):
-      see declaration of 'Tower::m_AttackTimer'
-  
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.cpp(51,32): error C2597: illegal reference to non-static member 'Tower::m_AttackSpeed'
-      C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.cpp(51,32):
-      see declaration of 'Tower::m_AttackSpeed'
-  
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.cpp(51,32): error C3867: 'Tower::m_AttackSpeed': non-standard syntax; use '&' to create a pointer to member
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.cpp(51,32): error C2568: '/': unable to resolve function overload
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.cpp(58,33): error C2597: illegal reference to non-static member 'Tower::m_Range'
-      C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.cpp(58,33):
-      see declaration of 'Tower::m_Range'
-  
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.cpp(58,33): error C3867: 'Tower::m_Range': non-standard syntax; use '&' to create a pointer to member
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.cpp(58,33): error C2568: '+': unable to resolve function overload
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.cpp(67,29): error C2597: illegal reference to non-static member 'Tower::m_Range'
-      C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.cpp(67,29):
-      see declaration of 'Tower::m_Range'
-  
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.cpp(67,29): error C3867: 'Tower::m_Range': non-standard syntax; use '&' to create a pointer to member
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.cpp(67,29): error C2568: '<=': unable to resolve function overload
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.cpp(82,17): error C2440: 'static_cast': cannot convert from 'unknown' to 'int'
-      C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.cpp(82,17):
-      ill-formed reference to a non-static member
-  
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.cpp(86,13): error C2597: illegal reference to non-static member 'Tower::m_AttackTimer'
-      C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.h(24,11):
-      see declaration of 'Tower::m_AttackTimer'
-  
+  TowerDefence.vcxproj -> C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\x64\Debug\TowerDefence.exe
+  0 File(s) copied
+  0 File(s) copied
+  0 File(s) copied
+  0 File(s) copied
+  0 File(s) copied

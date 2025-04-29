@@ -2,6 +2,7 @@
 #include "Bullet.h"
 #include "utils.h"
 #include <cmath>
+#include "Enemie.h"
 
 Bullet::Bullet(float x, float y, float targetX, float targetY, float speed, int damage)
     : m_Speed(speed)
