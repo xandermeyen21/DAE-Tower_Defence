@@ -16,13 +16,17 @@ Tower::Tower(Rectf tower, float range, float damage)
 
 void Tower::Draw() const
 {
-    // Draw tower
-    utils::SetColor(Color4f(0.f, 1.f, 1.f, 1.f));
-    utils::FillRect(m_Tower);
-
     // Draw range indicator (semi-transparent circle)
     utils::SetColor(Color4f(0.f, 1.f, 1.f, 0.2f));
     utils::FillEllipse(Vector2f(m_Tower.left + m_Tower.width / 2, m_Tower.bottom + m_Tower.height / 2), m_Range, m_Range);
+
+    // Draw tower with a more visible color
+    utils::SetColor(Color4f(0.f, 0.7f, 1.f, 1.f)); // Brighter turquoise color
+    utils::FillRect(m_Tower);
+
+    // Add tower outline for better visibility
+    utils::SetColor(Color4f(0.f, 0.f, 0.5f, 1.f)); // Dark blue outline
+    utils::DrawRect(m_Tower);
 
     // Draw bullets
     for (const Bullet& bullet : m_Bullets)
