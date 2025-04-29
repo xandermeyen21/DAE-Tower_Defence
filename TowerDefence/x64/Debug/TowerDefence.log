@@ -1,16 +1,118 @@
 ﻿  Bullet.cpp
   Enemie.cpp
   Game.cpp
-  main.cpp
-  pch.cpp
   Tower.cpp
-  TowerDefence.vcxproj -> C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\x64\Debug\TowerDefence.exe
-  C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\Libraries\SDLMain\SDL2-2.30.11\lib\x64\SDL2.dll
-  1 File(s) copied
-  C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\Libraries\SDLImage\SDL2_image-2.8.4\lib\x64\SDL2_image.dll
-  1 File(s) copied
-  C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\Libraries\SDLMixer\SDL2_mixer-2.8.0\lib\x64\SDL2_mixer.dll
-  1 File(s) copied
-  C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\Libraries\SDLTtf\SDL2_ttf-2.24.0\lib\x64\SDL2_ttf.dll
-  1 File(s) copied
-  0 File(s) copied
+C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(39,34): error C2440: 'initializing': cannot convert from 'std::vector<Bullet,std::allocator<Bullet>>' to 'std::vector<Bullet *,std::allocator<Bullet *>>'
+      C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(39,34):
+      No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+  
+C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(81,28): error C3861: 'ProcessBulletCollisions': identifier not found
+C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(187,34): error C2440: 'initializing': cannot convert from 'std::vector<Bullet,std::allocator<Bullet>>' to 'std::vector<Bullet *,std::allocator<Bullet *>>'
+      C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(187,34):
+      No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+  
+C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(193,21): error C2039: 'IsOutOfBounds': is not a member of 'Bullet'
+      C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Bullet.h(3,7):
+      see declaration of 'Bullet'
+  
+C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(203,19): error C2039: 'ClearBullet': is not a member of 'Tower'
+      C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.h(5,7):
+      see declaration of 'Tower'
+  
+C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(207,12): error C2039: 'ProcessBulletCollisions': is not a member of 'Game'
+      C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.h(8,7):
+      see declaration of 'Game'
+  
+C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(210,43): error C2065: 'm_pTower': undeclared identifier
+C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(210,41): error C2530: 'bullets': references must be initialized
+C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(216,28): error C2039: 'GetPosition': is not a member of 'Bullet'
+      C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Bullet.h(3,7):
+      see declaration of 'Bullet'
+  
+C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(216,53): error C2039: 'GetPosition': is not a member of 'Enemie'
+      C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Enemie.h(2,7):
+      see declaration of 'Enemie'
+  
+C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(217,28): error C2039: 'GetPosition': is not a member of 'Bullet'
+      C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Bullet.h(3,7):
+      see declaration of 'Bullet'
+  
+C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(217,53): error C2039: 'GetPosition': is not a member of 'Enemie'
+      C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Enemie.h(2,7):
+      see declaration of 'Enemie'
+  
+C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(220,33): error C2039: 'GetRadius': is not a member of 'Bullet'
+      C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Bullet.h(3,7):
+      see declaration of 'Bullet'
+  
+C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(220,54): error C2039: 'GetRadius': is not a member of 'Enemie'
+      C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Enemie.h(2,7):
+      see declaration of 'Enemie'
+  
+C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(234,21): error C2065: 'm_pTower': undeclared identifier
+C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(245,9): error C2065: 'm_pTower': undeclared identifier
+C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.h(10,53): error C2065: 'Enemie': undeclared identifier
+  (compiling source file 'Tower.cpp')
+  
+C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.h(10,60): error C2059: syntax error: '>'
+  (compiling source file 'Tower.cpp')
+  
+C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.h(10,35): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+  (compiling source file 'Tower.cpp')
+  
+C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.h(10,41): error C2144: syntax error: 'unknown-type' should be preceded by ')'
+  (compiling source file 'Tower.cpp')
+  
+C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.h(10,41): error C2144: syntax error: 'unknown-type' should be preceded by ';'
+  (compiling source file 'Tower.cpp')
+  
+C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.h(10,70): error C2059: syntax error: ')'
+  (compiling source file 'Tower.cpp')
+  
+C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.cpp(13,1): error C2530: 'Tower::enemies': references must be initialized
+C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.cpp(33,13): error C2511: 'void Tower::Update(float,const std::vector<Enemie *,std::allocator<Enemie *>> &)': overloaded member function not found in 'Tower'
+      C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.h(5,7):
+      see declaration of 'Tower'
+  
+C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.cpp(38,9): error C2597: illegal reference to non-static member 'Tower::m_Bullets'
+      C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.cpp(38,9):
+      see declaration of 'Tower::m_Bullets'
+  
+C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.cpp(38,9): error C3867: 'Tower::m_Bullets': non-standard syntax; use '&' to create a pointer to member
+C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.cpp(38,9): error C2568: '[': unable to resolve function overload
+C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.cpp(43,14): error C2672: 'std::remove_if': no matching overloaded function found
+      C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.41.34120\include\xmemory(2208,43):
+      could be '_FwdIt std::remove_if(_FwdIt,const _FwdIt,_Pr)'
+          C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.cpp(43,14):
+          '_FwdIt std::remove_if(_FwdIt,const _FwdIt,_Pr)': expects 3 arguments - 2 provided
+  
+C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.cpp(48,5): error C2597: illegal reference to non-static member 'Tower::m_AttackTimer'
+      C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.h(24,11):
+      see declaration of 'Tower::m_AttackTimer'
+  
+C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.cpp(51,32): error C2597: illegal reference to non-static member 'Tower::m_AttackSpeed'
+      C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.cpp(51,32):
+      see declaration of 'Tower::m_AttackSpeed'
+  
+C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.cpp(51,32): error C3867: 'Tower::m_AttackSpeed': non-standard syntax; use '&' to create a pointer to member
+C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.cpp(51,32): error C2568: '/': unable to resolve function overload
+C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.cpp(58,33): error C2597: illegal reference to non-static member 'Tower::m_Range'
+      C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.cpp(58,33):
+      see declaration of 'Tower::m_Range'
+  
+C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.cpp(58,33): error C3867: 'Tower::m_Range': non-standard syntax; use '&' to create a pointer to member
+C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.cpp(58,33): error C2568: '+': unable to resolve function overload
+C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.cpp(67,29): error C2597: illegal reference to non-static member 'Tower::m_Range'
+      C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.cpp(67,29):
+      see declaration of 'Tower::m_Range'
+  
+C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.cpp(67,29): error C3867: 'Tower::m_Range': non-standard syntax; use '&' to create a pointer to member
+C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.cpp(67,29): error C2568: '<=': unable to resolve function overload
+C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.cpp(82,17): error C2440: 'static_cast': cannot convert from 'unknown' to 'int'
+      C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.cpp(82,17):
+      ill-formed reference to a non-static member
+  
+C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.cpp(86,13): error C2597: illegal reference to non-static member 'Tower::m_AttackTimer'
+      C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.h(24,11):
+      see declaration of 'Tower::m_AttackTimer'
+  

@@ -31,6 +31,8 @@ private:
     void Cleanup();
     void ClearBackground() const;
     void SpawnEnemy();
+    bool CheckBulletCollisions(Enemie* enemy);
+    void CleanupBullets();
 
     // MEMBERS
     Tower* m_pTower;

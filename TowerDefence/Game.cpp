@@ -2,6 +2,7 @@
 #include "Game.h"
 #include "Tower.h"
 #include "Enemie.h"
+#include "Bullet.h"
 #include "utils.h"
 #include <cmath>
 
@@ -34,6 +35,13 @@ void Game::Initialize()
 
 void Game::Cleanup()
 {
+    // Clean up bullets first
+    std::vector<Bullet*> bullets = m_pTower->GetBullets();
+    for (Bullet* bullet : bullets)
+    {
+        delete bullet;
+    }
+
     delete m_pTower;
 
     // Clean up all enemies
@@ -44,10 +52,11 @@ void Game::Cleanup()
     m_pEnemies.clear();
 }
 
+
 void Game::Update(float elapsedSec)
 {
-    // Update tower
-    m_pTower->Update();
+    // Update tower - modified to pass enemies for targeting
+    m_pTower->Update(elapsedSec, m_pEnemies);
 
     // Enemy spawning logic
     m_EnemySpawnTimer += elapsedSec;
@@ -57,8 +66,9 @@ void Game::Update(float elapsedSec)
         m_EnemySpawnTimer = 0.f;
     }
 
-    // Update all enemies and have them move toward the tower
-    for (size_t i = 0; i < m_pEnemies.size(); i++)
+    // Update all enemies and check for bullet collisions
+    // IMPORTANT: Use indices instead of iterators for safe removal
+    for (size_t i = 0; i < m_pEnemies.size();)
     {
         // Get tower center position
         float towerCenterX = m_pTower->GetPosition().left + m_pTower->GetPosition().width / 2.f;
@@ -66,7 +76,28 @@ void Game::Update(float elapsedSec)
 
         // Update enemy with tower position for movement
         m_pEnemies[i]->Update(towerCenterX, towerCenterY, elapsedSec);
+
+        // Check for bullet collisions
+        bool enemyWasHit = ProcessBulletCollisions(m_pEnemies[i]);
+
+        if (enemyWasHit)
+        {
+            // Enemy was destroyed by bullet
+            delete m_pEnemies[i];
+            // Remove from vector using swap-and-pop for efficiency
+            std::swap(m_pEnemies[i], m_pEnemies.back());
+            m_pEnemies.pop_back();
+            // Don't increment i since we swapped in a new element
+        }
+        else
+        {
+            // Only increment if no deletion happened
+            ++i;
+        }
     }
+
+    // Clean up bullets that are out of bounds
+    CleanupBullets();
 }
 
 void Game::Draw() const
@@ -149,3 +180,72 @@ void Game::ClearBackground() const
     glClearColor(0.0f, 0.0f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 }
+
+
+void Game::CleanupBullets()
+{
+    std::vector<Bullet*> bullets = m_pTower->GetBullets();
+    std::vector<Bullet*> bulletsToDelete;
+
+    // First identify bullets that need to be deleted
+    for (Bullet* bullet : bullets)
+    {
+        if (bullet->IsOutOfBounds(m_Width, m_Height))
+        {
+            bulletsToDelete.push_back(bullet);
+        }
+    }
+
+    // Then delete them
+    for (Bullet* bullet : bulletsToDelete)
+    {
+        delete bullet;
+        m_pTower->ClearBullet(bullet);
+    }
+}
+
+bool Game::ProcessBulletCollisions(Enemie* enemy)
+{
+    // This safer implementation gets a const reference to avoid copying
+    const std::vector<Bullet*>& bullets = m_pTower->GetBullets();
+    std::vector<Bullet*> bulletsToRemove;
+
+    // First identify which bullets hit this enemy
+    for (Bullet* bullet : bullets)
+    {
+        float dx = bullet->GetPosition().x - enemy->GetPosition().x;
+        float dy = bullet->GetPosition().y - enemy->GetPosition().y;
+        float distance = std::sqrt(dx * dx + dy * dy);
+
+        if (distance < (bullet->GetRadius() + enemy->GetRadius()))
+        {
+            // Mark this bullet for removal
+            bulletsToRemove.push_back(bullet);
+
+            // Apply damage to enemy
+            bool enemyKilled = enemy->TakeDamage(bullet->GetDamage());
+
+            // If enemy was killed, report it
+            if (enemyKilled)
+            {
+                // Remove all marked bullets first
+                for (Bullet* bulletToRemove : bulletsToRemove)
+                {
+                    m_pTower->RemoveBullet(bulletToRemove);
+                    delete bulletToRemove;
+                }
+                return true;
+            }
+        }
+    }
+
+    // Remove all bullets that hit the enemy
+    for (Bullet* bulletToRemove : bulletsToRemove)
+    {
+        m_pTower->RemoveBullet(bulletToRemove);
+        delete bulletToRemove;
+    }
+
+    return false;
+}
+
