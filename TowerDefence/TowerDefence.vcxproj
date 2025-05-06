@@ -157,18 +157,24 @@ xcopy "$(SolutionDir)Resources\*.*" "$(TargetDir)" /y /d /s</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BossEnemy.cpp" />
     <ClCompile Include="Bullet.cpp" />
-    <ClCompile Include="Enemie.cpp" />
+    <ClCompile Include="EnemyBase.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MeleeEnemy.cpp" />
     <ClCompile Include="pch.cpp" />
+    <ClCompile Include="RangedEnemy.cpp" />
     <ClCompile Include="Tower.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BossEnemy.h" />
     <ClInclude Include="Bullet.h" />
-    <ClInclude Include="Enemie.h" />
+    <ClInclude Include="EnemyBase.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="MeleeEnemy.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="RangedEnemy.h" />
     <ClInclude Include="Tower.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
