@@ -121,3 +121,4 @@ int EnemyBase::GetMaxHp() const
 {
     return m_MaxHp;
 }
+

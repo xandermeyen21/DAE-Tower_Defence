@@ -90,3 +90,5 @@ private:
     float m_Width;
     float m_Height;
 };
+
+Ellipsef RectToEllipse(const Rectf& rect);

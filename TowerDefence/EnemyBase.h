@@ -23,7 +23,7 @@ public:
     EnemyType GetType() const;
     int GetHp() const;
     int GetMaxHp() const;
-
+    
 protected:
     void DrawHealthBar() const; 
     float m_WalkingSpeed;

@@ -35,7 +35,7 @@ void Tower::Draw() const
     }
 }
 
-void Tower::Update(float elapsedSec, const std::vector<EnemyBase*>& enemies) {
+void Tower::Update(float elapsedSec, const std::vector<EnemyBase*>& enemies)
 {
     // Update all bullets
     for (size_t i = 0; i < m_Bullets.size(); ++i)
