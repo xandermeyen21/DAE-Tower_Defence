@@ -17,6 +17,10 @@ BossEnemy::BossEnemy(Ellipsef shape, int hp, float walkingSpeed, int waveNumber)
     m_PreferredDistance = 100.0f; // Closer than ranged but not melee range
 }
 
+BossEnemy::~BossEnemy() {
+    m_Bullets.clear();
+}
+
 void BossEnemy::Draw() const
 {
     if (!m_IsAlive) return;

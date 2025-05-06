@@ -2,12 +2,14 @@
 #include "Bullet.h"
 #include "utils.h"
 #include <cmath>
-#include "Enemie.h"
+#include "EnemyBase.h"
 
 Bullet::Bullet(float x, float y, float targetX, float targetY, float speed, int damage)
-    : m_Speed(speed)
-    , m_Damage(damage)
-    , m_IsActive(true)
+    : m_Position{ x, y },
+    m_Direction{ 0, 0 },
+    m_Speed(speed),
+    m_Damage(damage),
+    m_IsActive(true)
 {
     // Set initial position
     m_Position.x = x;

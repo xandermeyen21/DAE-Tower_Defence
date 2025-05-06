@@ -14,7 +14,7 @@ public:
 
     virtual void Draw() const;
     virtual void Update(float targetX, float targetY, float elapsedSec);
-    virtual bool Attack(float elapsedSec, Rectf& towerShape); 
+    virtual bool Attack(float elapsedSec, Rectf& towerShape);
     bool TakeDamage(int damage);
     bool IsAlive() const;
     const Ellipsef& GetShape() const;
@@ -25,11 +25,12 @@ public:
     int GetMaxHp() const;
 
 protected:
+    void DrawHealthBar() const; 
     float m_WalkingSpeed;
     int m_Hp;
     int m_MaxHp;
     Ellipsef m_Shape;
     bool m_IsAlive;
     EnemyType m_Type;
-    float m_PreferredDistance; 
+    float m_PreferredDistance;
 };

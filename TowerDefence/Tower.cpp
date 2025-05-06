@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Tower.h"
 #include "Bullet.h"
-#include "Enemie.h"
+#include "EnemyBase.h"
 #include "utils.h"
 #include <cmath>
 
@@ -35,7 +35,7 @@ void Tower::Draw() const
     }
 }
 
-void Tower::Update(float elapsedSec, const std::vector<Enemie*>& enemies)
+void Tower::Update(float elapsedSec, const std::vector<EnemyBase*>& enemies) {
 {
     // Update all bullets
     for (size_t i = 0; i < m_Bullets.size(); ++i)
@@ -59,10 +59,10 @@ void Tower::Update(float elapsedSec, const std::vector<Enemie*>& enemies)
         float towerCenterX = m_Tower.left + m_Tower.width / 2;
         float towerCenterY = m_Tower.bottom + m_Tower.height / 2;
 
-        Enemie* closestEnemy = nullptr;
+        EnemyBase* closestEnemy = nullptr;
         float closestDistance = m_Range + 1.f; // Initialize to something larger than range
 
-        for (Enemie* enemy : enemies)
+        for (EnemyBase* enemy : enemies)
         {
             const Ellipsef& enemyShape = enemy->GetShape();
             float dx = enemyShape.center.x - towerCenterX;

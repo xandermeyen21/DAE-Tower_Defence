@@ -6,7 +6,7 @@
 class BossEnemy : public EnemyBase {
 public:
     BossEnemy(Ellipsef shape, int hp, float walkingSpeed, int waveNumber);
-
+    virtual ~BossEnemy();
     void Draw() const override;
     void Update(float targetX, float targetY, float elapsedSec) override;
     bool Attack(float elapsedSec, Rectf& towerShape) override;

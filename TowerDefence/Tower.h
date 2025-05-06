@@ -3,7 +3,7 @@
 #include <vector>
 
 
-class Enemie;
+class EnemyBase;
 class Bullet;
 
 class Tower
@@ -11,7 +11,7 @@ class Tower
 public:
     Tower(Rectf tower, float range, float damage = 1.f);
     void Draw() const;
-    void Update(float elapsedSec, const std::vector<Enemie*>& enemies);
+    void Update(float elapsedSec, const std::vector<EnemyBase*>& enemies);
     const Rectf& GetPosition() const;
     void UpgradeDamage(float amount);
     void UpgradeRange(float amount);
@@ -20,6 +20,7 @@ public:
     float GetRange() const;
     float GetAttackSpeed() const;
     std::vector<Bullet>& GetBullets();
+    Rectf GetRect() const { return m_Tower; }
 
 private:
     float m_Range;

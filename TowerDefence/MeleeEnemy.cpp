@@ -8,7 +8,7 @@ MeleeEnemy::MeleeEnemy(Ellipsef shape, int hp, float walkingSpeed)
     m_PreferredDistance = 5.0f; 
 }
 
-void MeleeEnemy::Draw() const
+void MeleeEnemy::Draw() const 
 {
     if (!m_IsAlive) return;
 
