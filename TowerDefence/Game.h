@@ -85,7 +85,6 @@ private:
     int m_EnemiesSpawnedInWave;
     std::vector<UpgradeOption> m_UpgradeOptions;
     int m_SelectedUpgrade;
-
     
     float m_Width;
     float m_Height;

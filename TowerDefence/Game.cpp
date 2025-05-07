@@ -11,6 +11,7 @@
 #include "RangedEnemy.h"
 #include "BossEnemy.h"
 #include "MeleeEnemy.h"
+#include "pch.h"
 
 Game::Game(const Window& window)
     : BaseGame{ window }

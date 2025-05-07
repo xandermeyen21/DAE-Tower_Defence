@@ -1,4 +1,6 @@
 #include "pch.h"
+#define SDL_MAIN_HANDLED
+#include <SDL.h>
 #include <ctime>
 #include "Game.h"
 
@@ -6,7 +8,7 @@
 void StartHeapControl();
 void DumpMemoryLeaks();
 
-int SDL_main(int argv, char** args)
+int main(int argc, char* argv[])
 {
 	srand(static_cast<unsigned int>(time(nullptr)));
 
