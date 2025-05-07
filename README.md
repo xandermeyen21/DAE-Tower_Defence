@@ -1,6 +1,8 @@
 DAE-Tower Defence
 A Tower Defence game developed for the GamePlayScripting course.
 
+https://github.com/xandermeyen21/DAE-Tower_Defence/releases/tag/v1.0.0
+
 Description
 Defend your tower against relentless waves of enemies! Your tower stands at the center of the screen, and your goal is to survive as long as possible by making strategic upgrade choices after each wave.
 
