@@ -1,0 +1,29 @@
+name: Build Windows C++ Project
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up MSBuild path
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Build with MSBuild
+        run: msbuild Prog2Engine.sln /p:Configuration=Release
+
+      - name: Upload .exe artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: my-cpp-exe
+          path: |
+            **\Release\*.exe
