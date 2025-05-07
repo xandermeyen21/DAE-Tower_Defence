@@ -32,11 +32,11 @@ void EnemyBase::DrawHealthBar() const
     const float barHeight = 5.f;
     const float barY = m_Shape.center.y + m_Shape.radiusY + 5.f;
 
-    // Health bar background
+    
     utils::SetColor(Color4f(0.3f, 0.3f, 0.3f, 1.f));
     utils::FillRect(Rectf(m_Shape.center.x - barWidth / 2, barY, barWidth, barHeight));
 
-    // Health bar fill
+    
     utils::SetColor(Color4f(0.2f, 0.8f, 0.2f, 1.f));
     float healthPercentage = static_cast<float>(m_Hp) / m_MaxHp;
     float filledWidth = barWidth * healthPercentage;

@@ -30,6 +30,7 @@ Game::Game(const Window& window)
     , m_SelectedUpgrade{ 0 }
     , m_Width{ window.width }
     , m_Height{ window.height }
+    , m_EnemiesSpawnedInWave{ 0 }
 {
     Initialize();
 }
@@ -109,10 +110,12 @@ void Game::Update(float elapsedSec)
 
         m_EnemySpawnTimer += elapsedSec;
         bool shouldSpawnEnemy = m_WaveInProgress &&
+            (m_EnemiesSpawnedInWave < m_EnemiesRequiredForWave) && 
             (m_pEnemies.size() < m_MaxEnemies) &&
             (m_EnemySpawnTimer >= m_EnemySpawnInterval);
 
         if (shouldSpawnEnemy) {
+            m_EnemiesSpawnedInWave++; 
             m_EnemySpawnTimer = 0.f;
             if (m_CurrentWave % 5 == 0 && !m_BossSpawned) {
                 SpawnEnemy(EnemySpawnType::Boss);
@@ -132,10 +135,12 @@ void Game::Update(float elapsedSec)
             float towerCenterY = m_pTower->GetPosition().bottom + m_pTower->GetPosition().height / 2.f;
             m_pEnemies[i]->Update(towerCenterX, towerCenterY, elapsedSec);
 
-            if (m_pEnemies[i]->HasReachedTarget(towerCenterX, towerCenterY, 10.0f))
-            {
-                m_GameState = GameState::GameOver;
-                return;
+            if (m_pEnemies[i]->HasReachedTarget(towerCenterX, towerCenterY, 10.0f)) {
+                UpdateTowerHealth(2); 
+                delete m_pEnemies[i];
+                std::swap(m_pEnemies[i], m_pEnemies.back());
+                m_pEnemies.pop_back();
+                continue; 
             }
 
             bool enemyWasHit = ProcessBulletCollisions(m_pEnemies[i]);
@@ -152,12 +157,12 @@ void Game::Update(float elapsedSec)
             }
         }
 
+        CheckWaveComplete();
         if (ProcessEnemyAttacks(elapsedSec)) {
             if (m_TowerHealth <= 0) {
                 m_GameState = GameState::GameOver;
             }
         }
-        CheckWaveComplete();
         break;
     } 
 
@@ -197,6 +202,32 @@ void Game::Draw() const
                 << "   Range: " << m_pTower->GetRange();
             Texture statsText(ts.str(), "ShortBaby.ttf", 20, Color4f{ 1.0f, 1.0f, 1.0f, 1.0f });
             statsText.Draw(Vector2f(10, m_Height - 40));
+        }
+        {
+            Rectf towerRect = m_pTower->GetPosition();
+            float barWidth = 60.0f;
+            float barHeight = 10.0f;
+            float barX = towerRect.left + (towerRect.width - barWidth) / 2.0f;
+            float barY = towerRect.bottom + towerRect.height + 8.0f;
+
+            float healthPercent = float(m_TowerHealth) / float(m_MaxTowerHealth);
+            if (healthPercent < 0.0f) healthPercent = 0.0f;
+            if (healthPercent > 1.0f) healthPercent = 1.0f;
+
+            
+            utils::SetColor(Color4f(0.2f, 0.2f, 0.2f, 1.0f));
+            utils::FillRect(Rectf(barX, barY, barWidth, barHeight));
+
+            
+            Color4f healthColor(1.0f - healthPercent, healthPercent, 0.0f, 1.0f);
+            utils::SetColor(healthColor);
+            utils::FillRect(Rectf(barX, barY, barWidth * healthPercent, barHeight));
+        }
+        {
+            std::stringstream hs;
+            hs << "Tower Health: " << m_TowerHealth << " / " << m_MaxTowerHealth;
+            Texture healthText(hs.str(), "ShortBaby.ttf", 20, Color4f{ 1.0f, 0.4f, 0.4f, 1.0f });
+            healthText.Draw(Vector2f(10, m_Height - 60));
         }
         break;
         }
@@ -249,24 +280,24 @@ void Game::SpawnEnemy(EnemySpawnType type)
     {
     case EnemySpawnType::Normal:
     {
-        int hp = 5 + m_CurrentWave;
+        int hp = 1 + m_CurrentWave;
         float speed = 40.f + (m_CurrentWave * 3.f);
-        enemy = new MeleeEnemy(Ellipsef(spawnX, spawnY, radius, radius), hp, speed);
+        enemy = new MeleeEnemy(Ellipsef(spawnX , spawnY , radius, radius), hp, speed);
         break;
     }
     case EnemySpawnType::Ranged:
     {
-        int hp = 3 + (m_CurrentWave * 0.7f);
+        int hp = 3 + static_cast<int>(m_CurrentWave * 0.7f);
         float speed = 30.f + (m_CurrentWave * 2.f); 
-        enemy = new RangedEnemy(Ellipsef(spawnX, spawnY, radius, radius), hp, speed);
+        enemy = new RangedEnemy(Ellipsef(spawnX , spawnY , radius, radius), hp, speed);
         break;
     }
     case EnemySpawnType::Boss:
     {
-        int hp = 30 + (m_CurrentWave * 10);
+        int hp = 10 + (m_CurrentWave * 10);
         float speed = 25.f + (m_CurrentWave * 1.5f); 
         float bossRadius = radius * 1.8f; 
-        enemy = new BossEnemy(Ellipsef(spawnX, spawnY, bossRadius, bossRadius), hp, speed, m_CurrentWave);
+        enemy = new BossEnemy(Ellipsef(spawnX , spawnY , bossRadius, bossRadius), hp, speed, m_CurrentWave);
         break;
     }
     }
@@ -292,8 +323,6 @@ void Game::ProcessKeyDownEvent(const SDL_KeyboardEvent& e)
             break;
         case SDLK_RETURN:
         case SDLK_SPACE:
-            // Don't directly call the function here, just set the selected upgrade
-            // and let StartNextWave handle it
             StartNextWave();
             break;
         }
@@ -303,18 +332,18 @@ void Game::ProcessKeyDownEvent(const SDL_KeyboardEvent& e)
 
         if (e.keysym.sym == SDLK_SPACE || e.keysym.sym == SDLK_RETURN)
         {
-            // Reset game code - unchanged
+            
             Cleanup();
 
-            // Reset game state - unchanged
             m_CurrentWave = 1;
             m_EnemiesKilled = 0;
             m_EnemiesRequiredForWave = 5;
+            m_EnemiesSpawnedInWave = 0;
             m_WaveInProgress = true;
             m_GameState = GameState::Playing;
-            m_TowerHealth = m_MaxTowerHealth; // Add this line to reset tower health
+            m_TowerHealth = m_MaxTowerHealth; 
 
-            // Create new tower - unchanged
+            
             float towerWidth = 30.f;
             float towerHeight = 50.f;
             float centerX = m_Width / 2.f - towerWidth / 2.f;
@@ -478,8 +507,10 @@ void Game::DrawUpgradeMenu() const
 
 void Game::CheckWaveComplete()
 {
-    if (m_WaveInProgress && m_EnemiesKilled >= m_EnemiesRequiredForWave && m_pEnemies.empty())
-    {
+    bool allEnemiesSpawned = (m_EnemiesSpawnedInWave >= m_EnemiesRequiredForWave);
+    bool noEnemiesLeft = m_pEnemies.empty();
+
+    if (m_WaveInProgress && allEnemiesSpawned && noEnemiesLeft) {
         m_WaveInProgress = false;
         m_GameState = GameState::UpgradeMenu;
     }
@@ -487,7 +518,7 @@ void Game::CheckWaveComplete()
 
 void Game::StartNextWave()
 {
-    
+    m_EnemiesSpawnedInWave = 0;
     if (m_SelectedUpgrade == 3) { 
         m_TowerHealth += static_cast<int>(m_UpgradeOptions[m_SelectedUpgrade].upgradeAmount);
         if (m_TowerHealth > m_MaxTowerHealth) {

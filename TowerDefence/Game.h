@@ -82,7 +82,7 @@ private:
     const int m_MaxEnemies;
     int m_RangedEnemyChance; 
     bool m_BossSpawned; 
-
+    int m_EnemiesSpawnedInWave;
     std::vector<UpgradeOption> m_UpgradeOptions;
     int m_SelectedUpgrade;
 

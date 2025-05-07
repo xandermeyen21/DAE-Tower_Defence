@@ -1,11 +1,4 @@
-﻿  BossEnemy.cpp
-  Bullet.cpp
-  EnemyBase.cpp
-  Game.cpp
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(259,16): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-  main.cpp
-  MeleeEnemy.cpp
-  RangedEnemy.cpp
+﻿  Game.cpp
   TowerDefence.vcxproj -> C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\x64\Debug\TowerDefence.exe
   0 File(s) copied
   0 File(s) copied
