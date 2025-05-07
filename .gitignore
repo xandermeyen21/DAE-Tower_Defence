@@ -1,6 +1,9 @@
 ﻿################################################################################
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
+bin/
+.vs/
+obj/
 
 /.vs/Prog2Engine/FileContentIndex/4a6425e7-bd06-4870-b846-1b58ddb66b4e.vsidx
 /.vs/Prog2Engine/v17/Browse.VC.opendb
