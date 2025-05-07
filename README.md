@@ -1,12 +1,35 @@
-# DAE-Tower_Defence
-Tower Defence game for the course GamePlayScripting
+DAE-Tower Defence
+A Tower Defence game developed for the GamePlayScripting course.
 
-Waves of enemies come towards your tower. The tower spawns in the middle of your screen. At the end of every wave you can choose for Attack speed, Range or damage upgrade. 
-With the wrong choices, the chance comes that your tower will be elimanted. That's how you lose the game. The purpose is to survive as long as possible.
+Description
+Defend your tower against relentless waves of enemies! Your tower stands at the center of the screen, and your goal is to survive as long as possible by making strategic upgrade choices after each wave.
 
-Newest version has new type of enemies. It shows the tower health. Every 5 waves a boss does spawn.
+Gameplay Features
+Progressive Waves: Face increasingly challenging waves of enemies attacking your central tower.
 
-What will be your record of waves in this new edition?
+Upgrade System: After each wave, choose one of four upgrades:
 
-Goodluck and Have fun!
+- Attack Speed
+- Range
+- Damage
+- Repair
 
+Make your choices wisely-poor decisions can lead to your tower's destruction and game over.
+
+Boss Battles: Every 5 waves, a powerful boss enemy appears to test your defenses.
+
+New in the Latest Version:
+
+New enemy types
+
+Visible tower health indicator
+
+Upcoming Features
+GUI Rework: A complete overhaul of the game's graphical user interface is planned to enhance clarity, usability, and visual appeal.
+
+Upgrade Menu Improvements: The upgrade selection menu will be redesigned for a smoother and more intuitive experience.
+
+Challenge
+How many waves can you survive in this new edition? Compete for the highest record!
+
+Good luck and have fun!
