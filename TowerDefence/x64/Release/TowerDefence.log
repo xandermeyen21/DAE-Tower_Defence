@@ -1,24 +1,12 @@
-﻿  pch.cpp
-  BossEnemy.cpp
-  Bullet.cpp
-  EnemyBase.cpp
-  Game.cpp
-  main.cpp
-  MeleeEnemy.cpp
-  RangedEnemy.cpp
-  Tower.cpp
+﻿  RangedEnemy.cpp
   Generating code
-  Previous IPDB not found, fall back to full compilation.
-  All 558 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  17 of 652 functions ( 2.6%) were compiled, the rest were copied from previous compilation.
+    6 functions were new in current compilation
+    40 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   TowerDefence.vcxproj -> C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\x64\Release\TowerDefence.exe
-  C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\Libraries\SDLMain\SDL2-2.30.11\lib\x64\SDL2.dll
-  1 File(s) copied
-  C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\Libraries\SDLImage\SDL2_image-2.8.4\lib\x64\SDL2_image.dll
-  1 File(s) copied
-  C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\Libraries\SDLMixer\SDL2_mixer-2.8.0\lib\x64\SDL2_mixer.dll
-  1 File(s) copied
-  C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\Libraries\SDLTtf\SDL2_ttf-2.24.0\lib\x64\SDL2_ttf.dll
-  1 File(s) copied
-  C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\Resources\ShortBaby.ttf
-  1 File(s) copied
+  0 File(s) copied
+  0 File(s) copied
+  0 File(s) copied
+  0 File(s) copied
+  0 File(s) copied

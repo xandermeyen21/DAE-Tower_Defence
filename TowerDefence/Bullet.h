@@ -5,7 +5,6 @@ class Bullet
 {
 public:
     Bullet(float x, float y, float targetX, float targetY, float speed, int damage);
-
    
     Bullet& operator=(const Bullet& other)
     {
@@ -20,7 +19,7 @@ public:
         }
         return *this;
     }
-
+    void Deactivate() { m_IsActive = false; }
     void Draw() const;
     void Update(float elapsedSec);
     bool IsActive() const;

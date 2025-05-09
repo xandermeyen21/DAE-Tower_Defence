@@ -10,7 +10,7 @@ EnemyBase::EnemyBase(Ellipsef shape, int hp, float walkingSpeed, EnemyType type)
     , m_Shape(shape)
     , m_IsAlive(true)
     , m_Type(type)
-    , m_PreferredDistance(5.0f) 
+    , m_PreferredDistance(5.0f)
 {
 }
 
@@ -18,11 +18,11 @@ void EnemyBase::Draw() const
 {
     if (!m_IsAlive) return;
 
-    
-    utils::SetColor(Color4f(1.f, 0.f, 0.2f, 1.f)); 
+
+    utils::SetColor(Color4f(1.f, 0.f, 0.2f, 1.f));
     utils::FillEllipse(m_Shape);
 
-    
+
     DrawHealthBar();
 }
 
@@ -32,11 +32,11 @@ void EnemyBase::DrawHealthBar() const
     const float barHeight = 5.f;
     const float barY = m_Shape.center.y + m_Shape.radiusY + 5.f;
 
-    
+
     utils::SetColor(Color4f(0.3f, 0.3f, 0.3f, 1.f));
     utils::FillRect(Rectf(m_Shape.center.x - barWidth / 2, barY, barWidth, barHeight));
 
-    
+
     utils::SetColor(Color4f(0.2f, 0.8f, 0.2f, 1.f));
     float healthPercentage = static_cast<float>(m_Hp) / m_MaxHp;
     float filledWidth = barWidth * healthPercentage;
@@ -51,10 +51,10 @@ void EnemyBase::Update(float targetX, float targetY, float elapsedSec)
     float dy = targetY - m_Shape.center.y;
     float distance = std::sqrt(dx * dx + dy * dy);
 
-    
+
     if (distance > m_PreferredDistance)
     {
-       
+
         if (distance > 0.1f)
         {
             dx /= distance;
@@ -65,9 +65,31 @@ void EnemyBase::Update(float targetX, float targetY, float elapsedSec)
     }
 }
 
-bool EnemyBase::Attack(float elapsedSec, Rectf& towerShape)
+bool EnemyBase::Attack(float elapsedSec, const Rectf& towerShape)
 {
     return false;
+}
+
+bool EnemyBase::CanAttack(float targetX, float targetY, float elapsedSec) const
+{
+    if (!m_IsAlive) return false;
+
+    float distance = GetDistanceToTarget(targetX, targetY);
+    return distance <= m_PreferredDistance;
+}
+
+int EnemyBase::GetAttackDamage() const
+{
+    switch (m_Type) {
+    case EnemyType::MELEE:
+        return 1;
+    case EnemyType::RANGED:
+        return 1;
+    case EnemyType::BOSS:
+        return 3;
+    default:
+        return 1;
+    }
 }
 
 bool EnemyBase::TakeDamage(int damage)
@@ -79,7 +101,7 @@ bool EnemyBase::TakeDamage(int damage)
     if (m_Hp <= 0)
     {
         m_IsAlive = false;
-        return true; 
+        return true;
     }
 
     return false;
@@ -121,4 +143,3 @@ int EnemyBase::GetMaxHp() const
 {
     return m_MaxHp;
 }
-
