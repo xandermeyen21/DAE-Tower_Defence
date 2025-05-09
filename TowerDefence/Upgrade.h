@@ -1,7 +1,9 @@
 #pragma once
+
 #include <string>
 #include <functional>
 #include "Tower.h"
+#include "Texture.h"
 
 enum class UpgradeType
 {
@@ -9,7 +11,7 @@ enum class UpgradeType
     ATTACK_SPEED,
     RANGE,
     REPAIR,
-    
+    RICOCHET
 };
 
 class Upgrade
@@ -23,15 +25,17 @@ public:
     const std::string& GetName() const { return m_Name; }
     const std::string& GetDescription() const { return m_Description; }
     float GetAmount() const { return m_Amount; }
-
     void Apply(Tower& tower) const;
-
     void Draw(float x, float y, float width, float height, bool isSelected) const;
 
     static Upgrade CreateDamageUpgrade(float amount);
     static Upgrade CreateAttackSpeedUpgrade(float amount);
     static Upgrade CreateRangeUpgrade(float amount);
     static Upgrade CreateRepairUpgrade(float amount);
+    static Upgrade CreateRicochetUpgrade(float amount);
+
+    void SetTexture(Texture* texture) { m_pCardTexture = texture; }
+    Texture* GetTexture() const { return m_pCardTexture; }
 
 private:
     UpgradeType m_Type;
@@ -39,4 +43,5 @@ private:
     std::string m_Description;
     float m_Amount;
     std::function<void(Tower&, float)> m_ApplyEffect;
+    Texture* m_pCardTexture = nullptr;
 };

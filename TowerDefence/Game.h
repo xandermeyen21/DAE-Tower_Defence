@@ -2,7 +2,9 @@
 #include "BaseGame.h"
 #include "Upgrade.h"
 #include <vector>
+#include <string>
 
+class Texture;
 class Tower;
 class EnemyBase;
 
@@ -60,7 +62,11 @@ private:
     // MEMBERS
     Tower* m_pTower;
     std::vector<EnemyBase*> m_pEnemies;
-
+    Texture* m_pDamageCardTexture;
+    Texture* m_pAttackSpeedCardTexture;
+    Texture* m_pRangeCardTexture;
+    Texture* m_pRepairCardTexture;
+    Texture* m_pRicocheetTexture;
     GameState m_GameState;
     int m_CurrentWave;
     int m_EnemiesKilled;
@@ -68,20 +74,17 @@ private:
     bool m_WaveInProgress;
     int m_TowerHealth;
     int m_MaxTowerHealth;
-
     float m_EnemySpawnTimer;
     float m_EnemySpawnInterval;
     const int m_MaxEnemies;
     int m_RangedEnemyChance;
     bool m_BossSpawned;
     int m_EnemiesSpawnedInWave;
-
     std::vector<Upgrade> m_AvailableUpgrades;
     int m_SelectedUpgrade;
-
     float m_Width;
     float m_Height;
     bool m_IsBossWave;
 };
 
-Ellipsef RectToEllipse(const Rectf& rect);
+//Ellipsef RectToEllipse(const Rectf& rect);

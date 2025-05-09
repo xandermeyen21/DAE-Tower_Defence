@@ -24,45 +24,18 @@ void Upgrade::Apply(Tower& tower) const
 
 void Upgrade::Draw(float x, float y, float width, float height, bool isSelected) const
 {
-    if (isSelected)
-    {
-        utils::SetColor(Color4f(1.0f, 0.0f, 1.0f, 0.6f));
+    
+    if (isSelected) {
+        utils::SetColor(Color4f(1.0f, 0.9f, 0.3f, 0.6f));
+        utils::FillRect(Rectf(x - 6, y - 6, width + 12, height + 12));
     }
-    else
-    {
-        switch (m_Type)
-        {
-        case UpgradeType::DAMAGE:
-            utils::SetColor(Color4f(0.8f, 0.2f, 0.2f, 0.4f));
-            break;
-        case UpgradeType::ATTACK_SPEED:
-            utils::SetColor(Color4f(0.2f, 0.8f, 0.2f, 0.4f));
-            break;
-        case UpgradeType::RANGE:
-            utils::SetColor(Color4f(0.2f, 0.2f, 0.8f, 0.4f));
-            break;
-        case UpgradeType::REPAIR:
-            utils::SetColor(Color4f(0.8f, 0.8f, 0.2f, 0.4f));
-            break;
-        default:
-            utils::SetColor(Color4f(0.4f, 0.4f, 0.4f, 0.4f));
-            break;
-        }
+
+    
+    if (m_pCardTexture) {
+        m_pCardTexture->Draw(Rectf(x, y, width, height));
     }
-    utils::FillRect(Rectf(x, y, width, height));
-
-    utils::SetColor(Color4f(1.0f, 1.0f, 1.0f, 0.8f));
-    utils::DrawRect(Rectf(x, y, width, height), 2.0f);
-
-    Texture nameText(m_Name, "ShortBaby.ttf", 15, Color4f{ 1.0f, 1.0f, 1.0f, 1.0f });
-    nameText.Draw(Vector2f(x + 10.f, y + height - 15.f));
-
-    Texture descText(m_Description, "ShortBaby.ttf", 14, Color4f{ 1.0f, 1.0f, 1.0f, 0.8f });
-    descText.Draw(Vector2f(x + 10.f, y + height - 35.f));
-
-    // Draw type icon (optional enhancement)
-    // To be implemented in a future version
 }
+
 
 Upgrade Upgrade::CreateDamageUpgrade(float amount)
 {
@@ -101,9 +74,20 @@ Upgrade Upgrade::CreateRepairUpgrade(float amount)
 {
     return Upgrade(
         UpgradeType::REPAIR,
-        "Repair Tower",
-        "Restore " + std::to_string(static_cast<int>(amount)) + " tower health",
+        "Max Health Up",
+        "Increase max tower health by " + std::to_string(static_cast<int>(amount)),
         amount,
-        nullptr  
+        [](Tower& tower, float amt) { tower.UpgradeMaxHealth(amt); }
+    );
+}
+
+Upgrade Upgrade::CreateRicochetUpgrade(float amount)
+{
+    return Upgrade(
+        UpgradeType::RICOCHET,
+        "Ricochet",
+        "Bullets ricochet to " + std::to_string(static_cast<int>(amount)) + " more enemy",
+        amount,
+        [](Tower& tower, float amt) { tower.UpgradeRicochet(static_cast<int>(amt)); }
     );
 }

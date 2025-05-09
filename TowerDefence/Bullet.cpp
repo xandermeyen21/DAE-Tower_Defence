@@ -4,12 +4,13 @@
 #include <cmath>
 #include "EnemyBase.h"
 
-Bullet::Bullet(float x, float y, float targetX, float targetY, float speed, int damage)
+Bullet::Bullet(float x, float y, float targetX, float targetY, float speed, int damage, int ricochetLeft)
     : m_Position{ x, y },
     m_Direction{ 0, 0 },
     m_Speed(speed),
     m_Damage(damage),
-    m_IsActive(true)
+    m_IsActive(true),
+    m_RicochetLeft(ricochetLeft)
 {
     m_Position.x = x;
     m_Position.y = y;

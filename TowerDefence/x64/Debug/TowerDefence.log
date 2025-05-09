@@ -1,10 +1,21 @@
-﻿  Game.cpp
+﻿  BossEnemy.cpp
+  Bullet.cpp
+  EnemyBase.cpp
+  Game.cpp
+  main.cpp
   MeleeEnemy.cpp
+  pch.cpp
   RangedEnemy.cpp
+  Tower.cpp
   Upgrade.cpp
   TowerDefence.vcxproj -> C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\x64\Debug\TowerDefence.exe
   0 File(s) copied
   0 File(s) copied
   0 File(s) copied
   0 File(s) copied
-  0 File(s) copied
+  C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\Resources\AttackSpeedUpgrade.png
+  C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\Resources\DamageUpgrade.png
+  C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\Resources\HealthUpgrade.png
+  C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\Resources\RangeUpgrade.png
+  C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\Resources\RicochetUpgrade.png
+  5 File(s) copied

@@ -4,7 +4,7 @@
 class Bullet
 {
 public:
-    Bullet(float x, float y, float targetX, float targetY, float speed, int damage);
+    Bullet(float x, float y, float targetX, float targetY, float speed, int damage, int ricochetLeft = 0);
    
     Bullet& operator=(const Bullet& other)
     {
@@ -25,6 +25,9 @@ public:
     bool IsActive() const;
     bool CheckHit(const Ellipsef& enemyShape) const;
     int GetDamage() const;
+    Vector2f GetPosition() const { return m_Position; }
+    int m_RicochetLeft = 0;
+    float GetSpeed() const { return m_Speed; }
 
 private:
     Vector2f m_Position;
@@ -32,5 +35,5 @@ private:
     float m_Speed;
     int m_Damage;
     bool m_IsActive;
-    const float m_Radius{ 5.f }; 
+    const float m_Radius{ 5.f };
 };

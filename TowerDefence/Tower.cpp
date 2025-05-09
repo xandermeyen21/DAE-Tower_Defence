@@ -36,7 +36,6 @@ void Tower::Draw() const
 
 void Tower::Update(float elapsedSec, const std::vector<EnemyBase*>& enemies)
 {
-  
     for (size_t i = 0; i < m_Bullets.size(); ++i)
     {
         m_Bullets[i].Update(elapsedSec);
@@ -55,7 +54,7 @@ void Tower::Update(float elapsedSec, const std::vector<EnemyBase*>& enemies)
         float towerCenterY = m_Tower.bottom + m_Tower.height / 2;
 
         EnemyBase* closestEnemy = nullptr;
-        float closestDistance = m_Range + 1.f; 
+        float closestDistance = m_Range + 1.f;
 
         for (EnemyBase* enemy : enemies)
         {
@@ -71,22 +70,22 @@ void Tower::Update(float elapsedSec, const std::vector<EnemyBase*>& enemies)
             }
         }
 
-       
         if (closestEnemy != nullptr)
         {
             const Ellipsef& enemyShape = closestEnemy->GetShape();
             m_Bullets.emplace_back(
                 towerCenterX, towerCenterY,
                 enemyShape.center.x, enemyShape.center.y,
-                300.f, 
-                static_cast<int>(m_Damage)
+                300.f,
+                static_cast<int>(m_Damage),
+                m_RicochetCount 
             );
 
-            
             m_AttackTimer = 0.f;
         }
     }
 }
+
 
 const Rectf& Tower::GetPosition() const
 {
@@ -126,4 +125,19 @@ float Tower::GetAttackSpeed() const
 std::vector<Bullet>& Tower::GetBullets()
 {
     return m_Bullets;
+}
+
+void Tower::UpgradeMaxHealth(float amt)
+{
+    m_MaxHealth += static_cast<int>(amt);
+    m_Health += static_cast<int>(amt);
+}
+
+void Tower::UpgradeRicochet(int amount)
+{
+    m_RicochetCount += amount;
+}
+int Tower::GetRicochetCount() const
+{
+    return m_RicochetCount;
 }

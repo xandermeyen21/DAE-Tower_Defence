@@ -1,8 +1,8 @@
-﻿  RangedEnemy.cpp
+﻿  Game.cpp
   Generating code
-  17 of 652 functions ( 2.6%) were compiled, the rest were copied from previous compilation.
-    6 functions were new in current compilation
-    40 functions had inline decision re-evaluated but remain unchanged
+  2 of 773 functions ( 0.3%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   TowerDefence.vcxproj -> C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\x64\Release\TowerDefence.exe
   0 File(s) copied

@@ -14,7 +14,7 @@ int main(int argc, char* argv[])
 
 	StartHeapControl();
 
-	Game* pGame{ new Game{ Window{ "Tower Defence - Meyen, Xander - 1DAE29", 846.f , 500.f } } };
+	Game* pGame{ new Game{ Window{ "Tower Defence - Meyen, Xander - 1DAE29", 1280.f , 720.f } } };
 	pGame->Run();
 	delete pGame;
 

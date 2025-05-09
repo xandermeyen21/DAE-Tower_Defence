@@ -56,6 +56,12 @@ void Game::Initialize()
 
     m_pTower = new Tower{ Rectf{centerX, centerY, towerWidth, towerHeight}, 150.f };
 
+    m_pDamageCardTexture = new Texture("DamageUpgrade.png");
+    m_pAttackSpeedCardTexture = new Texture("AttackSpeedUpgrade.png");
+    m_pRangeCardTexture = new Texture("RangeUpgrade.png");
+    m_pRepairCardTexture = new Texture("HealthUpgrade.png");
+    m_pRicocheetTexture = new Texture("RicochetUpgrade.png");
+
     SetupUpgradeOptions();
 }
 
@@ -63,13 +69,28 @@ void Game::SetupUpgradeOptions()
 {
     m_AvailableUpgrades.clear();
 
-    m_AvailableUpgrades.push_back(Upgrade::CreateDamageUpgrade(2.0f));
-    m_AvailableUpgrades.push_back(Upgrade::CreateAttackSpeedUpgrade(0.3f));
-    m_AvailableUpgrades.push_back(Upgrade::CreateRangeUpgrade(30.0f));
-    m_AvailableUpgrades.push_back(Upgrade::CreateRepairUpgrade(75.0f));
+    Upgrade dmg = Upgrade::CreateDamageUpgrade(2.0f);
+    dmg.SetTexture(m_pDamageCardTexture);
 
-    // m_AvailableUpgrades.push_back(Upgrade::CreateCustomUpgrade(...));
+    Upgrade spd = Upgrade::CreateAttackSpeedUpgrade(0.3f);
+    spd.SetTexture(m_pAttackSpeedCardTexture);
+
+    Upgrade rng = Upgrade::CreateRangeUpgrade(30.0f);
+    rng.SetTexture(m_pRangeCardTexture);
+
+    Upgrade rep = Upgrade::CreateRepairUpgrade(75.0f);
+    rep.SetTexture(m_pRepairCardTexture);
+
+    Upgrade rico = Upgrade::CreateRicochetUpgrade(1.f);
+    rico.SetTexture(m_pRicocheetTexture);
+
+    m_AvailableUpgrades.push_back(dmg);
+    m_AvailableUpgrades.push_back(spd);
+    m_AvailableUpgrades.push_back(rng);
+    m_AvailableUpgrades.push_back(rep);
+    m_AvailableUpgrades.push_back(rico);
 }
+
 
 void Game::Cleanup()
 {
@@ -79,6 +100,11 @@ void Game::Cleanup()
         delete enemy;
     }
     m_pEnemies.clear();
+
+    delete m_pDamageCardTexture;
+    delete m_pAttackSpeedCardTexture;
+    delete m_pRangeCardTexture;
+    delete m_pRepairCardTexture;
 }
 
 void Game::Update(float elapsedSec)
@@ -89,7 +115,6 @@ void Game::Update(float elapsedSec)
     {
         m_pTower->Update(elapsedSec, m_pEnemies);
 
-        // Check if current wave is a boss wave
         m_IsBossWave = (m_CurrentWave % 5 == 0);
 
         m_EnemySpawnTimer += elapsedSec;
@@ -103,13 +128,11 @@ void Game::Update(float elapsedSec)
             m_EnemySpawnTimer = 0.f;
 
             if (m_IsBossWave) {
-                // Only spawn boss on boss waves
                 if (!m_BossSpawned) {
                     SpawnEnemy(EnemySpawnType::Boss);
                     m_BossSpawned = true;
                 }
                 else {
-                    // If boss already spawned, spawn regular enemies
                     EnemySpawnType type = (rand() % 100 < m_RangedEnemyChance)
                         ? EnemySpawnType::Ranged
                         : EnemySpawnType::Normal;
@@ -117,7 +140,6 @@ void Game::Update(float elapsedSec)
                 }
             }
             else {
-                // Regular wave - spawn normal or ranged enemies
                 EnemySpawnType type = (rand() % 100 < m_RangedEnemyChance)
                     ? EnemySpawnType::Ranged
                     : EnemySpawnType::Normal;
@@ -329,10 +351,10 @@ void Game::ProcessKeyDownEvent(const SDL_KeyboardEvent& e)
     case GameState::UpgradeMenu:
         switch (e.keysym.sym)
         {
-        case SDLK_UP:
+        case SDLK_LEFT:
             m_SelectedUpgrade = (m_SelectedUpgrade - 1 + static_cast<int>(m_AvailableUpgrades.size())) % static_cast<int>(m_AvailableUpgrades.size());
             break;
-        case SDLK_DOWN:
+        case SDLK_RIGHT:
             m_SelectedUpgrade = (m_SelectedUpgrade + 1) % static_cast<int>(m_AvailableUpgrades.size());
             break;
         case SDLK_RETURN:
@@ -430,81 +452,110 @@ bool Game::ProcessBulletCollisions(EnemyBase* enemy)
     std::vector<Bullet>& bullets = m_pTower->GetBullets();
     std::vector<size_t> bulletsToRemove;
 
-
     for (size_t i = 0; i < bullets.size(); ++i)
     {
         if (bullets[i].CheckHit(enemy->GetShape()))
         {
-
             bool enemyKilled = enemy->TakeDamage(bullets[i].GetDamage());
 
-
-            bulletsToRemove.push_back(i);
-
-
-            if (enemyKilled)
+            if (bullets[i].m_RicochetLeft > 0) 
             {
+                EnemyBase* nextTarget = nullptr;
+                float minDist = std::numeric_limits<float>::max();
+                Vector2f hitPos = bullets[i].GetPosition();
 
-                for (auto it = bulletsToRemove.rbegin(); it != bulletsToRemove.rend(); ++it)
+                for (EnemyBase* other : m_pEnemies)
                 {
-                    bullets.erase(bullets.begin() + *it);
+                    if (other == enemy || !other->IsAlive()) continue;
+                    float dx = other->GetShape().center.x - hitPos.x;
+                    float dy = other->GetShape().center.y - hitPos.y;
+                    float dist = std::sqrt(dx * dx + dy * dy);
+                    if (dist < minDist)
+                    {
+                        minDist = dist;
+                        nextTarget = other;
+                    }
                 }
-                return true;
+
+                if (nextTarget)
+                {
+                    bullets.emplace_back(
+                        hitPos.x, hitPos.y,
+                        nextTarget->GetShape().center.x, nextTarget->GetShape().center.y,
+                        bullets[i].GetSpeed(),
+                        bullets[i].GetDamage(),
+                        bullets[i].m_RicochetLeft - 1
+                    );
+                }
             }
+            
+            bulletsToRemove.push_back(i);
+            if (enemyKilled)
+                return true; 
         }
     }
 
+    
     for (auto it = bulletsToRemove.rbegin(); it != bulletsToRemove.rend(); ++it)
-    {
         bullets.erase(bullets.begin() + *it);
-    }
 
     return false;
 }
 
+
 void Game::DrawUpgradeMenu() const
 {
-
     utils::SetColor(Color4f(0.0f, 0.0f, 0.0f, 0.7f));
     utils::FillRect(Rectf(0, 0, m_Width, m_Height));
 
-
     utils::SetColor(Color4f(1.0f, 1.0f, 1.0f, 1.0f));
-    {
-        Texture titleText("WAVE " + std::to_string(m_CurrentWave) + " COMPLETED!", "ShortBaby.ttf", 20, Color4f{ 1.0f, 1.0f, 1.0f, 1.0f });
-        titleText.Draw(Vector2f(m_Width / 2.f - 100.f, m_Height / 2.f + 150.f));
-    }
-    {
-        Texture chooseText("Choose an upgrade:", "ShortBaby.ttf", 20, Color4f{ 1.0f, 1.0f, 1.0f, 1.0f });
-        chooseText.Draw(Vector2f(m_Width / 2.f - 100.f, m_Height / 2.f + 130.f));
-    }
+    Texture titleText("WAVE " + std::to_string(m_CurrentWave) + " COMPLETED!", "ShortBaby.ttf", 20, Color4f{ 1.0f, 1.0f, 1.0f, 1.0f });
+    titleText.Draw(Vector2f(m_Width / 2.f - 100.f, m_Height / 2.f + 150.f));
 
+    Texture chooseText("Choose an upgrade:", "ShortBaby.ttf", 20, Color4f{ 1.0f, 1.0f, 1.0f, 1.0f });
+    chooseText.Draw(Vector2f(m_Width / 2.f - 100.f, m_Height / 2.f + 130.f));
 
-    float menuWidth = 300.f;
-    float menuLeft = m_Width / 2.f - menuWidth / 2.f;
-    float yPos = m_Height / 2.f + 100.f;
-    float itemHeight = 40.f;
+    float cardWidth = 180.f;
+    float cardHeight = 240.f;
+    float slotPadding = 10.f;
+
+    float totalWidth = m_AvailableUpgrades.size() * (cardWidth + slotPadding) - slotPadding;
+    float menuTop = m_Height / 2.f + 100.f;
+    float menuLeft = m_Width / 2.f - totalWidth / 2.f;
 
     for (size_t i = 0; i < m_AvailableUpgrades.size(); ++i)
     {
-        m_AvailableUpgrades[i].Draw(
-            menuLeft,
-            yPos - itemHeight,
-            menuWidth,
-            itemHeight,
-            i == m_SelectedUpgrade
-        );
+        float slotX = menuLeft + i * (cardWidth + slotPadding) - slotPadding;
+        float slotY = menuTop - cardHeight - slotPadding;
+        float slotW = cardWidth + 2 * slotPadding;
+        float slotH = cardHeight + 2 * slotPadding;
 
-        yPos -= itemHeight;
+        if (i == m_SelectedUpgrade)
+            utils::SetColor(Color4f(1.0f, 0.9f, 0.3f, 0.5f));
+        else
+            utils::SetColor(Color4f(0.2f, 0.2f, 0.2f, 0.3f));
+
+        utils::FillRect(Rectf(slotX, slotY, slotW, slotH));
+
+        m_AvailableUpgrades[i].Draw(
+            menuLeft + i * (cardWidth + slotPadding),
+            menuTop - cardHeight,
+            cardWidth,
+            cardHeight,
+            false
+        );
     }
 
-
+    float cardsBottom = menuTop + slotPadding;
+    float instructionY = cardsBottom + 20.f;
     utils::SetColor(Color4f(1.0f, 1.0f, 1.0f, 0.7f));
-    Texture instr1("Use UP/DOWN arrows and ENTER to select", "ShortBaby.ttf", 16, Color4f{ 1.0f, 1.0f, 1.0f, 0.7f });
-    instr1.Draw(Vector2f(m_Width / 2.f - 150.f, m_Height / 2.f - 130.f));
+    Texture instr1("Use LEFT/RIGHT arrows and ENTER to select", "ShortBaby.ttf", 16, Color4f{ 1.0f, 1.0f, 1.0f, 0.7f });
+    instr1.Draw(Vector2f(m_Width / 2.f - 150.f, instructionY));
     Texture instr2("Or click/double-click to choose upgrade", "ShortBaby.ttf", 16, Color4f{ 1.0f, 1.0f, 1.0f, 0.7f });
-    instr2.Draw(Vector2f(m_Width / 2.f - 150.f, m_Height / 2.f - 150.f));
+    instr2.Draw(Vector2f(m_Width / 2.f - 150.f, instructionY + 20.f));
 }
+
+
 
 bool Game::ProcessEnemyAttacks(float elapsedSec)
 {
@@ -548,7 +599,7 @@ void Game::StartNextWave()
         }
     }
 
-
+    UpdateTowerHealth(50);
     m_CurrentWave++;
     m_EnemiesKilled = 0;
     m_EnemiesSpawnedInWave = 0;
