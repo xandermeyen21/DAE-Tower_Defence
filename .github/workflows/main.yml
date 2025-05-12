@@ -1,11 +1,9 @@
-name: Build Windows C++ Project with SDL2
+name: Create Release
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-  workflow_dispatch:
+    tags:
+      - 'v*'  # Trigger on tags starting with 'v' (e.g., v1.0.0)
 
 jobs:
   build:
@@ -84,8 +82,8 @@ jobs:
           )
           
           :: Debug: List directory contents to help identify issues
-          echo "Listing SDL2_image directory contents:"
-          dir SDL2_image-2.6.3 /s
+          echo "Listing extracted directories:"
+          dir SDL2* /b
           
           :: Copy all DLLs to a common directory for later inclusion
           mkdir SDL_DLLs
@@ -180,16 +178,28 @@ jobs:
         shell: cmd
         run: |
           powershell Compress-Archive -Path dist\* -DestinationPath DAE-Tower_Defence.zip
+          
+      - name: Extract tag version
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+        shell: bash
 
-      - name: Upload ZIP artifact
-        uses: actions/upload-artifact@v4
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
         with:
-          name: DAE-Tower_Defence
-          path: DAE-Tower_Defence.zip
-
-      - name: Upload individual files artifact (for backward compatibility)
-        uses: actions/upload-artifact@v4
-        with:
-          name: tower-defence-files
-          path: |
-            dist/
+          token: ${{ secrets.GITHUB_TOKEN }}
+          files: DAE-Tower_Defence.zip
+          draft: false
+          prerelease: false
+          name: "DAE Tower Defence ${{ steps.get_version.outputs.VERSION }}"
+          body: |
+            # DAE Tower Defence ${{ steps.get_version.outputs.VERSION }}
+            
+            ## What's New
+            - New release with complete package including resources and documentation
+            
+            ## Installation
+            1. Download the ZIP file
+            2. Extract all files
+            3. Run DAE-Tower_Defence.exe
