@@ -1,4 +1,4 @@
-name: Build Windows C++ Project
+name: Build and Package Windows C++ Project
 
 on:
   push:
@@ -34,10 +34,27 @@ jobs:
       - name: Build with CMake
         run: cmake --build build --config Release
 
-      - name: Upload .exe and DLLs artifact
+      - name: Copy SDL2 DLLs to build output
+        run: |
+          xcopy /Y /S "%SDL2_DIR%\\bin\\*.dll" "build\\Release\\"
+          xcopy /Y /S "%SDL2_IMAGE_DIR%\\bin\\*.dll" "build\\Release\\"
+          xcopy /Y /S "%SDL2_MIXER_DIR%\\bin\\*.dll" "build\\Release\\"
+          xcopy /Y /S "%SDL2_TTF_DIR%\\bin\\*.dll" "build\\Release\\"
+
+      - name: Copy README and licenses
+        run: |
+          copy README.md build\Release\
+          copy %SDL2_DIR%\LICENSE.txt build\Release\LICENSE_SDL2.txt
+          copy %SDL2_IMAGE_DIR%\LICENSE.txt build\Release\LICENSE_SDL2_image.txt
+          copy %SDL2_MIXER_DIR%\LICENSE.txt build\Release\LICENSE_SDL2_mixer.txt
+          copy %SDL2_TTF_DIR%\LICENSE.txt build\Release\LICENSE_SDL2_ttf.txt
+
+      - name: Create release zip
+        run: |
+          powershell Compress-Archive -Path build\Release\* -DestinationPath release.zip
+
+      - name: Upload release zip as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: my-cpp-exe
-          path: |
-            build/Release/*.exe
-            build/Release/*.dll
+          name: tower-defence-release
+          path: release.zip
