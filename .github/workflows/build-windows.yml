@@ -26,6 +26,7 @@ jobs:
           mkdir -p SDL2_mixer/lib/x64
           mkdir -p SDL2_ttf/lib/x64
           mkdir -p SDL2/include
+          mkdir -p licenses
           
           # Download SDL2 and extract it
           curl -L https://github.com/libsdl-org/SDL/releases/download/release-2.28.5/SDL2-devel-2.28.5-VC.zip -o SDL2.zip
@@ -52,12 +53,38 @@ jobs:
           copy SDL2_ttf-2.20.2\lib\x64\*.dll SDL2_ttf\lib\x64\
           copy SDL2_ttf-2.20.2\lib\x64\*.lib SDL2_ttf\lib\x64\
           
-          # Extract SDL2 licenses
-          mkdir -p licenses
-          copy SDL2-2.28.5\COPYING.txt licenses\SDL2-COPYING.txt
-          copy SDL2_image-2.6.3\COPYING.txt licenses\SDL2_image-COPYING.txt
-          copy SDL2_mixer-2.6.3\COPYING.txt licenses\SDL2_mixer-COPYING.txt
-          copy SDL2_ttf-2.20.2\COPYING.txt licenses\SDL2_ttf-COPYING.txt
+          # Extract SDL2 licenses - with error handling
+          if exist SDL2-2.28.5\COPYING.txt (
+            copy SDL2-2.28.5\COPYING.txt licenses\SDL2-COPYING.txt
+          ) else (
+            echo "SDL2 license file not found, creating placeholder"
+            echo "See SDL2 license at: https://www.libsdl.org/license.php" > licenses\SDL2-COPYING.txt
+          )
+          
+          if exist SDL2_image-2.6.3\COPYING.txt (
+            copy SDL2_image-2.6.3\COPYING.txt licenses\SDL2_image-COPYING.txt
+          ) else (
+            echo "SDL2_image license file not found, creating placeholder"
+            echo "See SDL2_image license at: https://www.libsdl.org/projects/SDL_image/license.php" > licenses\SDL2_image-COPYING.txt
+          )
+          
+          if exist SDL2_mixer-2.6.3\COPYING.txt (
+            copy SDL2_mixer-2.6.3\COPYING.txt licenses\SDL2_mixer-COPYING.txt
+          ) else (
+            echo "SDL2_mixer license file not found, creating placeholder"
+            echo "See SDL2_mixer license at: https://www.libsdl.org/projects/SDL_mixer/license.php" > licenses\SDL2_mixer-COPYING.txt
+          )
+          
+          if exist SDL2_ttf-2.20.2\COPYING.txt (
+            copy SDL2_ttf-2.20.2\COPYING.txt licenses\SDL2_ttf-COPYING.txt
+          ) else (
+            echo "SDL2_ttf license file not found, creating placeholder"
+            echo "See SDL2_ttf license at: https://www.libsdl.org/projects/SDL_ttf/license.php" > licenses\SDL2_ttf-COPYING.txt
+          )
+          
+          # Debug: List directory contents to help identify issues
+          echo "Listing SDL2_image directory contents:"
+          dir SDL2_image-2.6.3 /s
           
           # Copy all DLLs to a common directory for later inclusion
           mkdir -p SDL_DLLs
