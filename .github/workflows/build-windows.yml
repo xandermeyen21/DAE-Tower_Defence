@@ -12,11 +12,11 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      # 1. Checkout code (updated to v4)
+      # 1. Checkout code
       - name: Checkout source
         uses: actions/checkout@v4
 
-      # 2. Set up SDL2 first (before CMake configuration)
+      # 2. Set up SDL2 and extensions
       - name: Set up SDL2
         uses: libsdl-org/setup-sdl@main
         with:
@@ -25,21 +25,24 @@ jobs:
           version-sdl-mixer: 2-latest
           version-sdl-ttf: 2-latest
 
-      # 3. Configure CMake (simplified)
+      # 3. Configure CMake for Visual Studio 2022 x64
       - name: Configure CMake
         run: cmake -S . -B build -G "Visual Studio 17 2022" -A x64
 
-      # 4. Build with CMake (instead of MSBuild)
+      # 4. Build with CMake
       - name: Build with CMake
         run: cmake --build build --config Release
 
-      # 5. Copy DLLs (alternative method)
+      # 5. Copy all SDL2 DLLs to the Release folder
       - name: Copy SDL2 DLLs
         run: |
-          copy "%SDL2_ROOT%\lib\x64\*.dll" "build\Release\"
+          copy "%SDL2_ROOT%\lib\x64\SDL2.dll" build\Release\
+          copy "%SDL2_IMAGE_ROOT%\lib\x64\SDL2_image.dll" build\Release\
+          copy "%SDL2_MIXER_ROOT%\lib\x64\SDL2_mixer.dll" build\Release\
+          copy "%SDL2_TTF_ROOT%\lib\x64\SDL2_ttf.dll" build\Release\
         shell: cmd
 
-      # 6. Upload artifacts
+      # 6. Upload the .exe and DLLs as artifact
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
