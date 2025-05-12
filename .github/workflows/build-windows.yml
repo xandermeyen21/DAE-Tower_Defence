@@ -10,20 +10,55 @@ on:
 jobs:
   build:
     runs-on: windows-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      # Checkout Code
+      - name: Checkout source
+        uses: actions/checkout@v2
 
+      # Install NASM
+      - name: Install NASM
+        run: |
+          choco install nasm -y
+          echo "CMAKE_ASM_NASM_COMPILER=C:\\ProgramData\\chocolatey\\bin\\nasm.exe" >> $GITHUB_ENV
+
+      # Set up MSBuild path
       - name: Set up MSBuild path
         uses: microsoft/setup-msbuild@v2
 
+      # Configure CMake
+      - name: Configure CMake
+        run: cmake -S . -B build -G "Ninja" -T host=x64
+
+      # Set up SDL2 and extension libraries
+      - name: Set up SDL2
+        uses: libsdl-org/setup-sdl@main
+        with:
+          version: 2-latest
+          version-sdl-image: 2-latest
+          version-sdl-mixer: 2-latest
+          version-sdl-ttf: 2-latest
+
+      # Build with MSBuild
       - name: Build with MSBuild
         run: msbuild Prog2Engine.sln /p:Configuration=Release
 
-      - name: Upload .exe artifact
+      # Copy all needed DLLs to the Release folder
+      - name: Copy SDL2 DLLs to Release folder
+        run: |
+          copy "%SDL2_ROOT%\lib\x64\SDL2.dll" .\Release\
+          copy "%SDL2_IMAGE_ROOT%\lib\x64\SDL2_image.dll" .\Release\
+          copy "%SDL2_MIXER_ROOT%\lib\x64\SDL2_mixer.dll" .\Release\
+          copy "%SDL2_TTF_ROOT%\lib\x64\SDL2_ttf.dll" .\Release\
+        shell: cmd
+
+      # Upload .exe and DLLs artifact
+      - name: Upload .exe and DLLs artifact
         uses: actions/upload-artifact@v4
         with:
           name: my-cpp-exe
           path: |
             **\Release\*.exe
+            **\Release\SDL2.dll
+            **\Release\SDL2_image.dll
+            **\Release\SDL2_mixer.dll
+            **\Release\SDL2_ttf.dll
