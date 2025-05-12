@@ -15,6 +15,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Install NASM
+        run: |
+          choco install nasm -y
+          nasm -v  # Verify installation
+
       - name: Set up SDL2 and extensions
         uses: libsdl-org/setup-sdl@main
         with:
