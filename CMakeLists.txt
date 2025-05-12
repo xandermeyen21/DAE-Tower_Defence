@@ -6,7 +6,7 @@ project(DAE-Tower_Defence)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-# Find SDL2 and its extensions using environment variables (set by GitHub Action)
+# Find SDL2 and its extensions using environment variables set by the GitHub Action
 find_path(SDL2_INCLUDE_DIR SDL.h
   HINTS "$ENV{SDL2_ROOT}/include"
 )
@@ -31,18 +31,19 @@ find_library(SDL2_TTF_LIBRARY
   HINTS "$ENV{SDL2_TTF_ROOT}/lib/x64"
 )
 
-# Add executable
+# Add your executable and all source files here
 add_executable(${PROJECT_NAME}
   src/main.cpp
   # Add other source files here
 )
 
-# Link SDL2 libraries
+# Include directories
 target_include_directories(${PROJECT_NAME} PRIVATE
   ${SDL2_INCLUDE_DIR}
   include  # Your project's include dir
 )
 
+# Link SDL2 and its extension libraries
 target_link_libraries(${PROJECT_NAME}
   ${SDL2_LIBRARY}
   ${SDL2_IMAGE_LIBRARY}
@@ -50,7 +51,7 @@ target_link_libraries(${PROJECT_NAME}
   ${SDL2_TTF_LIBRARY}
 )
 
-# Copy SDL2 DLLs to executable directory after build
+# Automatically copy SDL2 DLLs to the output directory after build
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy_if_different
     "$ENV{SDL2_ROOT}/lib/x64/SDL2.dll"
