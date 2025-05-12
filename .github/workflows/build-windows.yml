@@ -19,41 +19,42 @@ jobs:
         uses: microsoft/setup-msbuild@v2
 
       - name: Setup SDL2
+        shell: cmd
         run: |
-          # Create directories for SDL2 libraries
-          mkdir -p SDL2/lib/x64
-          mkdir -p SDL2_image/lib/x64
-          mkdir -p SDL2_mixer/lib/x64
-          mkdir -p SDL2_ttf/lib/x64
-          mkdir -p SDL2/include
-          mkdir -p licenses
+          :: Create directories for SDL2 libraries
+          mkdir SDL2\lib\x64
+          mkdir SDL2_image\lib\x64
+          mkdir SDL2_mixer\lib\x64
+          mkdir SDL2_ttf\lib\x64
+          mkdir SDL2\include
+          mkdir licenses
           
-          # Download SDL2 and extract it
+          :: Download SDL2 and extract it
           curl -L https://github.com/libsdl-org/SDL/releases/download/release-2.28.5/SDL2-devel-2.28.5-VC.zip -o SDL2.zip
           7z x SDL2.zip
           xcopy /E /I SDL2-2.28.5\include SDL2\include
           copy SDL2-2.28.5\lib\x64\*.dll SDL2\lib\x64\
           copy SDL2-2.28.5\lib\x64\*.lib SDL2\lib\x64\
           
-          # Download SDL2_image and extract it
+          :: Download SDL2_image and extract it
           curl -L https://github.com/libsdl-org/SDL_image/releases/download/release-2.6.3/SDL2_image-devel-2.6.3-VC.zip -o SDL2_image.zip
           7z x SDL2_image.zip
           copy SDL2_image-2.6.3\lib\x64\*.dll SDL2_image\lib\x64\
           copy SDL2_image-2.6.3\lib\x64\*.lib SDL2_image\lib\x64\
           
-          # Download SDL2_mixer and extract it
+          :: Download SDL2_mixer and extract it
           curl -L https://github.com/libsdl-org/SDL_mixer/releases/download/release-2.6.3/SDL2_mixer-devel-2.6.3-VC.zip -o SDL2_mixer.zip
           7z x SDL2_mixer.zip
           copy SDL2_mixer-2.6.3\lib\x64\*.dll SDL2_mixer\lib\x64\
           copy SDL2_mixer-2.6.3\lib\x64\*.lib SDL2_mixer\lib\x64\
           
-          # Download SDL2_ttf and extract it
+          :: Download SDL2_ttf and extract it
           curl -L https://github.com/libsdl-org/SDL_ttf/releases/download/release-2.20.2/SDL2_ttf-devel-2.20.2-VC.zip -o SDL2_ttf.zip
           7z x SDL2_ttf.zip
           copy SDL2_ttf-2.20.2\lib\x64\*.dll SDL2_ttf\lib\x64\
           copy SDL2_ttf-2.20.2\lib\x64\*.lib SDL2_ttf\lib\x64\
           
-          # Extract SDL2 licenses - with error handling
+          :: Extract SDL2 licenses - with error handling
           if exist SDL2-2.28.5\COPYING.txt (
             copy SDL2-2.28.5\COPYING.txt licenses\SDL2-COPYING.txt
           ) else (
@@ -82,12 +83,12 @@ jobs:
             echo "See SDL2_ttf license at: https://www.libsdl.org/projects/SDL_ttf/license.php" > licenses\SDL2_ttf-COPYING.txt
           )
           
-          # Debug: List directory contents to help identify issues
+          :: Debug: List directory contents to help identify issues
           echo "Listing SDL2_image directory contents:"
           dir SDL2_image-2.6.3 /s
           
-          # Copy all DLLs to a common directory for later inclusion
-          mkdir -p SDL_DLLs
+          :: Copy all DLLs to a common directory for later inclusion
+          mkdir SDL_DLLs
           copy SDL2-2.28.5\lib\x64\*.dll SDL_DLLs\
           copy SDL2_image-2.6.3\lib\x64\*.dll SDL_DLLs\
           copy SDL2_mixer-2.6.3\lib\x64\*.dll SDL_DLLs\
@@ -97,63 +98,66 @@ jobs:
         run: msbuild Prog2Engine.sln /p:Configuration=Release
 
       - name: Create README file
+        shell: cmd
         run: |
-          echo "# DAE Tower Defence" > README.md
-          echo "" >> README.md
-          echo "## Description" >> README.md
-          echo "A tower defence game created as part of the DAE programming curriculum." >> README.md
-          echo "" >> README.md
-          echo "## Controls" >> README.md
-          echo "- **Left Mouse Button**: Select and place towers" >> README.md
-          echo "- **Right Mouse Button**: Cancel selection" >> README.md
-          echo "- **ESC**: Exit game" >> README.md
-          echo "" >> README.md
-          echo "## System Requirements" >> README.md
-          echo "- Windows 10 or later" >> README.md
-          echo "- Graphics card supporting DirectX 11" >> README.md
-          echo "" >> README.md
-          echo "## Installation" >> README.md
-          echo "1. Extract all files from the ZIP" >> README.md
-          echo "2. Run the DAE-Tower_Defence.exe file" >> README.md
-          echo "" >> README.md
-          echo "## Credits" >> README.md
-          echo "This game uses SDL2 libraries (SDL2, SDL2_image, SDL2_mixer, SDL2_ttf)." >> README.md
-          echo "See the licenses folder for license information." >> README.md
+          echo # DAE Tower Defence > README.md
+          echo. >> README.md
+          echo ## Description >> README.md
+          echo A tower defence game created as part of the DAE programming curriculum. >> README.md
+          echo. >> README.md
+          echo ## Controls >> README.md
+          echo - **Left Mouse Button**: Select and place towers >> README.md
+          echo - **Right Mouse Button**: Cancel selection >> README.md
+          echo - **ESC**: Exit game >> README.md
+          echo. >> README.md
+          echo ## System Requirements >> README.md
+          echo - Windows 10 or later >> README.md
+          echo - Graphics card supporting DirectX 11 >> README.md
+          echo. >> README.md
+          echo ## Installation >> README.md
+          echo 1. Extract all files from the ZIP >> README.md
+          echo 2. Run the DAE-Tower_Defence.exe file >> README.md
+          echo. >> README.md
+          echo ## Credits >> README.md
+          echo This game uses SDL2 libraries (SDL2, SDL2_image, SDL2_mixer, SDL2_ttf). >> README.md
+          echo See the licenses folder for license information. >> README.md
 
       - name: Create combined licenses file
+        shell: cmd
         run: |
-          echo "# License Information" > LICENSES.md
-          echo "" >> LICENSES.md
-          echo "## DAE Tower Defence" >> LICENSES.md
-          echo "Copyright (c) 2025 xandermeyen21" >> LICENSES.md
-          echo "" >> LICENSES.md
-          echo "## Third-Party Libraries" >> LICENSES.md
-          echo "" >> LICENSES.md
-          echo "This application uses the following third-party libraries:" >> LICENSES.md
-          echo "" >> LICENSES.md
-          echo "### SDL2" >> LICENSES.md
-          echo "See licenses/SDL2-COPYING.txt" >> LICENSES.md
-          echo "" >> LICENSES.md
-          echo "### SDL2_image" >> LICENSES.md
-          echo "See licenses/SDL2_image-COPYING.txt" >> LICENSES.md
-          echo "" >> LICENSES.md
-          echo "### SDL2_mixer" >> LICENSES.md
-          echo "See licenses/SDL2_mixer-COPYING.txt" >> LICENSES.md
-          echo "" >> LICENSES.md
-          echo "### SDL2_ttf" >> LICENSES.md
-          echo "See licenses/SDL2_ttf-COPYING.txt" >> LICENSES.md
+          echo # License Information > LICENSES.md
+          echo. >> LICENSES.md
+          echo ## DAE Tower Defence >> LICENSES.md
+          echo Copyright (c) 2025 xandermeyen21 >> LICENSES.md
+          echo. >> LICENSES.md
+          echo ## Third-Party Libraries >> LICENSES.md
+          echo. >> LICENSES.md
+          echo This application uses the following third-party libraries: >> LICENSES.md
+          echo. >> LICENSES.md
+          echo ### SDL2 >> LICENSES.md
+          echo See licenses/SDL2-COPYING.txt >> LICENSES.md
+          echo. >> LICENSES.md
+          echo ### SDL2_image >> LICENSES.md
+          echo See licenses/SDL2_image-COPYING.txt >> LICENSES.md
+          echo. >> LICENSES.md
+          echo ### SDL2_mixer >> LICENSES.md
+          echo See licenses/SDL2_mixer-COPYING.txt >> LICENSES.md
+          echo. >> LICENSES.md
+          echo ### SDL2_ttf >> LICENSES.md
+          echo See licenses/SDL2_ttf-COPYING.txt >> LICENSES.md
 
       - name: Prepare distribution directory
+        shell: cmd
         run: |
-          mkdir -p dist
+          mkdir dist
           copy x64\Release\*.exe dist\
           copy SDL_DLLs\*.dll dist\
           copy README.md dist\
           copy LICENSES.md dist\
-          mkdir -p dist\licenses
+          mkdir dist\licenses
           copy licenses\*.txt dist\licenses\
           
-          # Check if resources directory exists and copy it
+          :: Check if resources directory exists and copy it
           if exist Resources (
             xcopy /E /I Resources dist\Resources
           )
@@ -168,10 +172,12 @@ jobs:
           )
 
       - name: List distribution directory
+        shell: cmd
         run: |
           dir dist /s
 
       - name: Create ZIP archive
+        shell: cmd
         run: |
           powershell Compress-Archive -Path dist\* -DestinationPath DAE-Tower_Defence.zip
 
