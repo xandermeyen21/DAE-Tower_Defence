@@ -10,32 +10,13 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+
     steps:
+      # 1. Checkout code (updated to v4)
       - name: Checkout source
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
-      - name: Install NASM
-        run: |
-          choco install nasm -y
-          echo "CMAKE_ASM_NASM_COMPILER=C:\\ProgramData\\chocolatey\\bin\\nasm.exe" >> $GITHUB_ENV
-
-      - name: Install Visual Studio Build Tools
-        run: |
-          choco install visualstudio2019buildtools -y
-          choco install visualstudio2019-workload-vctools -y
-
-      - name: Install CMake
-        run: choco install cmake --installargs '"ADD_CMAKE_TO_PATH=System"' -y
-
-      - name: Verify Compiler
-        run: cl /?
-
-      - name: Set up MSBuild path
-        uses: microsoft/setup-msbuild@v2
-
-      - name: Configure CMake
-        run: cmake -S . -B build -G "Ninja" -T host=x64 -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl
-
+      # 2. Set up SDL2 first (before CMake configuration)
       - name: Set up SDL2
         uses: libsdl-org/setup-sdl@main
         with:
@@ -44,24 +25,25 @@ jobs:
           version-sdl-mixer: 2-latest
           version-sdl-ttf: 2-latest
 
-      - name: Build with MSBuild
-        run: msbuild Prog2Engine.sln /p:Configuration=Release
+      # 3. Configure CMake (simplified)
+      - name: Configure CMake
+        run: cmake -S . -B build -G "Visual Studio 17 2022" -A x64
 
-      - name: Copy SDL2 DLLs to Release folder
+      # 4. Build with CMake (instead of MSBuild)
+      - name: Build with CMake
+        run: cmake --build build --config Release
+
+      # 5. Copy DLLs (alternative method)
+      - name: Copy SDL2 DLLs
         run: |
-          copy "%SDL2_ROOT%\lib\x64\SDL2.dll" .\Release\
-          copy "%SDL2_IMAGE_ROOT%\lib\x64\SDL2_image.dll" .\Release\
-          copy "%SDL2_MIXER_ROOT%\lib\x64\SDL2_mixer.dll" .\Release\
-          copy "%SDL2_TTF_ROOT%\lib\x64\SDL2_ttf.dll" .\Release\
+          copy "%SDL2_ROOT%\lib\x64\*.dll" "build\Release\"
         shell: cmd
 
-      - name: Upload .exe and DLLs artifact
+      # 6. Upload artifacts
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: my-cpp-exe
+          name: game-release
           path: |
-            **\Release\*.exe
-            **\Release\SDL2.dll
-            **\Release\SDL2_image.dll
-            **\Release\SDL2_mixer.dll
-            **\Release\SDL2_ttf.dll
+            build\Release\*.exe
+            build\Release\*.dll
