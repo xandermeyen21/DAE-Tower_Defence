@@ -1,11 +1,11 @@
-# Auto-Release Workflow
-
-name: Create Release
+name: Build Windows C++ Project with SDL2
 
 on:
   push:
-    tags:
-      - 'v*'  # Trigger on tags starting with 'v' (e.g., v1.0.0)
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -147,28 +147,16 @@ jobs:
       - name: Create ZIP archive
         run: |
           powershell Compress-Archive -Path dist\* -DestinationPath DAE-Tower_Defence.zip
-          
-      - name: Extract tag version
-        id: get_version
-        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
-        shell: bash
 
-      - name: Create Release
-        id: create_release
-        uses: softprops/action-gh-release@v1
+      - name: Upload ZIP artifact
+        uses: actions/upload-artifact@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          files: DAE-Tower_Defence.zip
-          draft: false
-          prerelease: false
-          name: "DAE Tower Defence ${{ steps.get_version.outputs.VERSION }}"
-          body: |
-            # DAE Tower Defence ${{ steps.get_version.outputs.VERSION }}
-            
-            ## What's New
-            - New release with complete package including resources and documentation
-            
-            ## Installation
-            1. Download the ZIP file
-            2. Extract all files
-            3. Run DAE-Tower_Defence.exe
+          name: DAE-Tower_Defence
+          path: DAE-Tower_Defence.zip
+
+      - name: Upload individual files artifact (for backward compatibility)
+        uses: actions/upload-artifact@v4
+        with:
+          name: tower-defence-files
+          path: |
+            dist/
