@@ -1,4 +1,4 @@
-name: Build and Package Windows C++ Project
+name: Build Windows C++ Project with SDL2
 
 on:
   push:
@@ -15,46 +15,68 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install NASM
-        run: |
-          choco install nasm -y
-          nasm -v  # Verify installation
+      - name: Install CMake
+        uses: lukka/get-cmake@latest
 
-      - name: Set up SDL2 and extensions
-        uses: libsdl-org/setup-sdl@main
-        with:
-          version: 2-latest
-          version-sdl-image: 2-latest
-          version-sdl-mixer: 2-latest
-          version-sdl-ttf: 2-latest
+      - name: Setup SDL2
+        run: |
+          # Create directories for SDL2 libraries
+          mkdir -p SDL2/lib/x64
+          mkdir -p SDL2_image/lib/x64
+          mkdir -p SDL2_mixer/lib/x64
+          mkdir -p SDL2_ttf/lib/x64
+          mkdir -p SDL2/include
+          
+          # Download SDL2 and extract it
+          curl -L https://github.com/libsdl-org/SDL/releases/download/release-2.28.5/SDL2-devel-2.28.5-VC.zip -o SDL2.zip
+          7z x SDL2.zip
+          xcopy /E /I SDL2-2.28.5\include SDL2\include
+          copy SDL2-2.28.5\lib\x64\*.dll SDL2\lib\x64\
+          copy SDL2-2.28.5\lib\x64\*.lib SDL2\lib\x64\
+          
+          # Download SDL2_image and extract it
+          curl -L https://github.com/libsdl-org/SDL_image/releases/download/release-2.6.3/SDL2_image-devel-2.6.3-VC.zip -o SDL2_image.zip
+          7z x SDL2_image.zip
+          copy SDL2_image-2.6.3\lib\x64\*.dll SDL2_image\lib\x64\
+          copy SDL2_image-2.6.3\lib\x64\*.lib SDL2_image\lib\x64\
+          
+          # Download SDL2_mixer and extract it
+          curl -L https://github.com/libsdl-org/SDL_mixer/releases/download/release-2.6.3/SDL2_mixer-devel-2.6.3-VC.zip -o SDL2_mixer.zip
+          7z x SDL2_mixer.zip
+          copy SDL2_mixer-2.6.3\lib\x64\*.dll SDL2_mixer\lib\x64\
+          copy SDL2_mixer-2.6.3\lib\x64\*.lib SDL2_mixer\lib\x64\
+          
+          # Download SDL2_ttf and extract it
+          curl -L https://github.com/libsdl-org/SDL_ttf/releases/download/release-2.20.2/SDL2_ttf-devel-2.20.2-VC.zip -o SDL2_ttf.zip
+          7z x SDL2_ttf.zip
+          copy SDL2_ttf-2.20.2\lib\x64\*.dll SDL2_ttf\lib\x64\
+          copy SDL2_ttf-2.20.2\lib\x64\*.lib SDL2_ttf\lib\x64\
+          
+          # Set environment variables for CMake to find the libraries
+          echo "SDL2_ROOT=$env:GITHUB_WORKSPACE\SDL2" >> $env:GITHUB_ENV
+          echo "SDL2_IMAGE_ROOT=$env:GITHUB_WORKSPACE\SDL2_image" >> $env:GITHUB_ENV
+          echo "SDL2_MIXER_ROOT=$env:GITHUB_WORKSPACE\SDL2_mixer" >> $env:GITHUB_ENV
+          echo "SDL2_TTF_ROOT=$env:GITHUB_WORKSPACE\SDL2_ttf" >> $env:GITHUB_ENV
 
       - name: Configure CMake
-        run: cmake -S . -B build -G "Visual Studio 17 2022" -A x64
+        run: |
+          mkdir build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release
 
       - name: Build with CMake
-        run: cmake --build build --config Release
-
-      - name: Copy SDL2 DLLs to build output
         run: |
-          xcopy /Y /S "%SDL2_DIR%\\bin\\*.dll" "build\\Release\\"
-          xcopy /Y /S "%SDL2_IMAGE_DIR%\\bin\\*.dll" "build\\Release\\"
-          xcopy /Y /S "%SDL2_MIXER_DIR%\\bin\\*.dll" "build\\Release\\"
-          xcopy /Y /S "%SDL2_TTF_DIR%\\bin\\*.dll" "build\\Release\\"
+          cd build
+          cmake --build . --config Release
 
-      - name: Copy README and licenses
+      - name: List output directory to verify DLLs
         run: |
-          copy README.md build\Release\
-          copy %SDL2_DIR%\LICENSE.txt build\Release\LICENSE_SDL2.txt
-          copy %SDL2_IMAGE_DIR%\LICENSE.txt build\Release\LICENSE_SDL2_image.txt
-          copy %SDL2_MIXER_DIR%\LICENSE.txt build\Release\LICENSE_SDL2_mixer.txt
-          copy %SDL2_TTF_DIR%\LICENSE.txt build\Release\LICENSE_SDL2_ttf.txt
+          dir build\Release
 
-      - name: Create release zip
-        run: |
-          powershell Compress-Archive -Path build\Release\* -DestinationPath release.zip
-
-      - name: Upload release zip as artifact
+      - name: Upload executable with DLLs
         uses: actions/upload-artifact@v4
         with:
-          name: tower-defence-release
-          path: release.zip
+          name: tower-defence-with-dlls
+          path: |
+            build/Release/*.exe
+            build/Release/*.dll
