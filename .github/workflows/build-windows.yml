@@ -18,12 +18,34 @@ jobs:
       - name: Set up MSBuild path
         uses: microsoft/setup-msbuild@v2
 
+      # Set up SDL2 and extension libraries
+      - name: Set up SDL2
+        uses: libsdl-org/setup-sdl@main
+        with:
+          version: 2-latest
+          version-sdl-image: 2-latest
+          version-sdl-mixer: 2-latest
+          version-sdl-ttf: 2-latest
+
       - name: Build with MSBuild
         run: msbuild Prog2Engine.sln /p:Configuration=Release
 
-      - name: Upload .exe artifact
+      # Copy all needed DLLs to the Release folder
+      - name: Copy SDL2 DLLs to Release folder
+        run: |
+          copy "%SDL2_ROOT%\lib\x64\SDL2.dll" .\Release\
+          copy "%SDL2_IMAGE_ROOT%\lib\x64\SDL2_image.dll" .\Release\
+          copy "%SDL2_MIXER_ROOT%\lib\x64\SDL2_mixer.dll" .\Release\
+          copy "%SDL2_TTF_ROOT%\lib\x64\SDL2_ttf.dll" .\Release\
+        shell: cmd
+
+      - name: Upload .exe and DLLs artifact
         uses: actions/upload-artifact@v4
         with:
           name: my-cpp-exe
           path: |
             **\Release\*.exe
+            **\Release\SDL2.dll
+            **\Release\SDL2_image.dll
+            **\Release\SDL2_mixer.dll
+            **\Release\SDL2_ttf.dll
