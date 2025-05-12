@@ -14,9 +14,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Install CMake
-        uses: lukka/get-cmake@latest
+      
+      - name: Set up MSBuild path
+        uses: microsoft/setup-msbuild@v2
 
       - name: Setup SDL2
         run: |
@@ -52,31 +52,32 @@ jobs:
           copy SDL2_ttf-2.20.2\lib\x64\*.dll SDL2_ttf\lib\x64\
           copy SDL2_ttf-2.20.2\lib\x64\*.lib SDL2_ttf\lib\x64\
           
-          # Set environment variables for CMake to find the libraries
-          echo "SDL2_ROOT=$env:GITHUB_WORKSPACE\SDL2" >> $env:GITHUB_ENV
-          echo "SDL2_IMAGE_ROOT=$env:GITHUB_WORKSPACE\SDL2_image" >> $env:GITHUB_ENV
-          echo "SDL2_MIXER_ROOT=$env:GITHUB_WORKSPACE\SDL2_mixer" >> $env:GITHUB_ENV
-          echo "SDL2_TTF_ROOT=$env:GITHUB_WORKSPACE\SDL2_ttf" >> $env:GITHUB_ENV
+          # Copy all DLLs to a common directory for later inclusion
+          mkdir -p SDL_DLLs
+          copy SDL2-2.28.5\lib\x64\*.dll SDL_DLLs\
+          copy SDL2_image-2.6.3\lib\x64\*.dll SDL_DLLs\
+          copy SDL2_mixer-2.6.3\lib\x64\*.dll SDL_DLLs\
+          copy SDL2_ttf-2.20.2\lib\x64\*.dll SDL_DLLs\
 
-      - name: Configure CMake
-        run: |
-          mkdir build
-          cd build
-          cmake .. -DCMAKE_BUILD_TYPE=Release
+      - name: Build with MSBuild
+        run: msbuild Prog2Engine.sln /p:Configuration=Release
 
-      - name: Build with CMake
+      - name: List output directory to verify exe
         run: |
-          cd build
-          cmake --build . --config Release
+          dir x64\Release\
 
-      - name: List output directory to verify DLLs
+      - name: Copy SDL2 DLLs to exe directory
         run: |
-          dir build\Release
+          copy SDL_DLLs\*.dll x64\Release\
+
+      - name: List DLLs in executable directory
+        run: |
+          dir x64\Release\
 
       - name: Upload executable with DLLs
         uses: actions/upload-artifact@v4
         with:
           name: tower-defence-with-dlls
           path: |
-            build/Release/*.exe
-            build/Release/*.dll
+            x64/Release/*.exe
+            x64/Release/*.dll
