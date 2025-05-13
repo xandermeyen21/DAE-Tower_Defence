@@ -149,6 +149,9 @@ jobs:
       - name: Prepare distribution directory
         shell: cmd
         run: |
+          :: Clean any existing dist directory first
+          if exist dist rmdir /s /q dist
+          
           mkdir dist
           copy x64\Release\*.exe dist\
           copy SDL_DLLs\*.dll dist\
@@ -158,17 +161,22 @@ jobs:
           copy licenses\*.txt dist\licenses\
           
           :: Check if resources directory exists and copy it
+          :: Use /Y to automatically overwrite without prompting
           if exist Resources (
-            xcopy /E /I Resources dist\Resources
+            mkdir dist\Resources
+            xcopy /E /Y Resources dist\Resources\
           )
           if exist resources (
-            xcopy /E /I resources dist\resources
+            mkdir dist\resources
+            xcopy /E /Y resources dist\resources\
           )
           if exist Assets (
-            xcopy /E /I Assets dist\Assets
+            mkdir dist\Assets
+            xcopy /E /Y Assets dist\Assets\
           )
           if exist assets (
-            xcopy /E /I assets dist\assets
+            mkdir dist\assets
+            xcopy /E /Y assets dist\assets\
           )
 
       - name: List distribution directory
