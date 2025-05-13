@@ -56,11 +56,11 @@ void Game::Initialize()
 
     m_pTower = new Tower{ Rectf{centerX, centerY, towerWidth, towerHeight}, 150.f };
 
-    m_pDamageCardTexture = new Texture("DamageUpgrade.png");
-    m_pAttackSpeedCardTexture = new Texture("AttackSpeedUpgrade.png");
-    m_pRangeCardTexture = new Texture("RangeUpgrade.png");
-    m_pRepairCardTexture = new Texture("HealthUpgrade.png");
-    m_pRicocheetTexture = new Texture("RicochetUpgrade.png");
+    m_pDamageCardTexture = new Texture("Resources/DamageUpgrade.png");
+    m_pAttackSpeedCardTexture = new Texture("Resources/AttackSpeedUpgrade.png");
+    m_pRangeCardTexture = new Texture("Resources/RangeUpgrade.png");
+    m_pRepairCardTexture = new Texture("Resources/HealthUpgrade.png");
+    m_pRicocheetTexture = new Texture("Recources/RicochetUpgrade.png");
 
     SetupUpgradeOptions();
 }
@@ -231,12 +231,12 @@ void Game::Draw() const
         {
             std::stringstream ss;
             ss << "WAVE " << m_CurrentWave;
-            Texture waveText(ss.str(), "ShortBaby.ttf", 24, Color4f{ 1.0f, 1.0f, 1.0f, 1.0f });
+            Texture waveText(ss.str(), "Resources/ShortBaby.ttf", 24, Color4f{ 1.0f, 1.0f, 1.0f, 1.0f });
             waveText.Draw(Vector2f(m_Width / 2.f - waveText.GetWidth() / 2.f, m_Height - 40.f));
 
             ss.str("");
             ss << "ENEMIES " << m_EnemiesKilled << " / " << m_EnemiesRequiredForWave;
-            Texture enemyText(ss.str(), "ShortBaby.ttf", 20, Color4f{ 1.0f, 1.0f, 1.0f, 0.8f });
+            Texture enemyText(ss.str(), "Resources/ShortBaby.ttf", 20, Color4f{ 1.0f, 1.0f, 1.0f, 0.8f });
             enemyText.Draw(Vector2f(m_Width / 2.f - enemyText.GetWidth() / 2.f, m_Height - 70.f));
         }
 
@@ -246,7 +246,7 @@ void Game::Draw() const
                 << " SPEED " << m_pTower->GetAttackSpeed()
                 << " RANGE " << m_pTower->GetRange()
                 << " HEALTH " << m_TowerHealth << " / " << m_MaxTowerHealth;
-            Texture statsText(ts.str(), "ShortBaby.ttf", 18, Color4f{ 0.8f, 0.8f, 1.0f, 1.0f });
+            Texture statsText(ts.str(), "Resources/ShortBaby.ttf", 18, Color4f{ 0.8f, 0.8f, 1.0f, 1.0f });
             statsText.Draw(Vector2f(m_Width / 2.f - statsText.GetWidth() / 2.f, m_Height - 100.f));
         }
 
@@ -519,10 +519,10 @@ void Game::DrawUpgradeMenu() const
     utils::FillRect(Rectf(0, 0, m_Width, m_Height));
 
     utils::SetColor(Color4f(1.0f, 1.0f, 1.0f, 1.0f));
-    Texture titleText("WAVE " + std::to_string(m_CurrentWave) + " COMPLETED!", "ShortBaby.ttf", 20, Color4f{ 1.0f, 1.0f, 1.0f, 1.0f });
+    Texture titleText("WAVE " + std::to_string(m_CurrentWave) + " COMPLETED!", "Resources/ShortBaby.ttf", 20, Color4f{ 1.0f, 1.0f, 1.0f, 1.0f });
     titleText.Draw(Vector2f(m_Width / 2.f - 100.f, m_Height / 2.f + 200.f));
 
-    Texture chooseText("Choose an upgrade:", "ShortBaby.ttf", 20, Color4f{ 1.0f, 1.0f, 1.0f, 1.0f });
+    Texture chooseText("Choose an upgrade:", "Resources/ShortBaby.ttf", 20, Color4f{ 1.0f, 1.0f, 1.0f, 1.0f });
     chooseText.Draw(Vector2f(m_Width / 2.f - 100.f, m_Height / 2.f + 150.f));
 
     float cardWidth = 180.f;
@@ -559,7 +559,7 @@ void Game::DrawUpgradeMenu() const
 
     float instructionY = menuMiddle - cardHeight / 2.f - 60.f;
     utils::SetColor(Color4f(1.0f, 1.0f, 1.0f, 0.7f));
-    Texture instr1("Use LEFT/RIGHT arrows and ENTER to select", "ShortBaby.ttf", 16, Color4f{ 1.0f, 1.0f, 1.0f, 0.7f });
+    Texture instr1("Use LEFT/RIGHT arrows and ENTER to select", "Resources/ShortBaby.ttf", 16, Color4f{ 1.0f, 1.0f, 1.0f, 0.7f });
     instr1.Draw(Vector2f(m_Width / 2.f - 150.f, instructionY));
     /*Texture instr2("Or click/double-click to choose upgrade", "ShortBaby.ttf", 16, Color4f{ 1.0f, 1.0f, 1.0f, 0.7f });
     instr2.Draw(Vector2f(m_Width / 2.f - 150.f, instructionY + 20.f));*/
@@ -653,13 +653,13 @@ void Game::GameOver() const
     utils::FillRect(Rectf(0, 0, m_Width, m_Height));
 
     utils::SetColor(Color4f(1.0f, 0.2f, 0.2f, 1.0f));
-    Texture gameOverText("GAME OVER", "ShortBaby.ttf", 40, Color4f{ 1.0f, 0.2f, 0.2f, 1.0f });
+    Texture gameOverText("GAME OVER", "Resources/ShortBaby.ttf", 40, Color4f{ 1.0f, 0.2f, 0.2f, 1.0f });
     gameOverText.Draw(Vector2f(m_Width / 2.f - 100.f, m_Height / 2.f + 50.f));
 
     std::string waveText = "You reached wave " + std::to_string(m_CurrentWave);
-    Texture waveReachedText(waveText, "ShortBaby.ttf", 24, Color4f{ 1.0f, 1.0f, 1.0f, 1.0f });
+    Texture waveReachedText(waveText, "Resources/ShortBaby.ttf", 24, Color4f{ 1.0f, 1.0f, 1.0f, 1.0f });
     waveReachedText.Draw(Vector2f(m_Width / 2.f - 120.f, m_Height / 2.f));
 
-    Texture restartText("Press ENTER or SPACE to restart", "ShortBaby.ttf", 20, Color4f{ 1.0f, 1.0f, 1.0f, 0.8f });
+    Texture restartText("Press ENTER or SPACE to restart", "Resources/ShortBaby.ttf", 20, Color4f{ 1.0f, 1.0f, 1.0f, 0.8f });
     restartText.Draw(Vector2f(m_Width / 2.f - 150.f, m_Height / 2.f - 50.f));
 }
