@@ -3,31 +3,42 @@
 #include "Bullet.h"
 #include <vector>
 
-class RangedEnemy : public EnemyBase {
-public:
-    RangedEnemy(Ellipsef shape, int hp, float walkingSpeed);
-    void Draw() const override;
-    void Update(float targetX, float targetY, float elapsedSec) override;
-    bool Attack(float elapsedSec, const Rectf& towerShape) override;
-    bool CanAttack(float targetX, float targetY, float elapsedSec) const override;
-    int GetAttackDamage() const override;
+class Tower;
 
-    const std::vector<Bullet>& GetBullets() const;
-    std::vector<Bullet>& GetBullets();
+class RangedEnemy : public EnemyBase
+{
+public:
+    RangedEnemy(const Vector2f& position, float health, float damage, float speed);
+    RangedEnemy(const Ellipsef& shape, float health, float speed);
+
+    virtual ~RangedEnemy() = default;
+
+    void Update(float elapsedSec, const std::vector<Tower*>& towers) override;
+    void Update(float targetX, float targetY, float elapsedSec);
+    void Draw() const override;
+    bool Attack(float elapsedSec, const Rectf& towerShape) override;
+
+    EnemyType GetType() const override { return EnemyType::Ranged; }
+    int GetAttackDamage() const override;
+    bool CanAttack(float targetX, float targetY, float elapsedSec) const override;
 
     void ShootIfAble(float targetX, float targetY, float elapsedSec);
     void UpdateBullets(float elapsedSec);
-    float GetPreferredDistance() const { return m_PreferredDistance; }
 
-    float m_ShootCooldown;
+    std::vector<Bullet>& GetBullets();
+    const std::vector<Bullet>& GetBullets() const;
+
+    bool IsShooting() const;
+    float GetAttackRange() const;
+
+    float m_BulletDamage;
     float m_ShootCooldownMax;
+    float m_ShootCooldown;
 
 private:
+    bool m_IsShooting;
+    float m_AttackTimer;
+    float m_AttackSpeed;
+    float m_AttackRange;
     std::vector<Bullet> m_Bullets;
-    float m_AttackTimer;        
-    float m_AttackSpeed;        
-    float m_BulletDamage;       
-    float m_PreferredDistance;  
-    float m_AttackRange;        
-    bool m_IsShooting;         
 };

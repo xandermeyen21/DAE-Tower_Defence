@@ -1,12 +1,7 @@
 #pragma once
-#include "BaseGame.h"
-#include "Upgrade.h"
 #include <vector>
 #include <string>
-
-class Texture;
-class Tower;
-class EnemyBase;
+#include "BaseGame.h"
 
 enum class GameState
 {
@@ -22,69 +17,80 @@ enum class EnemySpawnType
     Boss
 };
 
+class Tower;
+class EnemyBase;
+class Texture;
+class Upgrade;
+
 class Game : public BaseGame
 {
 public:
-    explicit Game(const Window& window);
-    Game(const Game& other) = delete;
-    Game& operator=(const Game& other) = delete;
-    Game(Game&& other) = delete;
-    Game& operator=(Game&& other) = delete;
+    Game(const Window& window);
     ~Game();
 
     void Update(float elapsedSec) override;
     void Draw() const override;
 
-    // Event handling
     void ProcessKeyDownEvent(const SDL_KeyboardEvent& e) override;
     void ProcessKeyUpEvent(const SDL_KeyboardEvent& e) override;
     void ProcessMouseMotionEvent(const SDL_MouseMotionEvent& e) override;
     void ProcessMouseDownEvent(const SDL_MouseButtonEvent& e) override;
     void ProcessMouseUpEvent(const SDL_MouseButtonEvent& e) override;
 
-
 private:
-    // FUNCTIONS
     void Initialize();
     void Cleanup();
     void ClearBackground() const;
-    void SpawnEnemy(EnemySpawnType type = EnemySpawnType::Normal);
+    void CleanupBullets();
+    void GameOver() const;
+
+    void SpawnEnemy(EnemySpawnType type);
     bool ProcessBulletCollisions(EnemyBase* enemy);
     bool ProcessEnemyAttacks(float elapsedSec);
-    void CleanupBullets();
-    void DrawUpgradeMenu() const;
-    void SetupUpgradeOptions();
-    void StartNextWave();
     void CheckWaveComplete();
-    void GameOver() const;
-    void UpdateTowerHealth(int damage);
+    void StartNextWave();
+    void UpdateTowerHealth(int amount);
+    void SetupUpgradeOptions();
+    void DrawUpgradeMenu() const;
+    void ApplyPostBossWaveUpgrades();
 
-    // MEMBERS
+    void AddNotification(const std::string& text, float duration);
+
     Tower* m_pTower;
     std::vector<EnemyBase*> m_pEnemies;
+    GameState m_GameState;
+
+    int m_CurrentWave;
+    int m_EnemiesKilled;
+    int m_EnemiesRequiredForWave;
+    int m_EnemiesSpawnedInWave;
+    int m_BossWavesCompleted;
+    int m_TowerHealth;
+    int m_MaxTowerHealth;
+
+    bool m_WaveInProgress;
+    bool m_BossSpawned;
+    bool m_IsBossWave;
+
+    float m_EnemySpawnTimer;
+    float m_EnemySpawnInterval;
+    float m_NotificationTimer;
+    float m_Width;
+    float m_Height;
+    float m_EnemyDamageMultiplier;
+    float m_EnemyAttackSpeedMultiplier;
+
+    int m_RangedEnemyChance;
+    int m_MaxEnemies;
+
+    std::vector<std::pair<std::string, float>> m_Notifications;
+
+    int m_SelectedUpgrade;
+    std::vector<Upgrade> m_AvailableUpgrades;
+
     Texture* m_pDamageCardTexture;
     Texture* m_pAttackSpeedCardTexture;
     Texture* m_pRangeCardTexture;
     Texture* m_pRepairCardTexture;
     Texture* m_pRicocheetTexture;
-    GameState m_GameState;
-    int m_CurrentWave;
-    int m_EnemiesKilled;
-    int m_EnemiesRequiredForWave;
-    bool m_WaveInProgress;
-    int m_TowerHealth;
-    int m_MaxTowerHealth;
-    float m_EnemySpawnTimer;
-    float m_EnemySpawnInterval;
-    const int m_MaxEnemies;
-    int m_RangedEnemyChance;
-    bool m_BossSpawned;
-    int m_EnemiesSpawnedInWave;
-    std::vector<Upgrade> m_AvailableUpgrades;
-    int m_SelectedUpgrade;
-    float m_Width;
-    float m_Height;
-    bool m_IsBossWave;
 };
-
-//Ellipsef RectToEllipse(const Rectf& rect);

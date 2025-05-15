@@ -12,6 +12,7 @@
 #include "BossEnemy.h"
 #include "MeleeEnemy.h"
 #include "Upgrade.h"
+#include <algorithm>
 
 Game::Game(const Window& window)
     : BaseGame{ window }
@@ -33,6 +34,10 @@ Game::Game(const Window& window)
     , m_Height{ window.height }
     , m_EnemiesSpawnedInWave{ 0 }
     , m_IsBossWave{ false }
+    , m_BossWavesCompleted{ 0 }
+    , m_EnemyDamageMultiplier{ 1.0f }
+    , m_EnemyAttackSpeedMultiplier{ 1.0f }
+    , m_NotificationTimer{-1.0f} 
 {
     Initialize();
 }
@@ -55,12 +60,21 @@ void Game::Initialize()
     if (centerY + towerHeight > m_Height) centerY = m_Height - towerHeight;
 
     m_pTower = new Tower{ Rectf{centerX, centerY, towerWidth, towerHeight}, 150.f };
+    if (!m_pTower) {
+        std::cerr << "Failed to create tower" << std::endl;
+        return;
+    }
 
-    m_pDamageCardTexture = new Texture("Resources/DamageUpgrade.png");
-    m_pAttackSpeedCardTexture = new Texture("Resources/AttackSpeedUpgrade.png");
-    m_pRangeCardTexture = new Texture("Resources/RangeUpgrade.png");
-    m_pRepairCardTexture = new Texture("Resources/HealthUpgrade.png");
-    m_pRicocheetTexture = new Texture("Recources/RicochetUpgrade.png");
+    try {
+        m_pDamageCardTexture = new Texture("Resources/DamageUpgrade.png");
+        m_pAttackSpeedCardTexture = new Texture("Resources/AttackSpeedUpgrade.png");
+        m_pRangeCardTexture = new Texture("Resources/RangeUpgrade.png");
+        m_pRepairCardTexture = new Texture("Resources/HealthUpgrade.png");
+        m_pRicocheetTexture = new Texture("Resources/RicochetUpgrade.png");  
+    }
+    catch (const std::exception& e) {
+        std::cerr << "Failed to load textures: " << e.what() << std::endl;
+    }
 
     SetupUpgradeOptions();
 }
@@ -70,19 +84,29 @@ void Game::SetupUpgradeOptions()
     m_AvailableUpgrades.clear();
 
     Upgrade dmg = Upgrade::CreateDamageUpgrade(2.0f);
-    dmg.SetTexture(m_pDamageCardTexture);
+    if (m_pDamageCardTexture != nullptr) {
+        dmg.SetTexture(m_pDamageCardTexture);
+    }
 
     Upgrade spd = Upgrade::CreateAttackSpeedUpgrade(0.3f);
-    spd.SetTexture(m_pAttackSpeedCardTexture);
+    if (m_pAttackSpeedCardTexture != nullptr) {
+        spd.SetTexture(m_pAttackSpeedCardTexture);
+    }
 
     Upgrade rng = Upgrade::CreateRangeUpgrade(30.0f);
-    rng.SetTexture(m_pRangeCardTexture);
+    if (m_pRangeCardTexture != nullptr) {
+        rng.SetTexture(m_pRangeCardTexture);
+    }
 
     Upgrade rep = Upgrade::CreateRepairUpgrade(25.0f);
-    rep.SetTexture(m_pRepairCardTexture);
+    if (m_pRepairCardTexture != nullptr) {
+        rep.SetTexture(m_pRepairCardTexture);
+    }
 
     Upgrade rico = Upgrade::CreateRicochetUpgrade(1.f);
-    rico.SetTexture(m_pRicocheetTexture);
+    if (m_pRicocheetTexture != nullptr) {
+        rico.SetTexture(m_pRicocheetTexture);
+    }
 
     m_AvailableUpgrades.push_back(dmg);
     m_AvailableUpgrades.push_back(spd);
@@ -105,6 +129,14 @@ void Game::Cleanup()
     delete m_pAttackSpeedCardTexture;
     delete m_pRangeCardTexture;
     delete m_pRepairCardTexture;
+    delete m_pRicocheetTexture; 
+
+    m_pTower = nullptr;
+    m_pDamageCardTexture = nullptr;
+    m_pAttackSpeedCardTexture = nullptr;
+    m_pRangeCardTexture = nullptr;
+    m_pRepairCardTexture = nullptr;
+    m_pRicocheetTexture = nullptr;
 }
 
 void Game::Update(float elapsedSec)
@@ -152,9 +184,9 @@ void Game::Update(float elapsedSec)
 
         for (size_t i = 0; i < m_pEnemies.size(); )
         {
-            m_pEnemies[i]->Update(towerCenterX, towerCenterY, elapsedSec);
+            m_pEnemies[i]->Update(elapsedSec);
 
-            if (m_pEnemies[i]->GetType() == EnemyType::RANGED) {
+            if (m_pEnemies[i]->GetType() == EnemyType::Ranged) {
                 RangedEnemy* ranged = static_cast<RangedEnemy*>(m_pEnemies[i]);
                 ranged->ShootIfAble(towerCenterX, towerCenterY, elapsedSec);
             }
@@ -173,7 +205,7 @@ void Game::Update(float elapsedSec)
         }
 
         for (EnemyBase* enemy : m_pEnemies) {
-            if (enemy->GetType() == EnemyType::RANGED) {
+            if (enemy->GetType() == EnemyType::Ranged) {
                 RangedEnemy* ranged = static_cast<RangedEnemy*>(enemy);
                 ranged->UpdateBullets(elapsedSec);
 
@@ -197,6 +229,22 @@ void Game::Update(float elapsedSec)
         if (ProcessEnemyAttacks(elapsedSec)) {
             if (m_TowerHealth <= 0) {
                 m_GameState = GameState::GameOver;
+            }
+        }
+        if (!m_Notifications.empty()) {
+            for (size_t i = 0; i < m_Notifications.size(); ) {
+                if (m_Notifications[i].second >= 0.0f) {
+                    m_Notifications[i].second -= elapsedSec;
+                    if (m_Notifications[i].second <= 0) {
+                        m_Notifications.erase(m_Notifications.begin() + i);
+                    }
+                    else {
+                        i++;
+                    }
+                }
+                else {
+                    m_Notifications.erase(m_Notifications.begin() + i);
+                }
             }
         }
         break;
@@ -238,6 +286,20 @@ void Game::Draw() const
             ss << "ENEMIES " << m_EnemiesKilled << " / " << m_EnemiesRequiredForWave;
             Texture enemyText(ss.str(), "Resources/ShortBaby.ttf", 20, Color4f{ 1.0f, 1.0f, 1.0f, 0.8f });
             enemyText.Draw(Vector2f(m_Width / 2.f - enemyText.GetWidth() / 2.f, m_Height - 70.f));
+
+            if (m_BossWavesCompleted > 0) {
+                ss.str("");
+                ss << "ENEMY POWER LEVEL: " << m_BossWavesCompleted;
+
+                Color4f powerColor;
+                if (m_BossWavesCompleted == 1) powerColor = Color4f{ 1.0f, 0.9f, 0.2f, 1.0f }; 
+                else if (m_BossWavesCompleted == 2) powerColor = Color4f{ 1.0f, 0.7f, 0.2f, 1.0f }; 
+                else if (m_BossWavesCompleted == 3) powerColor = Color4f{ 1.0f, 0.5f, 0.2f, 1.0f }; 
+                else powerColor = Color4f{ 1.0f, 0.3f, 0.2f, 1.0f }; 
+
+                Texture powerText(ss.str(), "Resources/ShortBaby.ttf", 18, powerColor);
+                powerText.Draw(Vector2f(m_Width / 2.f - powerText.GetWidth() / 2.f, m_Height - 130.f));
+            }
         }
 
         {
@@ -266,6 +328,36 @@ void Game::Draw() const
             Color4f healthColor(1.0f - healthPercent, healthPercent, 0.0f, 1.0f);
             utils::SetColor(healthColor);
             utils::FillRect(Rectf(barX, barY, barWidth * healthPercent, barHeight));
+        }
+        if (!m_Notifications.empty()) {
+            float notifY = m_Height - 160.f;
+            for (const auto& notification : m_Notifications) {
+                
+                float alpha = 1.0f;
+                if (notification.second < 1.0f) {
+                    alpha = notification.second; 
+                }
+                else if (notification.first.find("WARNING") != std::string::npos) {
+                    
+                    alpha = 0.7f + 0.3f * sin(SDL_GetTicks() * 0.008f);
+                }
+
+                
+                Color4f notifColor;
+                if (notification.first.find("WARNING") != std::string::npos) {
+                    notifColor = Color4f(1.0f, 0.2f, 0.2f, alpha); 
+                }
+                else if (notification.first.find("LEVEL") != std::string::npos) {
+                    notifColor = Color4f(1.0f, 0.7f, 0.2f, alpha); 
+                }
+                else {
+                    notifColor = Color4f(1.0f, 1.0f, 1.0f, alpha); 
+                }
+
+                Texture notifText(notification.first, "Resources/ShortBaby.ttf", 20, notifColor);
+                notifText.Draw(Vector2f(m_Width / 2.f - notifText.GetWidth() / 2.f, notifY));
+                notifY -= 30.f;
+            }
         }
         break;
     }
@@ -317,24 +409,50 @@ void Game::SpawnEnemy(EnemySpawnType type)
     {
     case EnemySpawnType::Normal:
     {
-        int hp = 1 + m_CurrentWave;
+        int baseHp = 1 + m_CurrentWave;
+        int hp = baseHp * (1 + m_BossWavesCompleted * 0.3f);
+
         float speed = 40.f + (m_CurrentWave * 3.f);
-        enemy = new MeleeEnemy(Ellipsef(spawnX, spawnY, radius, radius), hp, speed);
+        MeleeEnemy* meleeEnemy = new MeleeEnemy(Ellipsef(spawnX, spawnY, radius, radius), hp, speed);
+
+        if (m_BossWavesCompleted > 0) {
+            meleeEnemy->m_AttackCooldown = std::max(0.3f, 1.0f / m_EnemyAttackSpeedMultiplier);
+        }
+
+        enemy = meleeEnemy;
         break;
     }
     case EnemySpawnType::Ranged:
     {
-        int hp = 3 + static_cast<int>(m_CurrentWave * 0.7f);
+        int baseHp = 3 + static_cast<int>(m_CurrentWave * 0.7f);
+        int hp = baseHp * (1 + m_BossWavesCompleted * 0.3f);
         float speed = 30.f + (m_CurrentWave * 2.f);
-        enemy = new RangedEnemy(Ellipsef(spawnX, spawnY, radius, radius), hp, speed);
+
+        RangedEnemy* rangedEnemy = new RangedEnemy(Ellipsef(spawnX, spawnY, radius, radius), hp, speed);
+
+        if (m_BossWavesCompleted > 0) {
+            rangedEnemy->m_BulletDamage *= m_EnemyDamageMultiplier;
+            rangedEnemy->m_ShootCooldownMax = std::max(0.4f, 1.0f / m_EnemyAttackSpeedMultiplier);
+        }
+
+        enemy = rangedEnemy;
         break;
     }
     case EnemySpawnType::Boss:
     {
-        int hp = 10 + (m_CurrentWave * 10);
+        int baseHp = 10 + (m_CurrentWave * 10);
+        int hp = baseHp * (1 + m_BossWavesCompleted * 0.2f);
+
         float speed = 25.f + (m_CurrentWave * 1.5f);
         float bossRadius = radius * 1.8f;
-        enemy = new BossEnemy(Ellipsef(spawnX, spawnY, bossRadius, bossRadius), hp, speed, m_CurrentWave);
+        BossEnemy* bossEnemy = new BossEnemy(Ellipsef(spawnX, spawnY, bossRadius, bossRadius), hp, speed, m_CurrentWave);
+
+        if (m_BossWavesCompleted > 0) {
+            bossEnemy->SetBulletDamage(bossEnemy->GetBulletDamage() * m_EnemyDamageMultiplier);
+            bossEnemy->SetAttackSpeed(bossEnemy->GetAttackSpeed() * m_EnemyAttackSpeedMultiplier);
+        }
+
+        enemy = bossEnemy;
         break;
     }
     }
@@ -377,6 +495,9 @@ void Game::ProcessKeyDownEvent(const SDL_KeyboardEvent& e)
             m_WaveInProgress = true;
             m_GameState = GameState::Playing;
             m_TowerHealth = m_MaxTowerHealth;
+            m_BossWavesCompleted = 0;             
+            m_EnemyDamageMultiplier = 1.0f;       
+            m_EnemyAttackSpeedMultiplier = 1.0f;  
 
             float towerWidth = 30.f;
             float towerHeight = 50.f;
@@ -384,7 +505,6 @@ void Game::ProcessKeyDownEvent(const SDL_KeyboardEvent& e)
             float centerY = m_Height / 2.f - towerHeight / 2.f;
             m_pTower = new Tower{ Rectf{centerX, centerY, towerWidth, towerHeight}, 150.f };
         }
-        break;
     }
 }
 
@@ -455,9 +575,11 @@ bool Game::ProcessBulletCollisions(EnemyBase* enemy)
 
     for (auto bulletIt = bullets.begin(); bulletIt != bullets.end(); )
     {
-        if (bulletIt->CheckHit(enemy->GetShape()))
+        const auto& shape = enemy->GetShape();
+        if (bulletIt->CheckHit(shape))
         {
-            bool enemyKilled = enemy->TakeDamage(bulletIt->GetDamage());
+            enemy->TakeDamage(bulletIt->GetDamage());
+            bool enemyKilled = !enemy->IsAlive();
 
             if (bulletIt->m_RicochetLeft > 0)
             {
@@ -468,10 +590,12 @@ bool Game::ProcessBulletCollisions(EnemyBase* enemy)
                 for (EnemyBase* other : m_pEnemies)
                 {
                     if (other == enemy || !other->IsAlive()) continue;
+
                     float dx = other->GetShape().center.x - hitPos.x;
                     float dy = other->GetShape().center.y - hitPos.y;
                     float dist = std::sqrt(dx * dx + dy * dy);
-                    if (dist < minDist)
+
+                    if (dist < minDist && dist <= m_pTower->GetRange())
                     {
                         minDist = dist;
                         nextTarget = other;
@@ -484,18 +608,14 @@ bool Game::ProcessBulletCollisions(EnemyBase* enemy)
                         hitPos.x, hitPos.y,
                         nextTarget->GetShape().center.x, nextTarget->GetShape().center.y,
                         bulletIt->GetSpeed(),
-                        bulletIt->GetDamage(),
+                        bulletIt->GetDamage() * 0.8f,
                         bulletIt->m_RicochetLeft - 1
                     );
                 }
-                bulletIt->Deactivate();
-                ++bulletIt;
             }
-            else
-            {
-                bulletIt->Deactivate();
-                ++bulletIt;
-            }
+
+            bulletIt->Deactivate();
+            ++bulletIt;
 
             if (enemyKilled)
             {
@@ -574,7 +694,7 @@ bool Game::ProcessEnemyAttacks(float elapsedSec)
 
     for (EnemyBase* enemy : m_pEnemies)
     {
-        if (enemy->GetType() == EnemyType::MELEE)
+        if (enemy->GetType() == EnemyType::Melee)
         {
             MeleeEnemy* melee = static_cast<MeleeEnemy*>(enemy);
             if (melee->m_AtTower && melee->m_AttackCooldown <= 0.0f)
@@ -605,6 +725,24 @@ void Game::StartNextWave()
                 m_AvailableUpgrades[m_SelectedUpgrade].Apply(*m_pTower);
             }
         }
+    }
+
+    bool nextWaveBossWave = ((m_CurrentWave + 1) % 5 == 0);
+
+    if (m_CurrentWave % 5 == 0)
+    {
+        m_BossWavesCompleted++;
+        ApplyPostBossWaveUpgrades();
+
+        std::stringstream ss;
+        ss << "ENEMIES LEVELED UP! POWER LEVEL " << m_BossWavesCompleted;
+        AddNotification(ss.str(), 5.0f);
+    }
+
+    if (nextWaveBossWave) {
+        std::stringstream ss;
+        ss << "WARNING! BOSS WAVE INCOMING!";
+        AddNotification(ss.str(), 4.0f);
     }
 
     UpdateTowerHealth(50);
@@ -647,6 +785,31 @@ void Game::UpdateTowerHealth(int amount)
     }
 }
 
+void Game::ApplyPostBossWaveUpgrades()
+{
+    m_EnemyDamageMultiplier += 0.2f;
+    m_EnemyAttackSpeedMultiplier += 0.15f;
+
+    m_EnemyDamageMultiplier = std::min(3.0f, std::max(0.5f, m_EnemyDamageMultiplier));
+    m_EnemyAttackSpeedMultiplier = std::min(2.5f, std::max(0.5f, m_EnemyAttackSpeedMultiplier));
+    m_EnemyDamageMultiplier += 0.2f;
+   
+    m_EnemyAttackSpeedMultiplier += 0.15f;
+
+    m_EnemyDamageMultiplier = std::min(m_EnemyDamageMultiplier, 3.0f);
+    m_EnemyAttackSpeedMultiplier = std::min(m_EnemyAttackSpeedMultiplier, 2.5f);
+
+    std::cout << "Boss wave " << m_BossWavesCompleted << " completed! Enemies upgraded:" << std::endl;
+    std::cout << "- Damage multiplier: " << m_EnemyDamageMultiplier << std::endl;
+    std::cout << "- Attack speed multiplier: " << m_EnemyAttackSpeedMultiplier << std::endl;
+
+    int healthBonus = m_MaxTowerHealth * 0.1f; 
+    m_MaxTowerHealth += healthBonus;
+    m_TowerHealth += healthBonus;
+
+    m_pTower->IncreaseDamage(m_pTower->GetDamage() * 0.05f); 
+}
+
 void Game::GameOver() const
 {
     utils::SetColor(Color4f(0.0f, 0.0f, 0.0f, 0.8f));
@@ -662,4 +825,9 @@ void Game::GameOver() const
 
     Texture restartText("Press ENTER or SPACE to restart", "Resources/ShortBaby.ttf", 20, Color4f{ 1.0f, 1.0f, 1.0f, 0.8f });
     restartText.Draw(Vector2f(m_Width / 2.f - 150.f, m_Height / 2.f - 50.f));
+}
+
+void Game::AddNotification(const std::string& text, float duration)
+{
+    m_Notifications.push_back(std::make_pair(text, duration));
 }

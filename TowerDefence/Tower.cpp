@@ -1,32 +1,94 @@
 #include "pch.h"
 #include "Tower.h"
 #include "Bullet.h"
-#include "EnemyBase.h"
 #include "utils.h"
+#include "EnemyBase.h" 
+#include <vector>
 #include <cmath>
+#include <algorithm>
 
 Tower::Tower(Rectf tower, float range, float damage)
-    : m_Range(range)
+    : m_Tower(tower)
+    , m_Range(range)
     , m_Damage(damage)
-    , m_AttackSpeed(1.f) 
-    , m_AttackTimer(0.f)
-    , m_Tower(tower)
+    , m_AttackSpeed(1.0f)
+    , m_AttackTimer(0.0f)
+    , m_MaxHealth(100)
+    , m_Health(100)
+    , m_RicochetCount(0)
 {
+}
+
+void Tower::Update(float elapsedSec, const std::vector<EnemyBase*>& enemies)
+{
+    if (m_AttackTimer > 0.0f)
+    {
+        m_AttackTimer -= elapsedSec;
+    }
+
+    for (auto bulletIt = m_Bullets.begin(); bulletIt != m_Bullets.end();)
+    {
+        bulletIt->Update(elapsedSec);
+        if (!bulletIt->IsActive())
+        {
+            bulletIt = m_Bullets.erase(bulletIt);
+        }
+        else
+        {
+            ++bulletIt;
+        }
+    }
+
+    if (m_AttackTimer <= 0.0f && !enemies.empty())
+    {
+        float towerCenterX = m_Tower.left + m_Tower.width / 2.0f;
+        float towerCenterY = m_Tower.bottom + m_Tower.height / 2.0f;
+
+        EnemyBase* nearestEnemy = nullptr;
+        float nearestDistance = m_Range + 1.0f;
+        for (EnemyBase* enemy : enemies)
+        {
+            float enemyCenterX = enemy->GetShape().center.x;
+            float enemyCenterY = enemy->GetShape().center.y;
+
+            float dx = enemyCenterX - towerCenterX;
+            float dy = enemyCenterY - towerCenterY;
+            float distance = std::sqrt(dx * dx + dy * dy);
+
+            if (distance <= m_Range && distance < nearestDistance)
+            {
+                nearestDistance = distance;
+                nearestEnemy = enemy;
+            }
+        }
+
+        if (nearestEnemy)
+        {
+            float enemyCenterX = nearestEnemy->GetShape().center.x;
+            float enemyCenterY = nearestEnemy->GetShape().center.y;
+
+            m_Bullets.emplace_back(
+                towerCenterX, towerCenterY,
+                enemyCenterX, enemyCenterY,
+                200.0f, 
+                m_Damage,
+                m_RicochetCount
+            );
+
+            m_AttackTimer = 1.0f / m_AttackSpeed; 
+        }
+    }
 }
 
 void Tower::Draw() const
 {
-    
-    utils::SetColor(Color4f(0.f, 1.f, 1.f, 0.2f));
-    utils::FillEllipse(Vector2f(m_Tower.left + m_Tower.width / 2, m_Tower.bottom + m_Tower.height / 2), m_Range, m_Range);
-
-    
-    utils::SetColor(Color4f(0.f, 0.7f, 1.f, 1.f)); 
+    utils::SetColor(Color4f(0.2f, 0.2f, 0.8f, 1.0f));
     utils::FillRect(m_Tower);
 
-    
-    utils::SetColor(Color4f(0.f, 0.f, 0.5f, 1.f)); 
-    utils::DrawRect(m_Tower);
+    utils::SetColor(Color4f(0.5f, 0.5f, 0.9f, 0.2f));
+    float centerX = m_Tower.left + m_Tower.width / 2.0f;
+    float centerY = m_Tower.bottom + m_Tower.height / 2.0f;
+    utils::FillEllipse(centerX, centerY, m_Range, m_Range);
 
     for (const Bullet& bullet : m_Bullets)
     {
@@ -34,87 +96,19 @@ void Tower::Draw() const
     }
 }
 
-void Tower::Update(float elapsedSec, const std::vector<EnemyBase*>& enemies)
-{
-    for (size_t i = 0; i < m_Bullets.size(); ++i)
-    {
-        m_Bullets[i].Update(elapsedSec);
-    }
-
-    m_Bullets.erase(
-        std::remove_if(m_Bullets.begin(), m_Bullets.end(),
-            [](const Bullet& b) { return !b.IsActive(); }),
-        m_Bullets.end());
-
-    m_AttackTimer += elapsedSec;
-
-    if (m_AttackTimer >= 1.f / m_AttackSpeed)
-    {
-        float towerCenterX = m_Tower.left + m_Tower.width / 2;
-        float towerCenterY = m_Tower.bottom + m_Tower.height / 2;
-
-        EnemyBase* closestEnemy = nullptr;
-        float closestDistance = m_Range + 1.f;
-
-        for (EnemyBase* enemy : enemies)
-        {
-            const Ellipsef& enemyShape = enemy->GetShape();
-            float dx = enemyShape.center.x - towerCenterX;
-            float dy = enemyShape.center.y - towerCenterY;
-            float distance = std::sqrt(dx * dx + dy * dy);
-
-            if (distance <= m_Range && distance < closestDistance)
-            {
-                closestDistance = distance;
-                closestEnemy = enemy;
-            }
-        }
-
-        if (closestEnemy != nullptr)
-        {
-            const Ellipsef& enemyShape = closestEnemy->GetShape();
-            m_Bullets.emplace_back(
-                towerCenterX, towerCenterY,
-                enemyShape.center.x, enemyShape.center.y,
-                300.f,
-                static_cast<int>(m_Damage),
-                m_RicochetCount 
-            );
-
-            m_AttackTimer = 0.f;
-        }
-    }
-}
-
-
 const Rectf& Tower::GetPosition() const
 {
     return m_Tower;
 }
 
-void Tower::UpgradeDamage(float amount)
+float Tower::GetRange() const
 {
-    m_Damage += amount;
-}
-
-void Tower::UpgradeRange(float amount)
-{
-    m_Range += amount;
-}
-
-void Tower::UpgradeAttackSpeed(float amount)
-{
-    m_AttackSpeed += amount;
+    return m_Range;
 }
 
 float Tower::GetDamage() const
 {
     return m_Damage;
-}
-
-float Tower::GetRange() const
-{
-    return m_Range;
 }
 
 float Tower::GetAttackSpeed() const
@@ -127,16 +121,52 @@ std::vector<Bullet>& Tower::GetBullets()
     return m_Bullets;
 }
 
-void Tower::UpgradeMaxHealth(float amt)
+void Tower::UpgradeDamage(float amount)
 {
-    m_MaxHealth += static_cast<int>(amt);
-    m_Health += static_cast<int>(amt);
+    m_Damage += amount;
+}
+
+void Tower::IncreaseDamage(float amount)
+{
+    UpgradeDamage(amount);
+}
+
+void Tower::UpgradeAttackSpeed(float amount)
+{
+    m_AttackSpeed += amount;
+}
+
+void Tower::IncreaseAttackSpeed(float amount)
+{
+    UpgradeAttackSpeed(amount);
+}
+
+void Tower::UpgradeRange(float amount)
+{
+    m_Range += amount;
+}
+
+void Tower::IncreaseRange(float amount)
+{
+    UpgradeRange(amount);
 }
 
 void Tower::UpgradeRicochet(int amount)
 {
     m_RicochetCount += amount;
 }
+
+void Tower::IncreaseRicochet(float amount)
+{
+    UpgradeRicochet(static_cast<int>(amount));
+}
+
+void Tower::UpgradeMaxHealth(float amt)
+{
+    m_MaxHealth += static_cast<int>(amt);
+    m_Health += static_cast<int>(amt);
+}
+
 int Tower::GetRicochetCount() const
 {
     return m_RicochetCount;

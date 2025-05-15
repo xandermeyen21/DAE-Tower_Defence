@@ -1,39 +1,53 @@
 #pragma once
 #include "structs.h"
+#include <vector>
 
 enum class EnemyType {
-    MELEE,
-    RANGED,
-    BOSS
+    Melee,
+    Ranged,
+    Boss
 };
 
-class EnemyBase {
+class Tower;
+
+class EnemyBase
+{
 public:
-    EnemyBase(Ellipsef shape, int hp, float walkingSpeed, EnemyType type);
+    EnemyBase(const Ellipsef& shape, int hp, float walkingSpeed, EnemyType type);
     virtual ~EnemyBase() = default;
 
-    virtual void Draw() const;
+    virtual void Update(float elapsedSec);
+    virtual void Update(float elapsedSec, const std::vector<Tower*>& towers) { Update(elapsedSec); }
     virtual void Update(float targetX, float targetY, float elapsedSec);
-    virtual bool Attack(float elapsedSec, const Rectf& towerShape);
-    virtual bool CanAttack(float targetX, float targetY, float elapsedSec) const;
-    virtual int GetAttackDamage() const;
-    bool TakeDamage(int damage);
-    bool IsAlive() const;
+    virtual void Draw() const;
+
+
     const Ellipsef& GetShape() const;
-    float GetDistanceToTarget(float targetX, float targetY) const;
-    bool HasReachedTarget(float targetX, float targetY, float minDistance) const;
-    EnemyType GetType() const;
-    int GetHp() const;
-    int GetMaxHp() const;
-    float GetPreferredDistance() const { return m_PreferredDistance; }
+    float GetHealth() const;
+    float GetMaxHealth() const;
+    float GetDamage() const;
+    float GetSpeed() const;
+    bool IsAlive() const;
+
+    virtual bool Attack(float elapsedSec, const Rectf& towerShape) = 0;
+    virtual bool CanAttack(float targetX, float targetY, float elapsedSec) const { return false; }
+    virtual int GetAttackDamage() const { return 0; }
+
+    void TakeDamage(float damage);
+    void SetPosition(const Vector2f& position);
+
+    virtual EnemyType GetType() const = 0;
+
+    void SetTarget(const Vector2f& target);
+    bool HasReachedTarget() const;
 
 protected:
-    void DrawHealthBar() const;
-    float m_WalkingSpeed;
-    int m_Hp;
-    int m_MaxHp;
     Ellipsef m_Shape;
-    bool m_IsAlive;
+    float m_Health;
+    float m_MaxHealth;
+    float m_Damage;
+    float m_Speed;
+    Vector2f m_Target;
+    bool m_HasReachedTarget;
     EnemyType m_Type;
-    float m_PreferredDistance;
 };

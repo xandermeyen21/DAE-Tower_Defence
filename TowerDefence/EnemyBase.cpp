@@ -3,143 +3,103 @@
 #include "utils.h"
 #include <cmath>
 
-EnemyBase::EnemyBase(Ellipsef shape, int hp, float walkingSpeed, EnemyType type)
-    : m_WalkingSpeed(walkingSpeed)
-    , m_Hp(hp)
-    , m_MaxHp(hp)
-    , m_Shape(shape)
-    , m_IsAlive(true)
-    , m_Type(type)
-    , m_PreferredDistance(5.0f)
+EnemyBase::EnemyBase(const Ellipsef& shape, int hp, float walkingSpeed, EnemyType type)
+    : m_Shape(shape),
+    m_Health(hp),
+    m_MaxHealth(hp),
+    m_Damage(1.0f),
+    m_Speed(walkingSpeed),
+    m_Target(shape.center),
+    m_HasReachedTarget(false),
+    m_Type(type)
 {
+    // No need to set position, radius values here - they're set in the initializer list
 }
 
-void EnemyBase::Draw() const
+void EnemyBase::Update(float elapsedSec)
 {
-    if (!m_IsAlive) return;
+    if (!IsAlive()) return;
 
-
-    utils::SetColor(Color4f(1.f, 0.f, 0.2f, 1.f));
-    utils::FillEllipse(m_Shape);
-
-
-    DrawHealthBar();
-}
-
-void EnemyBase::DrawHealthBar() const
-{
-    const float barWidth = m_Shape.radiusX * 2;
-    const float barHeight = 5.f;
-    const float barY = m_Shape.center.y + m_Shape.radiusY + 5.f;
-
-
-    utils::SetColor(Color4f(0.3f, 0.3f, 0.3f, 1.f));
-    utils::FillRect(Rectf(m_Shape.center.x - barWidth / 2, barY, barWidth, barHeight));
-
-
-    utils::SetColor(Color4f(0.2f, 0.8f, 0.2f, 1.f));
-    float healthPercentage = static_cast<float>(m_Hp) / m_MaxHp;
-    float filledWidth = barWidth * healthPercentage;
-    utils::FillRect(Rectf(m_Shape.center.x - barWidth / 2, barY, filledWidth, barHeight));
-}
-
-void EnemyBase::Update(float targetX, float targetY, float elapsedSec)
-{
-    if (!m_IsAlive) return;
-
-    float dx = targetX - m_Shape.center.x;
-    float dy = targetY - m_Shape.center.y;
-    float distance = std::sqrt(dx * dx + dy * dy);
-
-
-    if (distance > m_PreferredDistance)
+    if (!m_HasReachedTarget)
     {
+        float dx = m_Target.x - m_Shape.center.x;
+        float dy = m_Target.y - m_Shape.center.y;
+        float distance = std::sqrt(dx * dx + dy * dy);
 
-        if (distance > 0.1f)
+        if (distance < 1.0f)
         {
-            dx /= distance;
-            dy /= distance;
-            m_Shape.center.x += dx * m_WalkingSpeed * elapsedSec;
-            m_Shape.center.y += dy * m_WalkingSpeed * elapsedSec;
+            m_HasReachedTarget = true;
+            return;
+        }
+
+        float dirX = dx / distance;
+        float dirY = dy / distance;
+        float moveDistance = m_Speed * elapsedSec;
+
+        if (moveDistance > distance)
+        {
+            m_Shape.center = m_Target;
+            m_HasReachedTarget = true;
+        }
+        else
+        {
+            m_Shape.center.x += dirX * moveDistance;
+            m_Shape.center.y += dirY * moveDistance;
         }
     }
 }
 
-bool EnemyBase::Attack(float elapsedSec, const Rectf& towerShape)
+void EnemyBase::Update(float targetX, float targetY, float elapsedSec)
 {
-    return false;
+    SetTarget(Vector2f(targetX, targetY));
+
+    Update(elapsedSec);
 }
 
-bool EnemyBase::CanAttack(float targetX, float targetY, float elapsedSec) const
+void EnemyBase::Draw() const
 {
-    if (!m_IsAlive) return false;
+    utils::SetColor(Color4f(0.7f, 0.2f, 0.2f, 1.0f));
+    utils::FillEllipse(m_Shape.center, m_Shape.radiusX, m_Shape.radiusY);
 
-    float distance = GetDistanceToTarget(targetX, targetY);
-    return distance <= m_PreferredDistance;
+    // Draw health bar above the enemy
+    const float healthBarWidth = 30.0f;
+    const float healthBarHeight = 5.0f;
+    const float healthBarY = m_Shape.center.y + m_Shape.radiusY + 5.0f;
+    const float healthBarX = m_Shape.center.x - healthBarWidth / 2.0f;
+
+    utils::SetColor(Color4f(0.3f, 0.3f, 0.3f, 0.7f));
+    utils::FillRect(healthBarX, healthBarY, healthBarWidth, healthBarHeight);
+
+    float healthPercentage = m_Health / m_MaxHealth;
+    utils::SetColor(Color4f(0.2f, 0.8f, 0.2f, 0.7f));
+    utils::FillRect(healthBarX, healthBarY, healthBarWidth * healthPercentage, healthBarHeight);
 }
 
-int EnemyBase::GetAttackDamage() const
+const Ellipsef& EnemyBase::GetShape() const { return m_Shape; }
+float EnemyBase::GetHealth() const { return m_Health; }
+float EnemyBase::GetMaxHealth() const { return m_MaxHealth; }
+float EnemyBase::GetDamage() const { return m_Damage; }
+float EnemyBase::GetSpeed() const { return m_Speed; }
+bool EnemyBase::IsAlive() const { return m_Health > 0.0f; }
+
+void EnemyBase::TakeDamage(float damage)
 {
-    switch (m_Type) {
-    case EnemyType::MELEE:
-        return 1;
-    case EnemyType::RANGED:
-        return 1;
-    case EnemyType::BOSS:
-        return 3;
-    default:
-        return 1;
-    }
+    m_Health -= damage;
+    if (m_Health < 0.0f) m_Health = 0.0f;
 }
 
-bool EnemyBase::TakeDamage(int damage)
+void EnemyBase::SetPosition(const Vector2f& position)
 {
-    if (!m_IsAlive) return false;
-
-    m_Hp -= damage;
-
-    if (m_Hp <= 0)
-    {
-        m_IsAlive = false;
-        return true;
-    }
-
-    return false;
+    m_Shape.center = position;
 }
 
-bool EnemyBase::IsAlive() const
+void EnemyBase::SetTarget(const Vector2f& target)
 {
-    return m_IsAlive;
+    m_Target = target;
+    m_HasReachedTarget = false;
 }
 
-const Ellipsef& EnemyBase::GetShape() const
+bool EnemyBase::HasReachedTarget() const
 {
-    return m_Shape;
-}
-
-float EnemyBase::GetDistanceToTarget(float targetX, float targetY) const
-{
-    float dx = targetX - m_Shape.center.x;
-    float dy = targetY - m_Shape.center.y;
-    return std::sqrt(dx * dx + dy * dy);
-}
-
-bool EnemyBase::HasReachedTarget(float targetX, float targetY, float minDistance) const
-{
-    return GetDistanceToTarget(targetX, targetY) < minDistance;
-}
-
-EnemyType EnemyBase::GetType() const
-{
-    return m_Type;
-}
-
-int EnemyBase::GetHp() const
-{
-    return m_Hp;
-}
-
-int EnemyBase::GetMaxHp() const
-{
-    return m_MaxHp;
+    return m_HasReachedTarget;
 }

@@ -13,8 +13,6 @@ struct Window
 	bool isVSyncOn;
 };
 
-
-
 struct Rectf
 {
 	Rectf( );
