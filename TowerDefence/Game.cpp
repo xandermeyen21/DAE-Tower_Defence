@@ -754,11 +754,11 @@ void Game::DrawUpgradeMenu() const
         m_AvailableUpgrades[i]->Draw(cardX, cardY, cardWidth, cardHeight, i == m_SelectedUpgrade);
 
         
-        std::string desc = m_AvailableUpgrades[i]->GetDescription();
+        /*std::string desc = m_AvailableUpgrades[i]->GetDescription();
         Texture descText(desc, m_MainFontPath, m_SmallFontSize, m_NormalColor);
         float descX = cardX + cardWidth / 2.f - descText.GetWidth() / 2.f;
         float descY = cardY + cardHeight + descriptionPadding;
-        descText.Draw(Vector2f(descX, descY));
+        descText.Draw(Vector2f(descX, descY));*/
     }
 
     

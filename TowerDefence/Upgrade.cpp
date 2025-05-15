@@ -117,11 +117,11 @@ void Upgrade::Draw(float x, float y, float width, float height, bool isSelected)
     utils::FillRect(Rectf(x + 10, y + height - 20.f, 10.f, 10.f));
 
 
-    if (m_pDescriptionTexture) {
+   /* if (m_pDescriptionTexture) {
         float descX = x + (width - m_pDescriptionTexture->GetWidth()) / 2.0f;
         float descY = y + height + 10.f; 
         m_pDescriptionTexture->Draw(Vector2f(descX, descY));
-    }
+    }*/
 
 
     std::string amountText;
