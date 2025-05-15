@@ -14,7 +14,7 @@ C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.c
 C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(598,50): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
   (compiling source file '/Game.cpp')
   
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(845,21): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(843,21): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
   (compiling source file '/Game.cpp')
   
 C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.43.34808\include\xmemory(732,103): warning C4244: 'argument': conversion from '_Ty' to 'int', possible loss of data
@@ -51,9 +51,9 @@ C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.43.348
           ]
   
   Generating code
-  79 of 782 functions (10.1%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    56 functions had inline decision re-evaluated but remain unchanged
+  11 of 783 functions ( 1.4%) were compiled, the rest were copied from previous compilation.
+    1 functions were new in current compilation
+    11 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   TowerDefence.vcxproj -> C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\x64\Release\TowerDefence.exe
   0 File(s) copied

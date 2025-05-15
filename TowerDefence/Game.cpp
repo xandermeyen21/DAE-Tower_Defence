@@ -314,18 +314,25 @@ void Game::Draw() const
         }
 
         {
-            std::stringstream ts;
-            ts << "DAMAGE: " << m_pTower->GetDamage()
-                << "\nSPEED: " << m_pTower->GetAttackSpeed()
-                << "\nRANGE: " << m_pTower->GetRange()
-                << "\nBOUNCE: " << m_pTower->GetRicochetCount()
-                << "\nHEALTH: " << m_TowerHealth << " / " << m_MaxTowerHealth;
-
-            Texture statsText(ts.str(), m_MainFontPath, m_SmallFontSize, m_StatsColor);
-            float rightPadding = 20.f;
             float leftPadding = 20.f;
             float topPadding = 20.f;
-            statsText.Draw(Vector2f(leftPadding, topPadding));
+            float lineSpacing = 6.f; 
+            float y = topPadding;
+
+            std::vector<std::string> statLines = {
+                "DAMAGE: " + std::to_string(m_pTower->GetDamage()),
+                "SPEED: " + std::to_string(m_pTower->GetAttackSpeed()),
+                "RANGE: " + std::to_string(m_pTower->GetRange()),
+                "BOUNCE: " + std::to_string(m_pTower->GetRicochetCount()),
+                "HEALTH: " + std::to_string(m_TowerHealth) + " / " + std::to_string(m_MaxTowerHealth)
+            };
+
+            for (const auto& line : statLines) {
+                Texture statText(line, m_MainFontPath, m_SmallFontSize, m_StatsColor);
+                statText.Draw(Vector2f(leftPadding, y));
+                y += statText.GetHeight() + lineSpacing;
+            }
+
         }
 
         {
@@ -659,61 +666,59 @@ bool Game::ProcessBulletCollisions(EnemyBase* enemy)
 
 void Game::DrawUpgradeMenu() const
 {
-
+    
     utils::SetColor(Color4f(0.0f, 0.0f, 0.0f, 0.7f));
     utils::FillRect(Rectf(0, 0, m_Width, m_Height));
-
-
     utils::SetColor(Color4f(1.0f, 1.0f, 1.0f, 1.0f));
+
     Texture titleText("WAVE " + std::to_string(m_CurrentWave) + " COMPLETED!", m_HeaderFontPath, m_TitleFontSize, m_TitleColor);
     titleText.Draw(Vector2f(m_Width / 2.f - titleText.GetWidth() / 2.f, m_Height / 2.f + 200.f));
-
- 
     Texture chooseText("Choose an upgrade:", m_MainFontPath, m_NormalFontSize, m_NormalColor);
     chooseText.Draw(Vector2f(m_Width / 2.f - chooseText.GetWidth() / 2.f, m_Height / 2.f + 150.f));
 
-
     float cardWidth = 180.f;
     float cardHeight = 240.f;
-    float descriptionHeight = 30.f; 
+    float descriptionPadding = 10.f;
     float slotPadding = 10.f;
+
     float totalWidth = m_AvailableUpgrades.size() * (cardWidth + slotPadding) - slotPadding;
     float menuLeft = m_Width / 2.f - totalWidth / 2.f;
-
-    
-    float menuMiddle = m_Height / 2.f - descriptionHeight / 2;
+    float menuMiddle = m_Height / 2.f;
 
     for (size_t i = 0; i < m_AvailableUpgrades.size(); ++i)
     {
-        float slotX = menuLeft + i * (cardWidth + slotPadding) - slotPadding;
-        float slotY = menuMiddle - cardHeight / 2.f - slotPadding;
+        float cardX = menuLeft + i * (cardWidth + slotPadding);
+        float cardY = menuMiddle - cardHeight / 2.f;
+
+        
+        float slotX = cardX - slotPadding;
+        float slotY = cardY - slotPadding;
         float slotW = cardWidth + 2 * slotPadding;
         float slotH = cardHeight + 2 * slotPadding;
-
-       
         if (i == m_SelectedUpgrade)
             utils::SetColor(Color4f(1.0f, 0.9f, 0.3f, 0.5f));
         else
             utils::SetColor(Color4f(0.2f, 0.2f, 0.2f, 0.3f));
         utils::FillRect(Rectf(slotX, slotY, slotW, slotH));
 
-       
-        m_AvailableUpgrades[i]->Draw(
-            menuLeft + i * (cardWidth + slotPadding),
-            menuMiddle - cardHeight / 2.f,
-            cardWidth,
-            cardHeight,
-            i == m_SelectedUpgrade
-        );
+        
+        m_AvailableUpgrades[i]->Draw(cardX, cardY, cardWidth, cardHeight, i == m_SelectedUpgrade);
+
+        
+        std::string desc = m_AvailableUpgrades[i]->GetDescription();
+        Texture descText(desc, m_MainFontPath, m_SmallFontSize, m_NormalColor);
+        float descX = cardX + cardWidth / 2.f - descText.GetWidth() / 2.f;
+        float descY = cardY + cardHeight + descriptionPadding;
+        descText.Draw(Vector2f(descX, descY));
     }
 
     
-    float instructionY = menuMiddle - cardHeight / 2.f - 70.f - descriptionHeight;
-
+    float instructionY = menuMiddle - cardHeight / 2.f - 70.f;
     utils::SetColor(Color4f(1.0f, 1.0f, 1.0f, 0.7f));
     Texture instr1("Use LEFT/RIGHT arrows and ENTER to select", m_MainFontPath, m_SmallFontSize, m_NormalColor);
     instr1.Draw(Vector2f(m_Width / 2.f - instr1.GetWidth() / 2.f, instructionY));
 }
+
 
 
 
