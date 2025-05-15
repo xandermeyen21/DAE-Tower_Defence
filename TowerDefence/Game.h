@@ -108,4 +108,8 @@ private:
 
     std::string m_MainFontPath;    
     std::string m_HeaderFontPath;  
+
+    int m_HighScore; 
+    void LoadHighScore();
+    void SaveHighScore();
 };

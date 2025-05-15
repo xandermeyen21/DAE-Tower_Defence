@@ -4,7 +4,7 @@
 #include "EnemyBase.h"
 #include "Bullet.h"
 #include "utils.h"
-#include <cmath>
+#include <fstream> 
 #include <sstream>
 #include <iostream>
 #include "Texture.h"
@@ -12,8 +12,7 @@
 #include "BossEnemy.h"
 #include "MeleeEnemy.h"
 #include "Upgrade.h"
-#include <algorithm>
-#include <stdexcept>
+#include <iomanip>
 
 Game::Game(const Window& window)
     : BaseGame{ window }
@@ -38,9 +37,11 @@ Game::Game(const Window& window)
     , m_BossWavesCompleted{ 0 }
     , m_EnemyDamageMultiplier{ 1.0f }
     , m_EnemyAttackSpeedMultiplier{ 1.0f }
-    , m_NotificationTimer{-1.0f} 
+    , m_NotificationTimer{ -1.0f }
+    , m_HighScore{ 0 }
 {
     Initialize();
+    LoadHighScore(); 
 }
 
 Game::~Game()
@@ -88,7 +89,7 @@ void Game::Initialize()
 
 void Game::SetupUpgradeOptions()
 {
-    // First, clean up any existing upgrades to prevent memory leaks
+ 
     for (Upgrade* upgrade : m_AvailableUpgrades) {
         delete upgrade;
     }
@@ -316,21 +317,40 @@ void Game::Draw() const
         {
             float leftPadding = 20.f;
             float topPadding = 20.f;
-            float lineSpacing = 6.f; 
-            float y = topPadding;
+            float lineSpacing = 6.f;
+            float y = m_Height - topPadding;
+
+            std::ostringstream oss;
+            oss << std::fixed << std::setprecision(1) << m_pTower->GetDamage();
+            std::string dmgStr = oss.str();
+            oss.str(""); oss.clear();
+            oss << std::fixed << std::setprecision(7) << m_pTower->GetAttackSpeed();
+            std::string spdStr = oss.str();
+            oss.str(""); oss.clear();
+            oss << std::fixed << std::setprecision(1) << m_pTower->GetRange();
+            std::string rngStr = oss.str();
+            oss.str(""); oss.clear();
+            oss << std::fixed << std::setprecision(0) << m_pTower->GetRicochetCount();
+            std::string ricStr = oss.str();
+            oss.str(""); oss.clear();
+            oss << std::fixed << std::setprecision(0) << m_TowerHealth;
+            std::string healthStr = oss.str();
+            oss.str(""); oss.clear();
+            oss << std::fixed << std::setprecision(0) << m_MaxTowerHealth;
+            std::string maxHealthStr = oss.str();
 
             std::vector<std::string> statLines = {
-                "DAMAGE: " + std::to_string(m_pTower->GetDamage()),
-                "SPEED: " + std::to_string(m_pTower->GetAttackSpeed()),
-                "RANGE: " + std::to_string(m_pTower->GetRange()),
-                "BOUNCE: " + std::to_string(m_pTower->GetRicochetCount()),
-                "HEALTH: " + std::to_string(m_TowerHealth) + " / " + std::to_string(m_MaxTowerHealth)
+                "DAMAGE: " + dmgStr,
+                "SPEED: " + spdStr,
+                "RANGE: " + rngStr,
+                "BOUNCE: " + ricStr,
+                "HEALTH: " + healthStr + " / " + maxHealthStr
             };
 
             for (const auto& line : statLines) {
                 Texture statText(line, m_MainFontPath, m_SmallFontSize, m_StatsColor);
-                statText.Draw(Vector2f(leftPadding, y));
-                y += statText.GetHeight() + lineSpacing;
+                statText.Draw(Vector2f(leftPadding, y - statText.GetHeight()));
+                y -= (statText.GetHeight() + lineSpacing);
             }
 
         }
@@ -532,9 +552,32 @@ void Game::ProcessKeyDownEvent(const SDL_KeyboardEvent& e)
     }
 }
 
-void Game::ProcessKeyUpEvent(const SDL_KeyboardEvent& e)
-{
-    // Add key handling if needed
+void Game::ProcessKeyUpEvent(const SDL_KeyboardEvent& e) {
+    if (m_GameState == GameState::GameOver &&
+        (e.keysym.sym == SDLK_SPACE || e.keysym.sym == SDLK_RETURN)) {
+        if (m_CurrentWave > m_HighScore) {
+            m_HighScore = m_CurrentWave;
+            SaveHighScore();
+        }
+
+        Cleanup();
+        m_CurrentWave = 1;
+        m_EnemiesKilled = 0;
+        m_EnemiesRequiredForWave = 5;
+        m_EnemiesSpawnedInWave = 0;
+        m_WaveInProgress = true;
+        m_GameState = GameState::Playing;
+        m_TowerHealth = m_MaxTowerHealth;
+        m_BossWavesCompleted = 0;
+        m_EnemyDamageMultiplier = 1.0f;
+        m_EnemyAttackSpeedMultiplier = 1.0f;
+
+        float towerWidth = 30.f;
+        float towerHeight = 50.f;
+        float centerX = m_Width / 2 - towerWidth / 2;
+        float centerY = m_Height / 2 - towerHeight / 2;
+        m_pTower = new Tower{ Rectf{centerX, centerY, towerWidth, towerHeight}, 150.f };
+    }
 }
 
 void Game::ProcessMouseMotionEvent(const SDL_MouseMotionEvent& e)
@@ -635,6 +678,12 @@ bool Game::ProcessBulletCollisions(EnemyBase* enemy)
 
                 if (nextTarget)
                 {
+                    float ricochetDamage = bulletIt->GetDamage() * 0.8f;
+                    nextTarget->TakeDamage(ricochetDamage);
+                    bool nextKilled = !nextTarget->IsAlive();
+                    if (nextKilled)
+                        enemyWasKilled = true;
+
                     bullets.emplace_back(
                         hitPos.x, hitPos.y,
                         nextTarget->GetShape().center.x, nextTarget->GetShape().center.y,
@@ -822,11 +871,10 @@ void Game::CheckWaveComplete()
 void Game::UpdateTowerHealth(int amount)
 {
     m_TowerHealth += amount;
-
     if (m_TowerHealth > m_MaxTowerHealth)
-    {
         m_TowerHealth = m_MaxTowerHealth;
-    }
+    if (m_TowerHealth < 0)
+        m_TowerHealth = 0;
 }
 
 void Game::ApplyPostBossWaveUpgrades()
@@ -854,21 +902,24 @@ void Game::ApplyPostBossWaveUpgrades()
     m_pTower->IncreaseDamage(m_pTower->GetDamage() * 0.05f); 
 }
 
-void Game::GameOver() const
-{
+void Game::GameOver() const {
     utils::SetColor(Color4f(0.0f, 0.0f, 0.0f, 0.8f));
     utils::FillRect(Rectf(0, 0, m_Width, m_Height));
 
+    std::string highscoreText = "Highscore: Wave " + std::to_string(m_HighScore);
+    Texture highscoreTexture(highscoreText, m_MainFontPath, m_NormalFontSize, m_TitleColor);
+    highscoreTexture.Draw(Vector2f(m_Width / 2 - highscoreTexture.GetWidth() / 2, m_Height / 2 - 100));
+
     utils::SetColor(Color4f(1.0f, 0.2f, 0.2f, 1.0f));
     Texture gameOverText("GAME OVER", m_HeaderFontPath, m_TitleFontSize + 12, m_WarningColor);
-    gameOverText.Draw(Vector2f(m_Width / 2.f - gameOverText.GetWidth() / 2.f, m_Height / 2.f + 50.f));
+    gameOverText.Draw(Vector2f(m_Width / 2 - gameOverText.GetWidth() / 2, m_Height / 2 + 50));
 
     std::string waveText = "You reached wave " + std::to_string(m_CurrentWave);
     Texture waveReachedText(waveText, m_MainFontPath, m_HeadingFontSize, m_TitleColor);
-    waveReachedText.Draw(Vector2f(m_Width / 2.f - waveReachedText.GetWidth() / 2.f, m_Height / 2.f));
+    waveReachedText.Draw(Vector2f(m_Width / 2 - waveReachedText.GetWidth() / 2, m_Height / 2));
 
     Texture restartText("Press ENTER or SPACE to restart", m_MainFontPath, m_NormalFontSize, m_NormalColor);
-    restartText.Draw(Vector2f(m_Width / 2.f - restartText.GetWidth() / 2.f, m_Height / 2.f - 50.f));
+    restartText.Draw(Vector2f(m_Width / 2 - restartText.GetWidth() / 2, m_Height / 2 - 50));
 }
 
 void Game::AddNotification(const std::string& text, float duration)
@@ -888,4 +939,20 @@ void Game::InitializeFonts()
     m_HighlightColor = Color4f{ 1.0f, 0.9f, 0.3f, 1.0f };
     m_NormalColor = Color4f{ 1.0f, 1.0f, 1.0f, 0.8f };
     m_StatsColor = Color4f{ 0.8f, 0.8f, 1.0f, 1.0f };
+}
+
+void Game::LoadHighScore() {
+    std::ifstream inFile("highscore.txt");
+    if (inFile.is_open()) {
+        inFile >> m_HighScore;
+        inFile.close();
+    }
+}
+
+void Game::SaveHighScore() {
+    std::ofstream outFile("highscore.txt");
+    if (outFile.is_open()) {
+        outFile << m_HighScore;
+        outFile.close();
+    }
 }
