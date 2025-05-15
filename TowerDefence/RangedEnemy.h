@@ -23,6 +23,7 @@ public:
     bool CanAttack(float targetX, float targetY, float elapsedSec) const override;
 
     void ShootIfAble(float targetX, float targetY, float elapsedSec);
+    void ShootBullet(float targetX, float targetY); 
     void UpdateBullets(float elapsedSec);
 
     std::vector<Bullet>& GetBullets();

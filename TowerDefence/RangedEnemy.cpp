@@ -33,31 +33,20 @@ RangedEnemy::RangedEnemy(const Ellipsef& shape, float health, float speed)
 
 void RangedEnemy::Update(float targetX, float targetY, float elapsedSec)
 {
-    if (!IsAlive()) return;
+    float dx = targetX - m_Shape.center.x;
+    float dy = targetY - m_Shape.center.y;
+    float distance = sqrt(dx * dx + dy * dy);
 
-    // Fixed: Call the base class Update method correctly
-    EnemyBase::Update(targetX, targetY, elapsedSec);
-
-    m_IsShooting = false;
-    if (m_AttackTimer > 0)
-        m_AttackTimer -= elapsedSec;
-    if (m_ShootCooldown > 0)
-        m_ShootCooldown -= elapsedSec;
-
-    float enemyX = GetShape().center.x;
-    float enemyY = GetShape().center.y;
-    float dx = targetX - enemyX;
-    float dy = targetY - enemyY;
-    float distance = std::sqrt(dx * dx + dy * dy);
-
-    if (distance <= m_AttackRange && m_AttackTimer <= 0)
+    if (distance <= m_AttackRange)
     {
-        m_IsShooting = true;
-        m_AttackTimer = 1.0f / m_AttackSpeed;
-        ShootIfAble(targetX, targetY, elapsedSec);
+        SetTarget(Vector2f(targetX, targetY));
+    }
+    else
+    {
+        EnemyBase::Update(targetX, targetY, elapsedSec);
     }
 
-    UpdateBullets(elapsedSec);
+    m_ShootCooldown -= elapsedSec;
 }
 
 void RangedEnemy::Draw() const
@@ -69,7 +58,7 @@ void RangedEnemy::Draw() const
         utils::FillEllipse(GetShape().center, GetShape().radiusX * 1.2f, GetShape().radiusY * 1.2f);
     }
 
-    utils::SetColor(Color4f(0.8f, 0.2f, 0.2f, 0.1f));
+    utils::SetColor(Color4f(0.8f, 0.2f, 1.0f, 1.0f));
     utils::FillEllipse(GetShape().center, m_AttackRange, m_AttackRange);
 
     for (const Bullet& bullet : m_Bullets)
@@ -79,7 +68,6 @@ void RangedEnemy::Draw() const
     }
 }
 
-// Fixed: Implementation to match the declaration in the header
 void RangedEnemy::Update(float elapsedSec, const std::vector<Tower*>& towers)
 {
     if (!IsAlive()) return;
@@ -147,19 +135,36 @@ bool RangedEnemy::Attack(float elapsedSec, const Rectf& towerShape)
 
 void RangedEnemy::ShootIfAble(float targetX, float targetY, float elapsedSec)
 {
-    if (m_ShootCooldown <= 0.0f)
+    float dx = targetX - m_Shape.center.x;
+    float dy = targetY - m_Shape.center.y;
+    float distance = sqrt(dx * dx + dy * dy);
+
+    if (distance <= m_AttackRange)
     {
-        float enemyX = GetShape().center.x;
-        float enemyY = GetShape().center.y;
-        m_Bullets.emplace_back(
-            enemyX, enemyY,
-            targetX, targetY,
-            200.0f,
-            m_BulletDamage,
-            0
-        );
-        m_ShootCooldown = m_ShootCooldownMax;
+        m_ShootCooldown -= elapsedSec;
+        if (m_ShootCooldown <= 0)
+        {
+            m_ShootCooldown = m_ShootCooldownMax;
+            ShootBullet(targetX, targetY);
+        }
     }
+}
+
+
+void RangedEnemy::ShootBullet(float targetX, float targetY)
+{
+
+    float x = m_Shape.center.x;
+    float y = m_Shape.center.y;
+
+
+    float bulletSpeed = 300.0f;  
+    int damage = static_cast<int>(m_BulletDamage);
+
+    m_Bullets.emplace_back(x, y, targetX, targetY, bulletSpeed, damage);
+
+ 
+    m_IsShooting = true;
 }
 
 void RangedEnemy::UpdateBullets(float elapsedSec)

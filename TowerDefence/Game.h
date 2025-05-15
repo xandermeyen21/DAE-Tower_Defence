@@ -93,4 +93,19 @@ private:
     Texture* m_pRangeCardTexture;
     Texture* m_pRepairCardTexture;
     Texture* m_pRicocheetTexture;
+
+    void InitializeFonts();
+    int m_TitleFontSize;
+    int m_HeadingFontSize;
+    int m_NormalFontSize;
+    int m_SmallFontSize;
+
+    Color4f m_TitleColor;
+    Color4f m_WarningColor;
+    Color4f m_HighlightColor;
+    Color4f m_NormalColor;
+    Color4f m_StatsColor;
+
+    std::string m_MainFontPath;    
+    std::string m_HeaderFontPath;  
 };

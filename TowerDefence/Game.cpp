@@ -65,12 +65,17 @@ void Game::Initialize()
         return;
     }
 
+    m_MainFontPath = "Resources/Baloo2.ttf";
+    m_HeaderFontPath = "Resources/Bungee.ttf";
+
+    InitializeFonts();
+
     try {
         m_pDamageCardTexture = new Texture("Resources/DamageUpgrade.png");
         m_pAttackSpeedCardTexture = new Texture("Resources/AttackSpeedUpgrade.png");
         m_pRangeCardTexture = new Texture("Resources/RangeUpgrade.png");
         m_pRepairCardTexture = new Texture("Resources/HealthUpgrade.png");
-        m_pRicocheetTexture = new Texture("Resources/RicochetUpgrade.png");  
+        m_pRicocheetTexture = new Texture("Resources/RicochetUpgrade.png");
     }
     catch (const std::exception& e) {
         std::cerr << "Failed to load textures: " << e.what() << std::endl;
@@ -79,34 +84,44 @@ void Game::Initialize()
     SetupUpgradeOptions();
 }
 
+
 void Game::SetupUpgradeOptions()
 {
     m_AvailableUpgrades.clear();
 
     Upgrade dmg = Upgrade::CreateDamageUpgrade(2.0f);
+    Upgrade spd = Upgrade::CreateAttackSpeedUpgrade(0.3f);
+    Upgrade rng = Upgrade::CreateRangeUpgrade(30.0f);
+    Upgrade rep = Upgrade::CreateRepairUpgrade(25.0f);
+    Upgrade rico = Upgrade::CreateRicochetUpgrade(1.f);
+
     if (m_pDamageCardTexture != nullptr) {
         dmg.SetTexture(m_pDamageCardTexture);
     }
-
-    Upgrade spd = Upgrade::CreateAttackSpeedUpgrade(0.3f);
     if (m_pAttackSpeedCardTexture != nullptr) {
         spd.SetTexture(m_pAttackSpeedCardTexture);
     }
-
-    Upgrade rng = Upgrade::CreateRangeUpgrade(30.0f);
     if (m_pRangeCardTexture != nullptr) {
         rng.SetTexture(m_pRangeCardTexture);
     }
-
-    Upgrade rep = Upgrade::CreateRepairUpgrade(25.0f);
     if (m_pRepairCardTexture != nullptr) {
         rep.SetTexture(m_pRepairCardTexture);
     }
-
-    Upgrade rico = Upgrade::CreateRicochetUpgrade(1.f);
     if (m_pRicocheetTexture != nullptr) {
         rico.SetTexture(m_pRicocheetTexture);
     }
+
+   
+    dmg.SetFontStyle(m_HeaderFontPath, m_MainFontPath, m_SmallFontSize + 2, m_SmallFontSize,
+        m_HighlightColor, m_NormalColor);
+    spd.SetFontStyle(m_HeaderFontPath, m_MainFontPath, m_SmallFontSize + 2, m_SmallFontSize,
+        m_HighlightColor, m_NormalColor);
+    rng.SetFontStyle(m_HeaderFontPath, m_MainFontPath, m_SmallFontSize + 2, m_SmallFontSize,
+        m_HighlightColor, m_NormalColor);
+    rep.SetFontStyle(m_HeaderFontPath, m_MainFontPath, m_SmallFontSize + 2, m_SmallFontSize,
+        m_HighlightColor, m_NormalColor);
+    rico.SetFontStyle(m_HeaderFontPath, m_MainFontPath, m_SmallFontSize + 2, m_SmallFontSize,
+        m_HighlightColor, m_NormalColor);
 
     m_AvailableUpgrades.push_back(dmg);
     m_AvailableUpgrades.push_back(spd);
@@ -129,7 +144,7 @@ void Game::Cleanup()
     delete m_pAttackSpeedCardTexture;
     delete m_pRangeCardTexture;
     delete m_pRepairCardTexture;
-    delete m_pRicocheetTexture; 
+    delete m_pRicocheetTexture;
 
     m_pTower = nullptr;
     m_pDamageCardTexture = nullptr;
@@ -184,7 +199,7 @@ void Game::Update(float elapsedSec)
 
         for (size_t i = 0; i < m_pEnemies.size(); )
         {
-            m_pEnemies[i]->Update(elapsedSec);
+            m_pEnemies[i]->Update(towerCenterX, towerCenterY, elapsedSec);
 
             if (m_pEnemies[i]->GetType() == EnemyType::Ranged) {
                 RangedEnemy* ranged = static_cast<RangedEnemy*>(m_pEnemies[i]);
@@ -279,12 +294,12 @@ void Game::Draw() const
         {
             std::stringstream ss;
             ss << "WAVE " << m_CurrentWave;
-            Texture waveText(ss.str(), "Resources/ShortBaby.ttf", 24, Color4f{ 1.0f, 1.0f, 1.0f, 1.0f });
+            Texture waveText(ss.str(), m_HeaderFontPath, m_HeadingFontSize, m_TitleColor);
             waveText.Draw(Vector2f(m_Width / 2.f - waveText.GetWidth() / 2.f, m_Height - 40.f));
 
             ss.str("");
             ss << "ENEMIES " << m_EnemiesKilled << " / " << m_EnemiesRequiredForWave;
-            Texture enemyText(ss.str(), "Resources/ShortBaby.ttf", 20, Color4f{ 1.0f, 1.0f, 1.0f, 0.8f });
+            Texture enemyText(ss.str(), m_MainFontPath, m_NormalFontSize, m_NormalColor);
             enemyText.Draw(Vector2f(m_Width / 2.f - enemyText.GetWidth() / 2.f, m_Height - 70.f));
 
             if (m_BossWavesCompleted > 0) {
@@ -292,12 +307,12 @@ void Game::Draw() const
                 ss << "ENEMY POWER LEVEL: " << m_BossWavesCompleted;
 
                 Color4f powerColor;
-                if (m_BossWavesCompleted == 1) powerColor = Color4f{ 1.0f, 0.9f, 0.2f, 1.0f }; 
-                else if (m_BossWavesCompleted == 2) powerColor = Color4f{ 1.0f, 0.7f, 0.2f, 1.0f }; 
-                else if (m_BossWavesCompleted == 3) powerColor = Color4f{ 1.0f, 0.5f, 0.2f, 1.0f }; 
-                else powerColor = Color4f{ 1.0f, 0.3f, 0.2f, 1.0f }; 
+                if (m_BossWavesCompleted == 1) powerColor = Color4f{ 1.0f, 0.9f, 0.2f, 1.0f };
+                else if (m_BossWavesCompleted == 2) powerColor = Color4f{ 1.0f, 0.7f, 0.2f, 1.0f };
+                else if (m_BossWavesCompleted == 3) powerColor = Color4f{ 1.0f, 0.5f, 0.2f, 1.0f };
+                else powerColor = Color4f{ 1.0f, 0.3f, 0.2f, 1.0f };
 
-                Texture powerText(ss.str(), "Resources/ShortBaby.ttf", 18, powerColor);
+                Texture powerText(ss.str(), m_HeaderFontPath, m_SmallFontSize, powerColor);
                 powerText.Draw(Vector2f(m_Width / 2.f - powerText.GetWidth() / 2.f, m_Height - 130.f));
             }
         }
@@ -308,7 +323,7 @@ void Game::Draw() const
                 << " SPEED " << m_pTower->GetAttackSpeed()
                 << " RANGE " << m_pTower->GetRange()
                 << " HEALTH " << m_TowerHealth << " / " << m_MaxTowerHealth;
-            Texture statsText(ts.str(), "Resources/ShortBaby.ttf", 18, Color4f{ 0.8f, 0.8f, 1.0f, 1.0f });
+            Texture statsText(ts.str(), m_MainFontPath, m_SmallFontSize, m_StatsColor);
             statsText.Draw(Vector2f(m_Width / 2.f - statsText.GetWidth() / 2.f, m_Height - 100.f));
         }
 
@@ -329,33 +344,34 @@ void Game::Draw() const
             utils::SetColor(healthColor);
             utils::FillRect(Rectf(barX, barY, barWidth * healthPercent, barHeight));
         }
+
         if (!m_Notifications.empty()) {
             float notifY = m_Height - 160.f;
             for (const auto& notification : m_Notifications) {
-                
                 float alpha = 1.0f;
                 if (notification.second < 1.0f) {
-                    alpha = notification.second; 
+                    alpha = notification.second;
                 }
                 else if (notification.first.find("WARNING") != std::string::npos) {
-                    
                     alpha = 0.7f + 0.3f * sin(SDL_GetTicks() * 0.008f);
                 }
 
-                
                 Color4f notifColor;
                 if (notification.first.find("WARNING") != std::string::npos) {
-                    notifColor = Color4f(1.0f, 0.2f, 0.2f, alpha); 
+                    notifColor = Color4f(1.0f, 0.2f, 0.2f, alpha);
+                    Texture notifText(notification.first, m_HeaderFontPath, m_NormalFontSize, notifColor);
+                    notifText.Draw(Vector2f(m_Width / 2.f - notifText.GetWidth() / 2.f, notifY));
                 }
                 else if (notification.first.find("LEVEL") != std::string::npos) {
-                    notifColor = Color4f(1.0f, 0.7f, 0.2f, alpha); 
+                    notifColor = Color4f(1.0f, 0.7f, 0.2f, alpha);
+                    Texture notifText(notification.first, m_HeaderFontPath, m_NormalFontSize, notifColor);
+                    notifText.Draw(Vector2f(m_Width / 2.f - notifText.GetWidth() / 2.f, notifY));
                 }
                 else {
-                    notifColor = Color4f(1.0f, 1.0f, 1.0f, alpha); 
+                    notifColor = Color4f(1.0f, 1.0f, 1.0f, alpha);
+                    Texture notifText(notification.first, m_MainFontPath, m_NormalFontSize, notifColor);
+                    notifText.Draw(Vector2f(m_Width / 2.f - notifText.GetWidth() / 2.f, notifY));
                 }
-
-                Texture notifText(notification.first, "Resources/ShortBaby.ttf", 20, notifColor);
-                notifText.Draw(Vector2f(m_Width / 2.f - notifText.GetWidth() / 2.f, notifY));
                 notifY -= 30.f;
             }
         }
@@ -587,10 +603,17 @@ bool Game::ProcessBulletCollisions(EnemyBase* enemy)
                 float minDist = std::numeric_limits<float>::max();
                 Vector2f hitPos = bulletIt->GetPosition();
 
+                std::vector<EnemyBase*> potentialTargets;
                 for (EnemyBase* other : m_pEnemies)
                 {
-                    if (other == enemy || !other->IsAlive()) continue;
+                    if (other != enemy && other->IsAlive())
+                    {
+                        potentialTargets.push_back(other);
+                    }
+                }
 
+                for (EnemyBase* other : potentialTargets)
+                {
                     float dx = other->GetShape().center.x - hitPos.x;
                     float dy = other->GetShape().center.y - hitPos.y;
                     float dist = std::sqrt(dx * dx + dy * dy);
@@ -635,25 +658,29 @@ bool Game::ProcessBulletCollisions(EnemyBase* enemy)
 
 void Game::DrawUpgradeMenu() const
 {
+
     utils::SetColor(Color4f(0.0f, 0.0f, 0.0f, 0.7f));
     utils::FillRect(Rectf(0, 0, m_Width, m_Height));
 
-    utils::SetColor(Color4f(1.0f, 1.0f, 1.0f, 1.0f));
-    Texture titleText("WAVE " + std::to_string(m_CurrentWave) + " COMPLETED!", "Resources/ShortBaby.ttf", 20, Color4f{ 1.0f, 1.0f, 1.0f, 1.0f });
-    titleText.Draw(Vector2f(m_Width / 2.f - 100.f, m_Height / 2.f + 200.f));
 
-    Texture chooseText("Choose an upgrade:", "Resources/ShortBaby.ttf", 20, Color4f{ 1.0f, 1.0f, 1.0f, 1.0f });
-    chooseText.Draw(Vector2f(m_Width / 2.f - 100.f, m_Height / 2.f + 150.f));
+    utils::SetColor(Color4f(1.0f, 1.0f, 1.0f, 1.0f));
+    Texture titleText("WAVE " + std::to_string(m_CurrentWave) + " COMPLETED!", m_HeaderFontPath, m_TitleFontSize, m_TitleColor);
+    titleText.Draw(Vector2f(m_Width / 2.f - titleText.GetWidth() / 2.f, m_Height / 2.f + 200.f));
+
+ 
+    Texture chooseText("Choose an upgrade:", m_MainFontPath, m_NormalFontSize, m_NormalColor);
+    chooseText.Draw(Vector2f(m_Width / 2.f - chooseText.GetWidth() / 2.f, m_Height / 2.f + 150.f));
+
 
     float cardWidth = 180.f;
     float cardHeight = 240.f;
     float slotPadding = 10.f;
 
     float totalWidth = m_AvailableUpgrades.size() * (cardWidth + slotPadding) - slotPadding;
-
     float menuLeft = m_Width / 2.f - totalWidth / 2.f;
     float menuMiddle = m_Height / 2.f;
 
+  
     for (size_t i = 0; i < m_AvailableUpgrades.size(); ++i)
     {
         float slotX = menuLeft + i * (cardWidth + slotPadding) - slotPadding;
@@ -661,6 +688,7 @@ void Game::DrawUpgradeMenu() const
         float slotW = cardWidth + 2 * slotPadding;
         float slotH = cardHeight + 2 * slotPadding;
 
+ 
         if (i == m_SelectedUpgrade)
             utils::SetColor(Color4f(1.0f, 0.9f, 0.3f, 0.5f));
         else
@@ -668,21 +696,21 @@ void Game::DrawUpgradeMenu() const
 
         utils::FillRect(Rectf(slotX, slotY, slotW, slotH));
 
+       
         m_AvailableUpgrades[i].Draw(
             menuLeft + i * (cardWidth + slotPadding),
             menuMiddle - cardHeight / 2.f,
             cardWidth,
             cardHeight,
-            false
+            i == m_SelectedUpgrade  
         );
     }
 
+
     float instructionY = menuMiddle - cardHeight / 2.f - 60.f;
     utils::SetColor(Color4f(1.0f, 1.0f, 1.0f, 0.7f));
-    Texture instr1("Use LEFT/RIGHT arrows and ENTER to select", "Resources/ShortBaby.ttf", 16, Color4f{ 1.0f, 1.0f, 1.0f, 0.7f });
-    instr1.Draw(Vector2f(m_Width / 2.f - 150.f, instructionY));
-    /*Texture instr2("Or click/double-click to choose upgrade", "ShortBaby.ttf", 16, Color4f{ 1.0f, 1.0f, 1.0f, 0.7f });
-    instr2.Draw(Vector2f(m_Width / 2.f - 150.f, instructionY + 20.f));*/
+    Texture instr1("Use LEFT/RIGHT arrows and ENTER to select", m_MainFontPath, m_SmallFontSize, m_NormalColor);
+    instr1.Draw(Vector2f(m_Width / 2.f - instr1.GetWidth() / 2.f, instructionY));
 }
 
 
@@ -816,18 +844,32 @@ void Game::GameOver() const
     utils::FillRect(Rectf(0, 0, m_Width, m_Height));
 
     utils::SetColor(Color4f(1.0f, 0.2f, 0.2f, 1.0f));
-    Texture gameOverText("GAME OVER", "Resources/ShortBaby.ttf", 40, Color4f{ 1.0f, 0.2f, 0.2f, 1.0f });
-    gameOverText.Draw(Vector2f(m_Width / 2.f - 100.f, m_Height / 2.f + 50.f));
+    Texture gameOverText("GAME OVER", m_HeaderFontPath, m_TitleFontSize + 12, m_WarningColor);
+    gameOverText.Draw(Vector2f(m_Width / 2.f - gameOverText.GetWidth() / 2.f, m_Height / 2.f + 50.f));
 
     std::string waveText = "You reached wave " + std::to_string(m_CurrentWave);
-    Texture waveReachedText(waveText, "Resources/ShortBaby.ttf", 24, Color4f{ 1.0f, 1.0f, 1.0f, 1.0f });
-    waveReachedText.Draw(Vector2f(m_Width / 2.f - 120.f, m_Height / 2.f));
+    Texture waveReachedText(waveText, m_MainFontPath, m_HeadingFontSize, m_TitleColor);
+    waveReachedText.Draw(Vector2f(m_Width / 2.f - waveReachedText.GetWidth() / 2.f, m_Height / 2.f));
 
-    Texture restartText("Press ENTER or SPACE to restart", "Resources/ShortBaby.ttf", 20, Color4f{ 1.0f, 1.0f, 1.0f, 0.8f });
-    restartText.Draw(Vector2f(m_Width / 2.f - 150.f, m_Height / 2.f - 50.f));
+    Texture restartText("Press ENTER or SPACE to restart", m_MainFontPath, m_NormalFontSize, m_NormalColor);
+    restartText.Draw(Vector2f(m_Width / 2.f - restartText.GetWidth() / 2.f, m_Height / 2.f - 50.f));
 }
 
 void Game::AddNotification(const std::string& text, float duration)
 {
     m_Notifications.push_back(std::make_pair(text, duration));
+}
+
+void Game::InitializeFonts()
+{
+    m_TitleFontSize = 28;
+    m_HeadingFontSize = 24;
+    m_NormalFontSize = 18;
+    m_SmallFontSize = 16;
+
+    m_TitleColor = Color4f{ 1.0f, 1.0f, 1.0f, 1.0f };
+    m_WarningColor = Color4f{ 1.0f, 0.2f, 0.2f, 1.0f };
+    m_HighlightColor = Color4f{ 1.0f, 0.9f, 0.3f, 1.0f };
+    m_NormalColor = Color4f{ 1.0f, 1.0f, 1.0f, 0.8f };
+    m_StatsColor = Color4f{ 0.8f, 0.8f, 1.0f, 1.0f };
 }
