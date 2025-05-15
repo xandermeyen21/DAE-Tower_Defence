@@ -13,6 +13,7 @@
 #include "MeleeEnemy.h"
 #include "Upgrade.h"
 #include <algorithm>
+#include <stdexcept>
 
 Game::Game(const Window& window)
     : BaseGame{ window }
@@ -87,41 +88,29 @@ void Game::Initialize()
 
 void Game::SetupUpgradeOptions()
 {
+    // First, clean up any existing upgrades to prevent memory leaks
+    for (Upgrade* upgrade : m_AvailableUpgrades) {
+        delete upgrade;
+    }
     m_AvailableUpgrades.clear();
 
-    Upgrade dmg = Upgrade::CreateDamageUpgrade(2.0f);
-    Upgrade spd = Upgrade::CreateAttackSpeedUpgrade(0.3f);
-    Upgrade rng = Upgrade::CreateRangeUpgrade(30.0f);
-    Upgrade rep = Upgrade::CreateRepairUpgrade(25.0f);
-    Upgrade rico = Upgrade::CreateRicochetUpgrade(1.f);
+    Upgrade* dmg = Upgrade::CreateDamageUpgrade(2.0f);
+    Upgrade* spd = Upgrade::CreateAttackSpeedUpgrade(0.3f);
+    Upgrade* rng = Upgrade::CreateRangeUpgrade(30.0f);
+    Upgrade* rep = Upgrade::CreateRepairUpgrade(25.0f);
+    Upgrade* rico = Upgrade::CreateRicochetUpgrade(1.f);
 
-    if (m_pDamageCardTexture != nullptr) {
-        dmg.SetTexture(m_pDamageCardTexture);
-    }
-    if (m_pAttackSpeedCardTexture != nullptr) {
-        spd.SetTexture(m_pAttackSpeedCardTexture);
-    }
-    if (m_pRangeCardTexture != nullptr) {
-        rng.SetTexture(m_pRangeCardTexture);
-    }
-    if (m_pRepairCardTexture != nullptr) {
-        rep.SetTexture(m_pRepairCardTexture);
-    }
-    if (m_pRicocheetTexture != nullptr) {
-        rico.SetTexture(m_pRicocheetTexture);
-    }
+    if (m_pDamageCardTexture) dmg->SetTexture(m_pDamageCardTexture);
+    if (m_pAttackSpeedCardTexture) spd->SetTexture(m_pAttackSpeedCardTexture);
+    if (m_pRangeCardTexture) rng->SetTexture(m_pRangeCardTexture);
+    if (m_pRepairCardTexture) rep->SetTexture(m_pRepairCardTexture);
+    if (m_pRicocheetTexture) rico->SetTexture(m_pRicocheetTexture);
 
-   
-    dmg.SetFontStyle(m_HeaderFontPath, m_MainFontPath, m_SmallFontSize + 2, m_SmallFontSize,
-        m_HighlightColor, m_NormalColor);
-    spd.SetFontStyle(m_HeaderFontPath, m_MainFontPath, m_SmallFontSize + 2, m_SmallFontSize,
-        m_HighlightColor, m_NormalColor);
-    rng.SetFontStyle(m_HeaderFontPath, m_MainFontPath, m_SmallFontSize + 2, m_SmallFontSize,
-        m_HighlightColor, m_NormalColor);
-    rep.SetFontStyle(m_HeaderFontPath, m_MainFontPath, m_SmallFontSize + 2, m_SmallFontSize,
-        m_HighlightColor, m_NormalColor);
-    rico.SetFontStyle(m_HeaderFontPath, m_MainFontPath, m_SmallFontSize + 2, m_SmallFontSize,
-        m_HighlightColor, m_NormalColor);
+    for (Upgrade* upg : { dmg, spd, rng, rep, rico }) {
+        upg->SetFontStyle(m_HeaderFontPath, m_MainFontPath,
+            m_SmallFontSize + 2, m_SmallFontSize,
+            m_HighlightColor, m_NormalColor);
+    }
 
     m_AvailableUpgrades.push_back(dmg);
     m_AvailableUpgrades.push_back(spd);
@@ -129,6 +118,7 @@ void Game::SetupUpgradeOptions()
     m_AvailableUpgrades.push_back(rep);
     m_AvailableUpgrades.push_back(rico);
 }
+
 
 
 void Game::Cleanup()
@@ -139,6 +129,12 @@ void Game::Cleanup()
         delete enemy;
     }
     m_pEnemies.clear();
+
+    for (Upgrade* upgrade : m_AvailableUpgrades)
+    {
+        delete upgrade;
+    }
+    m_AvailableUpgrades.clear();
 
     delete m_pDamageCardTexture;
     delete m_pAttackSpeedCardTexture;
@@ -319,12 +315,16 @@ void Game::Draw() const
 
         {
             std::stringstream ts;
-            ts << "DAMAGE " << m_pTower->GetDamage()
-                << " SPEED " << m_pTower->GetAttackSpeed()
-                << " RANGE " << m_pTower->GetRange()
-                << " HEALTH " << m_TowerHealth << " / " << m_MaxTowerHealth;
+            ts << "DAMAGE: " << m_pTower->GetDamage()
+                << "\nSPEED: " << m_pTower->GetAttackSpeed()
+                << "\nRANGE: " << m_pTower->GetRange()
+                << "\nBOUNCE: " << m_pTower->GetRicochetCount()
+                << "\nHEALTH: " << m_TowerHealth << " / " << m_MaxTowerHealth;
+
             Texture statsText(ts.str(), m_MainFontPath, m_SmallFontSize, m_StatsColor);
-            statsText.Draw(Vector2f(m_Width / 2.f - statsText.GetWidth() / 2.f, m_Height - 100.f));
+            float rightPadding = 20.f;
+            float topPadding = 20.f;
+            statsText.Draw(Vector2f(m_Width - statsText.GetWidth() - rightPadding, m_Height - topPadding));
         }
 
         {
@@ -697,7 +697,7 @@ void Game::DrawUpgradeMenu() const
         utils::FillRect(Rectf(slotX, slotY, slotW, slotH));
 
        
-        m_AvailableUpgrades[i].Draw(
+        m_AvailableUpgrades[i]->Draw(
             menuLeft + i * (cardWidth + slotPadding),
             menuMiddle - cardHeight / 2.f,
             cardWidth,
@@ -743,17 +743,25 @@ void Game::StartNextWave()
     {
         if (m_SelectedUpgrade < m_AvailableUpgrades.size())
         {
-            if (m_AvailableUpgrades[m_SelectedUpgrade].GetType() == UpgradeType::REPAIR)
+            Upgrade* selected = m_AvailableUpgrades[m_SelectedUpgrade];
+
+            if (selected->GetType() == UpgradeType::REPAIR)
             {
-                int healthIncrease = static_cast<int>(m_AvailableUpgrades[m_SelectedUpgrade].GetAmount());
+                int healthIncrease = static_cast<int>(selected->GetAmount());
                 m_MaxTowerHealth += healthIncrease;
             }
             else
             {
-                m_AvailableUpgrades[m_SelectedUpgrade].Apply(*m_pTower);
+                selected->Apply(*m_pTower);
             }
         }
     }
+
+    for (Upgrade* upgrade : m_AvailableUpgrades)
+    {
+        delete upgrade;
+    }
+    m_AvailableUpgrades.clear();
 
     bool nextWaveBossWave = ((m_CurrentWave + 1) % 5 == 0);
 
@@ -773,7 +781,7 @@ void Game::StartNextWave()
         AddNotification(ss.str(), 4.0f);
     }
 
-    UpdateTowerHealth(50);
+    UpdateTowerHealth(25);
     m_CurrentWave++;
     m_EnemiesKilled = 0;
     m_EnemiesSpawnedInWave = 0;
@@ -792,6 +800,7 @@ void Game::StartNextWave()
 
     m_GameState = GameState::Playing;
 }
+
 
 void Game::CheckWaveComplete()
 {

@@ -5,7 +5,6 @@
 #include <cmath>
 #include <algorithm>
 
-// Fixed: Changed constructor signature to match EnemyBase
 RangedEnemy::RangedEnemy(const Vector2f& position, float health, float damage, float speed)
     : EnemyBase(Ellipsef{ position, 15.0f, 15.0f }, static_cast<int>(health), speed, EnemyType::Ranged)
     , m_IsShooting(false)
@@ -18,14 +17,13 @@ RangedEnemy::RangedEnemy(const Vector2f& position, float health, float damage, f
 {
 }
 
-// Fixed: Changed constructor signature to match EnemyBase
 RangedEnemy::RangedEnemy(const Ellipsef& shape, float health, float speed)
     : EnemyBase(shape, static_cast<int>(health), speed, EnemyType::Ranged)
     , m_IsShooting(false)
     , m_AttackTimer(0.0f)
     , m_AttackSpeed(1.0f)
     , m_AttackRange(150.0f)
-    , m_BulletDamage(10.0f)
+    , m_BulletDamage(4.0f)
     , m_ShootCooldownMax(1.5f)
     , m_ShootCooldown(0.0f)
 {
@@ -51,16 +49,25 @@ void RangedEnemy::Update(float targetX, float targetY, float elapsedSec)
 
 void RangedEnemy::Draw() const
 {
+   
     EnemyBase::Draw();
+
+    
     if (m_IsShooting)
     {
         utils::SetColor(Color4f(1.0f, 0.0f, 0.0f, 0.7f));
         utils::FillEllipse(GetShape().center, GetShape().radiusX * 1.2f, GetShape().radiusY * 1.2f);
     }
 
-    utils::SetColor(Color4f(0.8f, 0.2f, 1.0f, 1.0f));
+  
+    utils::SetColor(Color4f(0.7f, 0.3f, 0.9f, 0.15f));
     utils::FillEllipse(GetShape().center, m_AttackRange, m_AttackRange);
 
+    
+    utils::SetColor(Color4f(0.8f, 0.2f, 1.0f, 0.3f));
+    utils::DrawEllipse(GetShape().center, m_AttackRange, m_AttackRange, 1.0f);
+
+    
     for (const Bullet& bullet : m_Bullets)
     {
         if (bullet.IsActive())

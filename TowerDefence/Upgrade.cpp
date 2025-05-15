@@ -4,6 +4,8 @@
 #include "utils.h"
 #include "Texture.h"
 #include <iostream>
+#include <memory>
+#include <stdexcept>
 
 Upgrade::Upgrade(UpgradeType type, const std::string& name, const std::string& description,
     float amount, std::function<void(Tower&, float)> applyEffect)
@@ -31,10 +33,15 @@ Upgrade::~Upgrade()
 
 void Upgrade::CleanupTextures()
 {
-    delete m_pNameTexture;
-    delete m_pDescriptionTexture;
-    m_pNameTexture = nullptr;
-    m_pDescriptionTexture = nullptr;
+    if (m_pNameTexture) {
+        delete m_pNameTexture;
+        m_pNameTexture = nullptr;
+    }
+
+    if (m_pDescriptionTexture) {
+        delete m_pDescriptionTexture;
+        m_pDescriptionTexture = nullptr;
+    }
 }
 
 void Upgrade::Apply(Tower& tower) const
@@ -162,9 +169,9 @@ void Upgrade::Draw(float x, float y, float width, float height, bool isSelected)
     utils::DrawString(Vector2f(badgeX + badgeSize / 2 - 10.f, badgeY + badgeSize / 2 + 5.f), amountText);
 }
 
-Upgrade Upgrade::CreateDamageUpgrade(float amount)
+Upgrade* Upgrade::CreateDamageUpgrade(float amount)
 {
-    return Upgrade(
+    return new Upgrade(
         UpgradeType::DAMAGE,
         "Damage Up",
         "Increase tower damage by " + std::to_string(static_cast<int>(amount)),
@@ -173,9 +180,9 @@ Upgrade Upgrade::CreateDamageUpgrade(float amount)
     );
 }
 
-Upgrade Upgrade::CreateAttackSpeedUpgrade(float amount)
+Upgrade* Upgrade::CreateAttackSpeedUpgrade(float amount)
 {
-    return Upgrade(
+    return new Upgrade(
         UpgradeType::ATTACK_SPEED,
         "Attack Speed Up",
         "Increase attack speed by " + std::to_string(amount),
@@ -184,9 +191,9 @@ Upgrade Upgrade::CreateAttackSpeedUpgrade(float amount)
     );
 }
 
-Upgrade Upgrade::CreateRangeUpgrade(float amount)
+Upgrade* Upgrade::CreateRangeUpgrade(float amount)
 {
-    return Upgrade(
+    return new Upgrade(
         UpgradeType::RANGE,
         "Range Up",
         "Increase tower range by " + std::to_string(static_cast<int>(amount)),
@@ -195,9 +202,9 @@ Upgrade Upgrade::CreateRangeUpgrade(float amount)
     );
 }
 
-Upgrade Upgrade::CreateRepairUpgrade(float amount)
+Upgrade* Upgrade::CreateRepairUpgrade(float amount)
 {
-    return Upgrade(
+    return new Upgrade(
         UpgradeType::REPAIR,
         "Max Health Up",
         "Increase max tower health by " + std::to_string(static_cast<int>(amount)),
@@ -206,9 +213,9 @@ Upgrade Upgrade::CreateRepairUpgrade(float amount)
     );
 }
 
-Upgrade Upgrade::CreateRicochetUpgrade(float amount)
+Upgrade* Upgrade::CreateRicochetUpgrade(float amount)
 {
-    return Upgrade(
+    return new Upgrade(
         UpgradeType::RICOCHET,
         "Ricochet",
         "Bullets ricochet to " + std::to_string(static_cast<int>(amount)) + " more enemy",

@@ -86,7 +86,7 @@ private:
     std::vector<std::pair<std::string, float>> m_Notifications;
 
     int m_SelectedUpgrade;
-    std::vector<Upgrade> m_AvailableUpgrades;
+    std::vector<Upgrade*> m_AvailableUpgrades;
 
     Texture* m_pDamageCardTexture;
     Texture* m_pAttackSpeedCardTexture;
