@@ -23,7 +23,7 @@ RangedEnemy::RangedEnemy(const Ellipsef& shape, float health, float speed)
     , m_AttackTimer(0.0f)
     , m_AttackSpeed(1.0f)
     , m_AttackRange(150.0f)
-    , m_BulletDamage(4.0f)
+    , m_BulletDamage(2.0f)
     , m_ShootCooldownMax(1.5f)
     , m_ShootCooldown(0.0f)
 {

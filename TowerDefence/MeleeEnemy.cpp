@@ -10,7 +10,7 @@ MeleeEnemy::MeleeEnemy(Ellipsef shape, int hp, float walkingSpeed)
     m_PowerLevel(1),
     m_PreferredDistance(20.0f)
 {
-    // Move initialization to initializer list
+    
     int baseHp = 1 + (hp / (1 + 0.3f));
     if (hp > baseHp * 1.5f) {
         m_PowerLevel = 2;
@@ -25,9 +25,9 @@ MeleeEnemy::MeleeEnemy(Ellipsef shape, int hp, float walkingSpeed)
 
 void MeleeEnemy::Draw() const
 {
-    if (!IsAlive()) return;  // Fixed: m_IsAlive to IsAlive()
+    if (!IsAlive()) return;  
 
-    // Base enemy color
+    
     utils::SetColor(Color4f(1.f, 0.f, 0.2f, 1.f));
     utils::FillEllipse(m_Shape);
 
@@ -58,7 +58,7 @@ void MeleeEnemy::Update(float targetX, float targetY, float elapsedSec)
 {
     if (!IsAlive()) return;
 
-    // Call the correct base class Update that handles setting the target and basic movement
+    
     EnemyBase::Update(targetX, targetY, elapsedSec);
 
     if (m_AttackCooldown > 0.0f) {
@@ -69,7 +69,7 @@ void MeleeEnemy::Update(float targetX, float targetY, float elapsedSec)
     float dy = targetY - m_Shape.center.y;
     float distance = std::sqrt(dx * dx + dy * dy);
 
-    // Fine-tuning of position to maintain preferred distance
+   
     if (distance <= m_PreferredDistance - 0.5f && distance > 0.1f) {
         dx /= distance;
         dy /= distance;
@@ -80,8 +80,6 @@ void MeleeEnemy::Update(float targetX, float targetY, float elapsedSec)
     m_AtTower = (distance <= m_PreferredDistance + 5.0f);
 }
 
-
-// Add DrawHealthBar implementation
 void MeleeEnemy::DrawHealthBar() const
 {
     const float healthBarWidth = 30.0f;
@@ -137,8 +135,6 @@ bool MeleeEnemy::HasReachedTarget(float targetX, float targetY, float distance) 
 
     return actualDistance <= distance + 5.0f;
 }
-
-// Add missing implementation of pure virtual function
 EnemyType MeleeEnemy::GetType() const
 {
     return EnemyType::Melee;
