@@ -11,6 +11,10 @@
       "RelativeMoniker": "D:0:0:{B2EEAB50-AEE5-43D6-BF99-1928FF916CB6}|TowerDefence\\TowerDefence.vcxproj|solutionrelative:TowerDefence\\BossEnemy.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{B2EEAB50-AEE5-43D6-BF99-1928FF916CB6}|TowerDefence\\TowerDefence.vcxproj|C:\\School\\Semester2\\GamePlayScripting\\Game\\DAE-Tower_Defence\\TowerDefence\\Bullet.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{B2EEAB50-AEE5-43D6-BF99-1928FF916CB6}|TowerDefence\\TowerDefence.vcxproj|solutionrelative:TowerDefence\\Bullet.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{B2EEAB50-AEE5-43D6-BF99-1928FF916CB6}|TowerDefence\\TowerDefence.vcxproj|C:\\School\\Semester2\\GamePlayScripting\\Game\\DAE-Tower_Defence\\TowerDefence\\Upgrade.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{B2EEAB50-AEE5-43D6-BF99-1928FF916CB6}|TowerDefence\\TowerDefence.vcxproj|solutionrelative:TowerDefence\\Upgrade.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
@@ -42,11 +46,24 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 8,
+          "SelectedChildIndex": 9,
           "Children": [
             {
               "$type": "Bookmark",
               "Name": "ST:128:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Bullet.cpp",
+              "DocumentMoniker": "C:\\School\\Semester2\\GamePlayScripting\\Game\\DAE-Tower_Defence\\TowerDefence\\Bullet.cpp",
+              "RelativeDocumentMoniker": "TowerDefence\\Bullet.cpp",
+              "ToolTip": "C:\\School\\Semester2\\GamePlayScripting\\Game\\DAE-Tower_Defence\\TowerDefence\\Bullet.cpp",
+              "RelativeToolTip": "TowerDefence\\Bullet.cpp",
+              "ViewState": "AgIAADMAAAAAAAAAAAAAAEMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-05-15T20:41:49.162Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -56,14 +73,14 @@
               "RelativeDocumentMoniker": "TowerDefence\\BossEnemy.cpp",
               "ToolTip": "C:\\School\\Semester2\\GamePlayScripting\\Game\\DAE-Tower_Defence\\TowerDefence\\BossEnemy.cpp",
               "RelativeToolTip": "TowerDefence\\BossEnemy.cpp",
-              "ViewState": "AgIAAE4AAAAAAAAAAAAAAG8AAAAZAAAAAAAAAA==",
+              "ViewState": "AgIAAIEAAAAAAAAAAAAAAJgAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-05-15T20:03:34.332Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "MeleeEnemy.cpp",
               "DocumentMoniker": "C:\\School\\Semester2\\GamePlayScripting\\Game\\DAE-Tower_Defence\\TowerDefence\\MeleeEnemy.cpp",
               "RelativeDocumentMoniker": "TowerDefence\\MeleeEnemy.cpp",
@@ -75,7 +92,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "utils.cpp",
               "DocumentMoniker": "C:\\School\\Semester2\\GamePlayScripting\\Game\\DAE-Tower_Defence\\Engine\\utils.cpp",
               "RelativeDocumentMoniker": "Engine\\utils.cpp",
@@ -87,7 +104,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "RangedEnemy.cpp",
               "DocumentMoniker": "C:\\School\\Semester2\\GamePlayScripting\\Game\\DAE-Tower_Defence\\TowerDefence\\RangedEnemy.cpp",
               "RelativeDocumentMoniker": "TowerDefence\\RangedEnemy.cpp",
@@ -99,7 +116,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 8,
               "Title": "Upgrade.h",
               "DocumentMoniker": "C:\\School\\Semester2\\GamePlayScripting\\Game\\DAE-Tower_Defence\\TowerDefence\\Upgrade.h",
               "RelativeDocumentMoniker": "TowerDefence\\Upgrade.h",
@@ -111,7 +128,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "Upgrade.cpp",
               "DocumentMoniker": "C:\\School\\Semester2\\GamePlayScripting\\Game\\DAE-Tower_Defence\\TowerDefence\\Upgrade.cpp",
               "RelativeDocumentMoniker": "TowerDefence\\Upgrade.cpp",
@@ -123,7 +140,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "Game.h",
               "DocumentMoniker": "C:\\School\\Semester2\\GamePlayScripting\\Game\\DAE-Tower_Defence\\TowerDefence\\Game.h",
               "RelativeDocumentMoniker": "TowerDefence\\Game.h",
@@ -141,7 +158,7 @@
               "RelativeDocumentMoniker": "TowerDefence\\Game.cpp",
               "ToolTip": "C:\\School\\Semester2\\GamePlayScripting\\Game\\DAE-Tower_Defence\\TowerDefence\\Game.cpp",
               "RelativeToolTip": "TowerDefence\\Game.cpp",
-              "ViewState": "AgIAAFwBAAAAAAAAAAAAAGkBAAA0AAAAAAAAAA==",
+              "ViewState": "AgIAAE4DAAAAAAAAAAAewGADAAAnAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-05-14T20:54:14.45Z",
               "EditorCaption": ""

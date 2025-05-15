@@ -861,7 +861,8 @@ void Game::StartNextWave()
 
     bool nextWaveBossWave = ((m_CurrentWave + 1) % 5 == 0);
 
-    if (m_CurrentWave % 5 == 0)
+    
+    if ((m_CurrentWave - 1) % 5 == 0)  
     {
         m_BossWavesCompleted++;
         ApplyPostBossWaveUpgrades();

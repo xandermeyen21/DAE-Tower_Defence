@@ -59,16 +59,14 @@ bool Bullet::IsActive() const
     return m_IsActive;
 }
 
-bool Bullet::CheckHit(const Ellipsef& enemyShape) const
-{
-    if (!m_IsActive)
-        return false;
+bool Bullet::CheckHit(const Ellipsef& target) const {
+    if (!m_IsActive) return false;
 
-    float dx = m_Position.x - enemyShape.center.x;
-    float dy = m_Position.y - enemyShape.center.y;
-    float distance = std::sqrt(dx * dx + dy * dy);
 
-    return distance < (m_Radius + enemyShape.radiusX);
+    float dx = (m_Position.x - target.center.x) / target.radiusX;
+    float dy = (m_Position.y - target.center.y) / target.radiusY;
+
+    return (dx * dx + dy * dy) <= 1.0f;
 }
 
 int Bullet::GetDamage() const
