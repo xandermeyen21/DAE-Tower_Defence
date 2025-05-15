@@ -699,7 +699,7 @@ bool utils::InitializeFont()
 
 	// Load font file - make sure this path is correct!
 	// You might need to bundle this with your application
-	g_Font = TTF_OpenFont("ShortBaby.ttf", 32);
+	g_Font = TTF_OpenFont("Baloo2.ttf", 32);
 	if (g_Font == nullptr)
 	{
 		printf("Failed to load font! SDL_ttf Error: %s\n", TTF_GetError());

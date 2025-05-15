@@ -323,8 +323,9 @@ void Game::Draw() const
 
             Texture statsText(ts.str(), m_MainFontPath, m_SmallFontSize, m_StatsColor);
             float rightPadding = 20.f;
+            float leftPadding = 20.f;
             float topPadding = 20.f;
-            statsText.Draw(Vector2f(m_Width - statsText.GetWidth() - rightPadding, m_Height - topPadding));
+            statsText.Draw(Vector2f(leftPadding, topPadding));
         }
 
         {
@@ -674,13 +675,14 @@ void Game::DrawUpgradeMenu() const
 
     float cardWidth = 180.f;
     float cardHeight = 240.f;
+    float descriptionHeight = 30.f; 
     float slotPadding = 10.f;
-
     float totalWidth = m_AvailableUpgrades.size() * (cardWidth + slotPadding) - slotPadding;
     float menuLeft = m_Width / 2.f - totalWidth / 2.f;
-    float menuMiddle = m_Height / 2.f;
 
-  
+    
+    float menuMiddle = m_Height / 2.f - descriptionHeight / 2;
+
     for (size_t i = 0; i < m_AvailableUpgrades.size(); ++i)
     {
         float slotX = menuLeft + i * (cardWidth + slotPadding) - slotPadding;
@@ -688,12 +690,11 @@ void Game::DrawUpgradeMenu() const
         float slotW = cardWidth + 2 * slotPadding;
         float slotH = cardHeight + 2 * slotPadding;
 
- 
+       
         if (i == m_SelectedUpgrade)
             utils::SetColor(Color4f(1.0f, 0.9f, 0.3f, 0.5f));
         else
             utils::SetColor(Color4f(0.2f, 0.2f, 0.2f, 0.3f));
-
         utils::FillRect(Rectf(slotX, slotY, slotW, slotH));
 
        
@@ -702,12 +703,13 @@ void Game::DrawUpgradeMenu() const
             menuMiddle - cardHeight / 2.f,
             cardWidth,
             cardHeight,
-            i == m_SelectedUpgrade  
+            i == m_SelectedUpgrade
         );
     }
 
+    
+    float instructionY = menuMiddle - cardHeight / 2.f - 70.f - descriptionHeight;
 
-    float instructionY = menuMiddle - cardHeight / 2.f - 60.f;
     utils::SetColor(Color4f(1.0f, 1.0f, 1.0f, 0.7f));
     Texture instr1("Use LEFT/RIGHT arrows and ENTER to select", m_MainFontPath, m_SmallFontSize, m_NormalColor);
     instr1.Draw(Vector2f(m_Width / 2.f - instr1.GetWidth() / 2.f, instructionY));

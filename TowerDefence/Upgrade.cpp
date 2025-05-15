@@ -86,85 +86,51 @@ void Upgrade::CreateTextTextures()
 
 void Upgrade::Draw(float x, float y, float width, float height, bool isSelected) const
 {
+    
     if (isSelected) {
         utils::SetColor(Color4f(1.0f, 0.9f, 0.3f, 0.6f));
         utils::FillRect(Rectf(x - 6, y - 6, width + 12, height + 12));
     }
 
+   
     if (m_pCardTexture) {
         m_pCardTexture->Draw(Rectf(x, y, width, height));
     }
     else {
         utils::SetColor(Color4f(0.2f, 0.3f, 0.5f, 0.8f));
         utils::FillRect(Rectf(x, y, width, height));
-
         utils::SetColor(Color4f(0.4f, 0.5f, 0.8f, 0.5f));
         utils::FillRect(Rectf(x, y + height - 20.f, width, 20.f));
     }
 
+ 
     if (m_pNameTexture) {
         float nameX = x + (width - m_pNameTexture->GetWidth()) / 2.0f;
-        float nameY = y + height - 30.f; 
+        float nameY = y + height - 30.f;
         m_pNameTexture->Draw(Vector2f(nameX, nameY));
     }
 
+  
     Color4f typeColor;
-    switch (m_Type) {
-    case UpgradeType::DAMAGE:
-        typeColor = Color4f(1.0f, 0.3f, 0.3f, 1.0f);
-        break;
-    case UpgradeType::ATTACK_SPEED:
-        typeColor = Color4f(0.3f, 0.8f, 0.3f, 1.0f);
-        break;
-    case UpgradeType::RANGE:
-        typeColor = Color4f(0.3f, 0.6f, 1.0f, 1.0f);
-        break;
-    case UpgradeType::REPAIR:
-        typeColor = Color4f(1.0f, 0.8f, 0.3f, 1.0f);
-        break;
-    case UpgradeType::RICOCHET:
-        typeColor = Color4f(0.8f, 0.3f, 1.0f, 1.0f);
-        break;
-    default:
-        typeColor = Color4f(0.7f, 0.7f, 0.7f, 1.0f);
-        break;
-    }
 
     utils::SetColor(typeColor);
     utils::FillRect(Rectf(x + 10, y + height - 20.f, 10.f, 10.f));
 
+
     if (m_pDescriptionTexture) {
         float descX = x + (width - m_pDescriptionTexture->GetWidth()) / 2.0f;
-        float descY = y + height / 2.f - 10.f; 
+        float descY = y + height + 10.f; 
         m_pDescriptionTexture->Draw(Vector2f(descX, descY));
     }
+
+
     std::string amountText;
-
-    switch (m_Type) {
-    case UpgradeType::DAMAGE:
-        amountText = "+" + std::to_string(static_cast<int>(m_Amount));
-        break;
-    case UpgradeType::ATTACK_SPEED:
-        amountText = "+" + std::to_string(m_Amount);
-        break;
-    case UpgradeType::RANGE:
-        amountText = "+" + std::to_string(static_cast<int>(m_Amount));
-        break;
-    case UpgradeType::REPAIR:
-        amountText = "+" + std::to_string(static_cast<int>(m_Amount));
-        break;
-    case UpgradeType::RICOCHET:
-        amountText = "+" + std::to_string(static_cast<int>(m_Amount));
-        break;
-    }
-
+ 
     float badgeSize = 40.f;
     float badgeX = x + width - badgeSize - 10.f;
     float badgeY = y + 10.f;
-
     utils::SetColor(typeColor);
     utils::FillEllipse(badgeX + badgeSize / 2, badgeY + badgeSize / 2, badgeSize / 2, badgeSize / 2);
-
     utils::SetColor(Color4f(1.0f, 1.0f, 1.0f, 1.0f));
     utils::DrawString(Vector2f(badgeX + badgeSize / 2 - 10.f, badgeY + badgeSize / 2 + 5.f), amountText);
 }
