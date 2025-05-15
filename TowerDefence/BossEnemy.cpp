@@ -102,8 +102,7 @@ void BossEnemy::Update(float targetX, float targetY, float elapsedSec)
 
     EnemyBase::Update(targetX, targetY, elapsedSec);
 
-    for (size_t i = 0; i < m_Bullets.size(); ++i)
-    {
+    for (size_t i = 0; i < m_Bullets.size(); ++i) {
         m_Bullets[i].Update(elapsedSec);
     }
 

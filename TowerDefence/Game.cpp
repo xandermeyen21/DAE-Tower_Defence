@@ -158,32 +158,30 @@ void Game::Update(float elapsedSec)
     case GameState::Playing:
     {
         m_pTower->Update(elapsedSec, m_pEnemies);
-
         m_IsBossWave = (m_CurrentWave % 5 == 0);
-
         m_EnemySpawnTimer += elapsedSec;
+
+       
         bool shouldSpawnEnemy = m_WaveInProgress &&
             (m_EnemiesSpawnedInWave < m_EnemiesRequiredForWave) &&
             (m_pEnemies.size() < m_MaxEnemies) &&
             (m_EnemySpawnTimer >= m_EnemySpawnInterval);
 
-        if (shouldSpawnEnemy) {
+        if (shouldSpawnEnemy)
+        {
             m_EnemiesSpawnedInWave++;
             m_EnemySpawnTimer = 0.f;
 
-            if (m_IsBossWave) {
-                if (!m_BossSpawned) {
+            if (m_IsBossWave)
+            {
+                if (!m_BossSpawned)
+                {
                     SpawnEnemy(EnemySpawnType::Boss);
                     m_BossSpawned = true;
                 }
-                else {
-                    EnemySpawnType type = (rand() % 100 < m_RangedEnemyChance)
-                        ? EnemySpawnType::Ranged
-                        : EnemySpawnType::Normal;
-                    SpawnEnemy(type);
-                }
             }
-            else {
+            else 
+            {
                 EnemySpawnType type = (rand() % 100 < m_RangedEnemyChance)
                     ? EnemySpawnType::Ranged
                     : EnemySpawnType::Normal;
@@ -194,17 +192,21 @@ void Game::Update(float elapsedSec)
         float towerCenterX = m_pTower->GetPosition().left + m_pTower->GetPosition().width / 2.f;
         float towerCenterY = m_pTower->GetPosition().bottom + m_pTower->GetPosition().height / 2.f;
 
+        
         for (size_t i = 0; i < m_pEnemies.size(); )
         {
             m_pEnemies[i]->Update(towerCenterX, towerCenterY, elapsedSec);
 
-            if (m_pEnemies[i]->GetType() == EnemyType::Ranged) {
+          
+            if (m_pEnemies[i]->GetType() == EnemyType::Ranged)
+            {
                 RangedEnemy* ranged = static_cast<RangedEnemy*>(m_pEnemies[i]);
                 ranged->ShootIfAble(towerCenterX, towerCenterY, elapsedSec);
             }
 
             bool enemyWasHit = ProcessBulletCollisions(m_pEnemies[i]);
-            if (enemyWasHit) {
+            if (enemyWasHit)
+            {
                 delete m_pEnemies[i];
                 std::swap(m_pEnemies[i], m_pEnemies.back());
                 m_pEnemies.pop_back();
@@ -216,12 +218,17 @@ void Game::Update(float elapsedSec)
             }
         }
 
-        for (EnemyBase* enemy : m_pEnemies) {
-            if (enemy->GetType() == EnemyType::Ranged) {
+       
+        for (EnemyBase* enemy : m_pEnemies)
+        {
+            if (enemy->GetType() == EnemyType::Ranged)
+            {
                 RangedEnemy* ranged = static_cast<RangedEnemy*>(enemy);
                 ranged->UpdateBullets(elapsedSec);
 
-                for (Bullet& bullet : ranged->GetBullets()) {
+               
+                for (Bullet& bullet : ranged->GetBullets())
+                {
                     Rectf towerRect = m_pTower->GetPosition();
                     Ellipsef towerEllipse(
                         towerRect.left + towerRect.width / 2.0f,
@@ -229,7 +236,29 @@ void Game::Update(float elapsedSec)
                         towerRect.width / 2.0f,
                         towerRect.height / 2.0f
                     );
-                    if (bullet.IsActive() && bullet.CheckHit(towerEllipse)) {
+                    if (bullet.IsActive() && bullet.CheckHit(towerEllipse))
+                    {
+                        UpdateTowerHealth(-bullet.GetDamage());
+                        bullet.Deactivate();
+                    }
+                }
+            }
+            else if (enemy->GetType() == EnemyType::Boss)
+            {
+                BossEnemy* boss = static_cast<BossEnemy*>(enemy);
+
+                
+                for (Bullet& bullet : boss->GetBullets())
+                {
+                    Rectf towerRect = m_pTower->GetPosition();
+                    Ellipsef towerEllipse(
+                        towerRect.left + towerRect.width / 2.0f,
+                        towerRect.bottom + towerRect.height / 2.0f,
+                        towerRect.width / 2.0f,
+                        towerRect.height / 2.0f
+                    );
+                    if (bullet.IsActive() && bullet.CheckHit(towerEllipse))
+                    {
                         UpdateTowerHealth(-bullet.GetDamage());
                         bullet.Deactivate();
                     }
@@ -238,41 +267,50 @@ void Game::Update(float elapsedSec)
         }
 
         CheckWaveComplete();
-        if (ProcessEnemyAttacks(elapsedSec)) {
-            if (m_TowerHealth <= 0) {
+
+       
+        if (ProcessEnemyAttacks(elapsedSec) || m_TowerHealth <= 0)
+        {
+            if (m_TowerHealth <= 0 && m_GameState != GameState::GameOver)
+            {
                 m_GameState = GameState::GameOver;
+                for (auto enemy : m_pEnemies) delete enemy;
+                m_pEnemies.clear();
             }
         }
-        if (!m_Notifications.empty()) {
-            for (size_t i = 0; i < m_Notifications.size(); ) {
-                if (m_Notifications[i].second >= 0.0f) {
+
+       
+        if (!m_Notifications.empty())
+        {
+            for (size_t i = 0; i < m_Notifications.size(); )
+            {
+                if (m_Notifications[i].second >= 0.0f)
+                {
                     m_Notifications[i].second -= elapsedSec;
-                    if (m_Notifications[i].second <= 0) {
+                    if (m_Notifications[i].second <= 0)
+                    {
                         m_Notifications.erase(m_Notifications.begin() + i);
                     }
-                    else {
+                    else
+                    {
                         i++;
                     }
                 }
-                else {
+                else
+                {
                     m_Notifications.erase(m_Notifications.begin() + i);
                 }
             }
         }
         break;
     }
-
     case GameState::UpgradeMenu:
-        break;
-
     case GameState::GameOver:
         break;
     }
 
     CleanupBullets();
 }
-
-
 
 
 void Game::Draw() const
@@ -321,10 +359,10 @@ void Game::Draw() const
             float y = m_Height - topPadding;
 
             std::ostringstream oss;
-            oss << std::fixed << std::setprecision(1) << m_pTower->GetDamage();
+            oss << std::fixed << std::setprecision(0) << m_pTower->GetDamage();
             std::string dmgStr = oss.str();
             oss.str(""); oss.clear();
-            oss << std::fixed << std::setprecision(7) << m_pTower->GetAttackSpeed();
+            oss << std::fixed << std::setprecision(2) << m_pTower->GetAttackSpeed();
             std::string spdStr = oss.str();
             oss.str(""); oss.clear();
             oss << std::fixed << std::setprecision(1) << m_pTower->GetRange();
@@ -795,6 +833,8 @@ bool Game::ProcessEnemyAttacks(float elapsedSec)
 
 void Game::StartNextWave()
 {
+    m_BossSpawned = false;
+
     if (m_GameState == GameState::UpgradeMenu && !m_AvailableUpgrades.empty())
     {
         if (m_SelectedUpgrade < m_AvailableUpgrades.size())
@@ -837,7 +877,7 @@ void Game::StartNextWave()
         AddNotification(ss.str(), 4.0f);
     }
 
-    UpdateTowerHealth(25);
+    UpdateTowerHealth(30);
     m_CurrentWave++;
     m_EnemiesKilled = 0;
     m_EnemiesSpawnedInWave = 0;
