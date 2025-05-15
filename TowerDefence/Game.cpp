@@ -672,13 +672,13 @@ void Game::CleanupBullets()
 
 bool Game::ProcessBulletCollisions(EnemyBase* enemy)
 {
-    if (!enemy->IsAlive())
-        return false;
+    if (!enemy->IsAlive()) return false;
 
     std::vector<Bullet>& bullets = m_pTower->GetBullets();
     bool enemyWasKilled = false;
+    std::vector<Bullet> newBullets; 
 
-    for (auto bulletIt = bullets.begin(); bulletIt != bullets.end(); )
+    for (auto bulletIt = bullets.begin(); bulletIt != bullets.end();)
     {
         const auto& shape = enemy->GetShape();
         if (bulletIt->CheckHit(shape))
@@ -686,69 +686,66 @@ bool Game::ProcessBulletCollisions(EnemyBase* enemy)
             enemy->TakeDamage(bulletIt->GetDamage());
             bool enemyKilled = !enemy->IsAlive();
 
+   
             if (bulletIt->m_RicochetLeft > 0)
             {
                 EnemyBase* nextTarget = nullptr;
                 float minDist = std::numeric_limits<float>::max();
                 Vector2f hitPos = bulletIt->GetPosition();
 
-                std::vector<EnemyBase*> potentialTargets;
                 for (EnemyBase* other : m_pEnemies)
                 {
                     if (other != enemy && other->IsAlive())
                     {
-                        potentialTargets.push_back(other);
+                        float dx = other->GetShape().center.x - hitPos.x;
+                        float dy = other->GetShape().center.y - hitPos.y;
+                        float dist = std::sqrt(dx * dx + dy * dy);
+
+                        if (dist < minDist && dist <= m_pTower->GetRange() * 1.2f)
+                        {
+                            minDist = dist;
+                            nextTarget = other;
+                        }
                     }
                 }
 
-                for (EnemyBase* other : potentialTargets)
+                if (nextTarget && nextTarget->IsAlive())
                 {
-                    float dx = other->GetShape().center.x - hitPos.x;
-                    float dy = other->GetShape().center.y - hitPos.y;
-                    float dist = std::sqrt(dx * dx + dy * dy);
+                 
+                    Vector2f targetPos = nextTarget->GetShape().center;
 
-                    if (dist < minDist && dist <= m_pTower->GetRange())
-                    {
-                        minDist = dist;
-                        nextTarget = other;
-                    }
-                }
-
-                if (nextTarget)
-                {
-                    float ricochetDamage = bulletIt->GetDamage() * 0.8f;
-                    nextTarget->TakeDamage(ricochetDamage);
-                    bool nextKilled = !nextTarget->IsAlive();
-                    if (nextKilled)
-                        enemyWasKilled = true;
-
-                    bullets.emplace_back(
+                    newBullets.emplace_back(
                         hitPos.x, hitPos.y,
-                        nextTarget->GetShape().center.x, nextTarget->GetShape().center.y,
+                        targetPos.x,  
+                        targetPos.y,
                         bulletIt->GetSpeed(),
-                        bulletIt->GetDamage() * 0.8f,
-                        bulletIt->m_RicochetLeft - 1
+                        static_cast<int>(bulletIt->GetDamage() * 0.8f),
+                        std::min(3, bulletIt->m_RicochetLeft - 1) 
                     );
+
+                    nextTarget->TakeDamage(static_cast<int>(bulletIt->GetDamage() * 0.8f));
                 }
             }
 
             bulletIt->Deactivate();
-            ++bulletIt;
+            bulletIt = bullets.erase(bulletIt); 
 
-            if (enemyKilled)
-            {
+            if (enemyKilled) {
                 enemyWasKilled = true;
                 break;
             }
         }
-        else
-        {
+        else {
             ++bulletIt;
         }
     }
 
+   
+    bullets.insert(bullets.end(), newBullets.begin(), newBullets.end());
+
     return enemyWasKilled;
 }
+
 
 
 void Game::DrawUpgradeMenu() const
@@ -862,7 +859,7 @@ void Game::StartNextWave()
     bool nextWaveBossWave = ((m_CurrentWave + 1) % 5 == 0);
 
     
-    if ((m_CurrentWave - 1) % 5 == 0)  
+    if (m_CurrentWave > 1 && (m_CurrentWave - 1) % 5 == 0)
     {
         m_BossWavesCompleted++;
         ApplyPostBossWaveUpgrades();
