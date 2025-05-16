@@ -676,21 +676,22 @@ bool Game::ProcessBulletCollisions(EnemyBase* enemy)
 
                 if (nextTarget && nextTarget->IsAlive())
                 {
-                 
                     Vector2f targetPos = nextTarget->GetShape().center;
 
                     newBullets.emplace_back(
                         hitPos.x, hitPos.y,
-                        targetPos.x,  
+                        targetPos.x,
                         targetPos.y,
                         bulletIt->GetSpeed(),
                         static_cast<int>(bulletIt->GetDamage() * 0.8f),
-                        std::min(3, bulletIt->m_RicochetLeft - 1) 
+                        std::min(3, bulletIt->m_RicochetLeft - 1)
                     );
 
                     nextTarget->TakeDamage(static_cast<int>(bulletIt->GetDamage() * 0.8f));
+                    if (!nextTarget->IsAlive()) {
+                        m_EnemiesKilled++;
+                    }
                 }
-            }
 
             bulletIt->Deactivate();
             bulletIt = bullets.erase(bulletIt); 
@@ -817,6 +818,7 @@ void Game::StartNextWave()
 
     
     if (nextWaveBossWave) {
+        AddNotification("WARNING: BOSS WAVE INCOMING!", 2.5f);
         m_EnemiesRequiredForWave = 1; 
     }
     else {
@@ -865,6 +867,8 @@ void Game::UpdateTowerHealth(int amount)
 
 void Game::ApplyPostBossWaveUpgrades()
 {
+    AddNotification("ENEMY POWER LEVEL INCREASED: " + std::to_string(m_BossWavesCompleted), 2.5f);
+
     m_EnemyDamageMultiplier += 0.2f;
     m_EnemyAttackSpeedMultiplier += 0.15f;
 
