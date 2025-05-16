@@ -14,21 +14,16 @@ C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.c
 C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(651,50): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
   (compiling source file '/Game.cpp')
   
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(691,83): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(690,83): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
   (compiling source file '/Game.cpp')
   
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(884,21): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(887,21): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
   (compiling source file '/Game.cpp')
   
-  MeleeEnemy.cpp
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\MeleeEnemy.cpp(14,16): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-  (compiling source file '/MeleeEnemy.cpp')
-  
-  RangedEnemy.cpp
   Generating code
-  5 of 889 functions ( 0.6%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    1 functions had inline decision re-evaluated but remain unchanged
+  55 of 922 functions ( 6.0%) were compiled, the rest were copied from previous compilation.
+    2 functions were new in current compilation
+    57 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   TowerDefence.vcxproj -> C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\x64\Release\TowerDefence.exe
   0 File(s) copied

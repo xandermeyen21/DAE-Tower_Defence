@@ -651,7 +651,7 @@ bool Game::ProcessBulletCollisions(EnemyBase* enemy)
             enemy->TakeDamage(bulletIt->GetDamage());
             bool enemyKilled = !enemy->IsAlive();
 
-   
+
             if (bulletIt->m_RicochetLeft > 0)
             {
                 EnemyBase* nextTarget = nullptr;
@@ -693,26 +693,25 @@ bool Game::ProcessBulletCollisions(EnemyBase* enemy)
                     }
                 }
 
-            bulletIt->Deactivate();
-            bulletIt = bullets.erase(bulletIt); 
+                bulletIt->Deactivate();
+                bulletIt = bullets.erase(bulletIt);
 
-            if (enemyKilled) {
-                enemyWasKilled = true;
-                break;
+                if (enemyKilled) {
+                    enemyWasKilled = true;
+                    break;
+                }
+            }
+            else {
+                ++bulletIt;
             }
         }
-        else {
-            ++bulletIt;
-        }
-    }
 
-   
+    }
     bullets.insert(bullets.end(), newBullets.begin(), newBullets.end());
 
     return enemyWasKilled;
 }
-
-
+   
 
 void Game::DrawUpgradeMenu() const
 {
