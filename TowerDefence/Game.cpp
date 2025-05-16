@@ -641,7 +641,7 @@ bool Game::ProcessBulletCollisions(EnemyBase* enemy)
 
     std::vector<Bullet>& bullets = m_pTower->GetBullets();
     bool enemyWasKilled = false;
-    std::vector<Bullet> newBullets; 
+    std::vector<Bullet> newBullets;
 
     for (auto bulletIt = bullets.begin(); bulletIt != bullets.end();)
     {
@@ -650,7 +650,6 @@ bool Game::ProcessBulletCollisions(EnemyBase* enemy)
         {
             enemy->TakeDamage(bulletIt->GetDamage());
             bool enemyKilled = !enemy->IsAlive();
-
 
             if (bulletIt->m_RicochetLeft > 0)
             {
@@ -698,15 +697,27 @@ bool Game::ProcessBulletCollisions(EnemyBase* enemy)
 
                 if (enemyKilled) {
                     enemyWasKilled = true;
-                    break;
+                    
                 }
             }
             else {
-                ++bulletIt;
+                
+                bulletIt->Deactivate();
+                bulletIt = bullets.erase(bulletIt);
+
+                if (enemyKilled) {
+                    enemyWasKilled = true;
+                    
+                }
             }
         }
-
+        else {
+            
+            ++bulletIt;
+        }
     }
+
+    
     bullets.insert(bullets.end(), newBullets.begin(), newBullets.end());
 
     return enemyWasKilled;
