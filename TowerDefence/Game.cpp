@@ -301,6 +301,11 @@ void Game::Update(float elapsedSec)
 void Game::Draw() const
 {
     ClearBackground();
+
+    if (m_pBackgroundTexture) {
+        m_pBackgroundTexture->Draw(Rectf{ 0.0f, 0.0f, float(m_Width), float(m_Height) });
+    }
+
     m_pTower->Draw();
     for (const EnemyBase* enemy : m_pEnemies)
     {
@@ -973,5 +978,21 @@ void Game::UpdateTowerHealth(int amount)
 
 void Game::CheckWaveComplete()
 {
-    // Implement your wave completion logic here, or leave empty if not needed
+
+    if (!m_WaveInProgress || m_GameState != GameState::Playing)
+        return;
+
+   
+    bool allEnemiesSpawned = (m_EnemiesSpawnedInWave >= m_EnemiesRequiredForWave);
+    bool allEnemiesKilled = (m_EnemiesKilled >= m_EnemiesRequiredForWave);
+    bool noEnemiesLeft = m_pEnemies.empty();
+
+    if (allEnemiesSpawned && allEnemiesKilled && noEnemiesLeft)
+    {
+        m_WaveInProgress = false;
+        m_GameState = GameState::UpgradeMenu;
+        m_SelectedUpgrade = 0;
+        SetupUpgradeOptions();
+        AddNotification("Wave " + std::to_string(m_CurrentWave) + " completed!", 2.0f);
+    }
 }

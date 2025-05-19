@@ -1,24 +1,23 @@
 ﻿  Game.cpp
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(480,16): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(485,16): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
   (compiling source file '/Game.cpp')
   
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(495,16): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(500,16): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
   (compiling source file '/Game.cpp')
   
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(498,94): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(503,94): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
   (compiling source file '/Game.cpp')
   
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(511,16): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(516,16): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
   (compiling source file '/Game.cpp')
   
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(669,47): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(674,47): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
   (compiling source file '/Game.cpp')
   
-  main.cpp
   Generating code
-  15 of 913 functions ( 1.6%) were compiled, the rest were copied from previous compilation.
+  1 of 913 functions ( 0.1%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    7 functions had inline decision re-evaluated but remain unchanged
+    53 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   TowerDefence.vcxproj -> C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\x64\Release\TowerDefence.exe
   0 File(s) copied

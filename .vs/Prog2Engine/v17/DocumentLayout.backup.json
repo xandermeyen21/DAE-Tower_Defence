@@ -58,8 +58,7 @@
               "RelativeToolTip": "TowerDefence\\Tower.h",
               "ViewState": "AgIAAAkAAAAAAAAAAAAAABEAAAAYAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-05-19T13:42:26.805Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-19T13:42:26.805Z"
             },
             {
               "$type": "Document",
@@ -95,8 +94,7 @@
               "RelativeToolTip": "TowerDefence\\Tower.cpp",
               "ViewState": "AgIAAKsAAAAAAAAAAADwv7cAAAAEAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-05-16T08:03:39.315Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-16T08:03:39.315Z"
             },
             {
               "$type": "Document",
@@ -120,8 +118,7 @@
               "RelativeToolTip": "TowerDefence\\Game.h",
               "ViewState": "AgIAAE0AAAAAAAAAAAAAAF8AAAAiAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-05-15T15:53:39.114Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-15T15:53:39.114Z"
             },
             {
               "$type": "Document",
@@ -131,7 +128,7 @@
               "RelativeDocumentMoniker": "TowerDefence\\Game.cpp",
               "ToolTip": "C:\\School\\Semester2\\GamePlayScripting\\Game\\DAE-Tower_Defence\\TowerDefence\\Game.cpp",
               "RelativeToolTip": "TowerDefence\\Game.cpp",
-              "ViewState": "AgIAADwAAAAAAAAAAAAAAFMAAAAUAAAAAAAAAA==",
+              "ViewState": "AgIAALABAAAAAAAAAAAAALsBAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-05-14T20:54:14.45Z",
               "EditorCaption": ""
