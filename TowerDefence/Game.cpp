@@ -302,107 +302,113 @@ void Game::Draw() const
 {
     ClearBackground();
 
+    
     if (m_pBackgroundTexture) {
         m_pBackgroundTexture->Draw(Rectf{ 0.0f, 0.0f, float(m_Width), float(m_Height) });
     }
 
+   
     m_pTower->Draw();
-    for (const EnemyBase* enemy : m_pEnemies)
-    {
+    for (const EnemyBase* enemy : m_pEnemies) {
         enemy->Draw();
     }
 
-    switch (m_GameState)
-    {
+   
+    for (const EnemyBase* enemy : m_pEnemies) {
+        if (enemy->GetType() == EnemyType::Ranged) {
+            const RangedEnemy* ranged = static_cast<const RangedEnemy*>(enemy);
+            for (const Bullet& bullet : ranged->GetBullets()) {
+                if (bullet.IsActive()) bullet.Draw();
+            }
+        }
+        else if (enemy->GetType() == EnemyType::Boss) {
+            const BossEnemy* boss = static_cast<const BossEnemy*>(enemy);
+            for (const Bullet& bullet : boss->GetBullets()) {
+                if (bullet.IsActive()) bullet.Draw();
+            }
+        }
+    }
+
+    
+    switch (m_GameState) {
     case GameState::Playing:
     {
-        {
-            std::stringstream ss;
-            ss << "WAVE " << m_CurrentWave;
-            Texture waveText(ss.str(), m_HeaderFontPath, m_HeadingFontSize, m_TitleColor);
-            waveText.Draw(Vector2f(m_Width / 2.f - waveText.GetWidth() / 2.f, m_Height - 40.f));
+        std::stringstream ss;
+        ss << "WAVE " << m_CurrentWave;
+        Texture waveText(ss.str(), m_HeaderFontPath, m_HeadingFontSize, m_TitleColor);
+        waveText.Draw(Vector2f(m_Width / 2.f - waveText.GetWidth() / 2.f, m_Height - 140.f)); 
 
+        ss.str("");
+        ss << "ENEMIES " << m_EnemiesKilled << " / " << m_EnemiesRequiredForWave;
+        Texture enemyText(ss.str(), m_MainFontPath, m_NormalFontSize, m_NormalColor);
+        enemyText.Draw(Vector2f(m_Width / 2.f - enemyText.GetWidth() / 2.f, m_Height - 170.f)); 
+        if (m_BossWavesCompleted > 0) {
             ss.str("");
-            ss << "ENEMIES " << m_EnemiesKilled << " / " << m_EnemiesRequiredForWave;
-            Texture enemyText(ss.str(), m_MainFontPath, m_NormalFontSize, m_NormalColor);
-            enemyText.Draw(Vector2f(m_Width / 2.f - enemyText.GetWidth() / 2.f, m_Height - 70.f));
-
-            if (m_BossWavesCompleted > 0) {
-                ss.str("");
-                ss << "ENEMY POWER LEVEL: " << m_BossWavesCompleted;
-
-                Color4f powerColor;
-                if (m_BossWavesCompleted == 1) powerColor = Color4f{ 1.0f, 0.9f, 0.2f, 1.0f };
-                else if (m_BossWavesCompleted == 2) powerColor = Color4f{ 1.0f, 0.7f, 0.2f, 1.0f };
-                else if (m_BossWavesCompleted == 3) powerColor = Color4f{ 1.0f, 0.5f, 0.2f, 1.0f };
-                else powerColor = Color4f{ 1.0f, 0.3f, 0.2f, 1.0f };
-
-                Texture powerText(ss.str(), m_HeaderFontPath, m_SmallFontSize, powerColor);
-                powerText.Draw(Vector2f(m_Width / 2.f - powerText.GetWidth() / 2.f, m_Height - 130.f));
-            }
+            ss << "ENEMY POWER LEVEL: " << m_BossWavesCompleted;
+            Color4f powerColor;
+            if (m_BossWavesCompleted == 1) powerColor = Color4f{ 1.0f, 0.9f, 0.2f, 1.0f };
+            else if (m_BossWavesCompleted == 2) powerColor = Color4f{ 1.0f, 0.7f, 0.2f, 1.0f };
+            else if (m_BossWavesCompleted == 3) powerColor = Color4f{ 1.0f, 0.5f, 0.2f, 1.0f };
+            else powerColor = Color4f{ 1.0f, 0.3f, 0.2f, 1.0f };
+            Texture powerText(ss.str(), m_HeaderFontPath, m_SmallFontSize, powerColor);
+            powerText.Draw(Vector2f(m_Width / 2.f - powerText.GetWidth() / 2.f, m_Height - 200.f)); 
         }
 
-        {
-            float leftPadding = 20.f;
-            float topPadding = 20.f;
-            float lineSpacing = 6.f;
-            float y = m_Height - topPadding;
+        float leftPadding = 20.f;
+        float topPadding = 20.f;
+        float lineSpacing = 6.f;
+        float y = m_Height - topPadding;
 
-            std::ostringstream oss;
-            oss << std::fixed << std::setprecision(0) << m_pTower->GetDamage();
-            std::string dmgStr = oss.str();
-            oss.str(""); oss.clear();
-            oss << std::fixed << std::setprecision(2) << m_pTower->GetAttackSpeed();
-            std::string spdStr = oss.str();
-            oss.str(""); oss.clear();
-            oss << std::fixed << std::setprecision(1) << m_pTower->GetRange();
-            std::string rngStr = oss.str();
-            oss.str(""); oss.clear();
-            oss << std::fixed << std::setprecision(0) << m_pTower->GetRicochetCount();
-            std::string ricStr = oss.str();
-            oss.str(""); oss.clear();
-            oss << std::fixed << std::setprecision(0) << m_TowerHealth;
-            std::string healthStr = oss.str();
-            oss.str(""); oss.clear();
-            oss << std::fixed << std::setprecision(0) << m_MaxTowerHealth;
-            std::string maxHealthStr = oss.str();
+        std::ostringstream oss;
+        oss << std::fixed << std::setprecision(0) << m_pTower->GetDamage();
+        std::string dmgStr = oss.str();
+        oss.str(""); oss.clear();
+        oss << std::fixed << std::setprecision(2) << m_pTower->GetAttackSpeed();
+        std::string spdStr = oss.str();
+        oss.str(""); oss.clear();
+        oss << std::fixed << std::setprecision(1) << m_pTower->GetRange();
+        std::string rngStr = oss.str();
+        oss.str(""); oss.clear();
+        oss << std::fixed << std::setprecision(0) << m_pTower->GetRicochetCount();
+        std::string ricStr = oss.str();
+        oss.str(""); oss.clear();
+        oss << std::fixed << std::setprecision(0) << m_TowerHealth;
+        std::string healthStr = oss.str();
+        oss.str(""); oss.clear();
+        oss << std::fixed << std::setprecision(0) << m_MaxTowerHealth;
+        std::string maxHealthStr = oss.str();
 
-            std::vector<std::string> statLines = {
-                "DAMAGE: " + dmgStr,
-                "SPEED: " + spdStr,
-                "RANGE: " + rngStr,
-                "BOUNCE: " + ricStr,
-                "HEALTH: " + healthStr + " / " + maxHealthStr
-            };
+        std::vector<std::string> statLines = {
+            "DAMAGE: " + dmgStr,
+            "SPEED: " + spdStr,
+            "RANGE: " + rngStr,
+            "BOUNCE: " + ricStr,
+            "HEALTH: " + healthStr + " / " + maxHealthStr
+        };
 
-            for (const auto& line : statLines) {
-                Texture statText(line, m_MainFontPath, m_SmallFontSize, m_StatsColor);
-                statText.Draw(Vector2f(leftPadding, y - statText.GetHeight()));
-                y -= (statText.GetHeight() + lineSpacing);
-            }
-
+        for (const auto& line : statLines) {
+            Texture statText(line, m_MainFontPath, m_SmallFontSize, m_StatsColor);
+            statText.Draw(Vector2f(leftPadding, y - statText.GetHeight()));
+            y -= (statText.GetHeight() + lineSpacing);
         }
 
-        {
-            Rectf towerRect = m_pTower->GetPosition();
-            float barWidth = 100.0f;
-            float barHeight = 15.0f;
-            float barX = towerRect.left + (towerRect.width - barWidth) / 2.0f;
-            float barY = towerRect.bottom + towerRect.height + 15.0f;
+        Rectf towerRect = m_pTower->GetPosition();
+        float barWidth = 100.0f;
+        float barHeight = 15.0f;
+        float barX = towerRect.left + (towerRect.width - barWidth) / 2.0f;
+        float barY = towerRect.bottom + towerRect.height + 15.0f;
+        float healthPercent = float(m_TowerHealth) / float(m_MaxTowerHealth);
+        healthPercent = std::max(0.0f, std::min(1.0f, healthPercent));
 
-            float healthPercent = float(m_TowerHealth) / float(m_MaxTowerHealth);
-            healthPercent = std::max(0.0f, std::min(1.0f, healthPercent));
+        utils::SetColor(Color4f(0.2f, 0.2f, 0.2f, 1.0f));
+        utils::FillRect(Rectf(barX, barY, barWidth, barHeight));
 
-            utils::SetColor(Color4f(0.2f, 0.2f, 0.2f, 1.0f));
-            utils::FillRect(Rectf(barX, barY, barWidth, barHeight));
-
-            Color4f healthColor(1.0f - healthPercent, healthPercent, 0.0f, 1.0f);
-            utils::SetColor(healthColor);
-            utils::FillRect(Rectf(barX, barY, barWidth * healthPercent, barHeight));
-        }
+        Color4f healthColor(1.0f - healthPercent, healthPercent, 0.0f, 1.0f);
+        utils::SetColor(healthColor);
+        utils::FillRect(Rectf(barX, barY, barWidth * healthPercent, barHeight));
 
         if (!m_Notifications.empty()) {
-            float notifY = m_Height - 160.f;
+            float notifY = m_Height - 230.f; 
             for (const auto& notification : m_Notifications) {
                 float alpha = 1.0f;
                 if (notification.second < 1.0f) {
@@ -415,38 +421,31 @@ void Game::Draw() const
                 Color4f notifColor;
                 if (notification.first.find("WARNING") != std::string::npos) {
                     notifColor = Color4f(1.0f, 0.2f, 0.2f, alpha);
-                    Texture notifText(notification.first, m_HeaderFontPath, m_NormalFontSize, notifColor);
-                    notifText.Draw(Vector2f(m_Width / 2.f - notifText.GetWidth() / 2.f, notifY));
                 }
                 else if (notification.first.find("LEVEL") != std::string::npos) {
                     notifColor = Color4f(1.0f, 0.7f, 0.2f, alpha);
-                    Texture notifText(notification.first, m_HeaderFontPath, m_NormalFontSize, notifColor);
-                    notifText.Draw(Vector2f(m_Width / 2.f - notifText.GetWidth() / 2.f, notifY));
                 }
                 else {
                     notifColor = Color4f(1.0f, 1.0f, 1.0f, alpha);
-                    Texture notifText(notification.first, m_MainFontPath, m_NormalFontSize, notifColor);
-                    notifText.Draw(Vector2f(m_Width / 2.f - notifText.GetWidth() / 2.f, notifY));
                 }
+
+                Texture notifText(notification.first, m_HeaderFontPath, m_NormalFontSize, notifColor);
+                notifText.Draw(Vector2f(m_Width / 2.f - notifText.GetWidth() / 2.f, notifY));
+
                 notifY -= 30.f;
             }
         }
         break;
     }
-
     case GameState::UpgradeMenu:
-    {
         DrawUpgradeMenu();
         break;
-    }
-
     case GameState::GameOver:
-    {
         GameOver();
         break;
     }
-    }
 }
+
 
 
 void Game::SpawnEnemy(EnemySpawnType type)
