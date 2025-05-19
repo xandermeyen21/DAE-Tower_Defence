@@ -24,7 +24,7 @@ public:
 
     void ShootIfAble(float targetX, float targetY, float elapsedSec);
     void ShootBullet(float targetX, float targetY); 
-    void UpdateBullets(float elapsedSec);
+    void UpdateBullets(float elapsedSec, float windowWidth, float windowHeight);
 
     std::vector<Bullet>& GetBullets();
     const std::vector<Bullet>& GetBullets() const;

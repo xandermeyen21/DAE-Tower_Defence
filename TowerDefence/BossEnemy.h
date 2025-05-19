@@ -9,7 +9,7 @@ public:
     virtual ~BossEnemy();
 
     void Draw() const override;
-    void Update(float targetX, float targetY, float elapsedSec) override;
+    void Update(float targetX, float targetY, float elapsedSec, float windowWidth, float windowHeight) override;
     bool Attack(float elapsedSec, const Rectf& towerShape) override;
     bool CanAttack(float targetX, float targetY, float elapsedSec) const override;
     int GetAttackDamage() const override;

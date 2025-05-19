@@ -31,6 +31,7 @@ RangedEnemy::RangedEnemy(const Ellipsef& shape, float health, float speed)
 
 void RangedEnemy::Update(float targetX, float targetY, float elapsedSec)
 {
+    m_IsShooting = false; 
     float dx = targetX - m_Shape.center.x;
     float dy = targetY - m_Shape.center.y;
     float distance = sqrt(dx * dx + dy * dy);
@@ -38,12 +39,16 @@ void RangedEnemy::Update(float targetX, float targetY, float elapsedSec)
     if (distance <= m_AttackRange)
     {
         SetTarget(Vector2f(targetX, targetY));
+        if (m_ShootCooldown <= 0)
+        {
+            ShootBullet(targetX, targetY);
+            m_IsShooting = true;
+        }
     }
     else
     {
         EnemyBase::Update(targetX, targetY, elapsedSec);
     }
-
     m_ShootCooldown -= elapsedSec;
 }
 
@@ -63,7 +68,7 @@ void RangedEnemy::Draw() const
 
     utils::SetColor(Color4f(0.8f, 0.2f, 1.0f, 0.3f));
     utils::DrawEllipse(GetShape().center, m_AttackRange, m_AttackRange, 1.0f);
-
+    
     for (const Bullet& bullet : m_Bullets)
     {
         if (bullet.IsActive())
@@ -168,12 +173,11 @@ void RangedEnemy::ShootBullet(float targetX, float targetY)
     m_IsShooting = true;
 }
 
-void RangedEnemy::UpdateBullets(float elapsedSec)
+void RangedEnemy::UpdateBullets(float elapsedSec, float windowWidth, float windowHeight)
 {
-    for (Bullet& bullet : m_Bullets)
-    {
+    for (Bullet& bullet : m_Bullets) {
         if (bullet.IsActive())
-            bullet.Update(elapsedSec);
+            bullet.Update(elapsedSec, windowWidth, windowHeight);
     }
     m_Bullets.erase(
         std::remove_if(m_Bullets.begin(), m_Bullets.end(),

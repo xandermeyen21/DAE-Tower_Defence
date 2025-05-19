@@ -96,14 +96,14 @@ void BossEnemy::Draw() const
     }
 }
 
-void BossEnemy::Update(float targetX, float targetY, float elapsedSec)
+void BossEnemy::Update(float targetX, float targetY, float elapsedSec, float windowWidth, float windowHeight)
 {
     if (!m_IsAlive) return;
 
-    EnemyBase::Update(targetX, targetY, elapsedSec);
+    EnemyBase::Update(targetX, targetY, elapsedSec, windowWidth, windowHeight);
 
     for (size_t i = 0; i < m_Bullets.size(); ++i) {
-        m_Bullets[i].Update(elapsedSec);
+        m_Bullets[i].Update(elapsedSec, windowWidth, windowHeight);
     }
 
     m_Bullets.erase(
@@ -111,7 +111,6 @@ void BossEnemy::Update(float targetX, float targetY, float elapsedSec)
             [](const Bullet& b) { return !b.IsActive(); }),
         m_Bullets.end());
 }
-
 
 bool BossEnemy::Attack(float elapsedSec, const Rectf& towerShape)
 {

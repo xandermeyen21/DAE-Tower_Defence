@@ -56,6 +56,12 @@ void EnemyBase::Update(float targetX, float targetY, float elapsedSec)
     Update(elapsedSec);
 }
 
+void EnemyBase::Update(float targetX, float targetY, float elapsedSec, float windowWidth, float windowHeight)
+{
+    // Default base implementation: just call the simpler Update
+    Update(targetX, targetY, elapsedSec);
+    // If you want to use windowWidth/windowHeight, add code here
+}
 void EnemyBase::Draw() const
 {
     utils::SetColor(GetDrawColor());  

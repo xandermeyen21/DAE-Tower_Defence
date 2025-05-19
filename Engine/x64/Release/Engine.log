@@ -1,10 +1,10 @@
 ﻿  BaseGame.cpp
   Matrix2x3.cpp
+  SVGParser.cpp
   SoundEffect.cpp
   SoundStream.cpp
-  structs.cpp
-  SVGParser.cpp
   Texture.cpp
-  utils.cpp
   Vector2f.cpp
+  structs.cpp
+  utils.cpp
   Engine.vcxproj -> C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\x64\Release\Engine.lib

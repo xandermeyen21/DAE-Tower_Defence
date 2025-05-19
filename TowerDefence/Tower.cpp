@@ -19,7 +19,7 @@ Tower::Tower(Rectf tower, float range, float damage)
 {
 }
 
-void Tower::Update(float elapsedSec, const std::vector<EnemyBase*>& enemies)
+void Tower::Update(float elapsedSec, const std::vector<EnemyBase*>& enemies, float windowWidth, float windowHeight)
 {
     if (m_AttackTimer > 0.0f)
     {
@@ -28,7 +28,7 @@ void Tower::Update(float elapsedSec, const std::vector<EnemyBase*>& enemies)
 
     for (auto bulletIt = m_Bullets.begin(); bulletIt != m_Bullets.end();)
     {
-        bulletIt->Update(elapsedSec);
+        bulletIt->Update(elapsedSec, windowWidth, windowHeight);
         if (!bulletIt->IsActive())
         {
             bulletIt = m_Bullets.erase(bulletIt);
@@ -190,4 +190,8 @@ void Tower::ResetToInitialStats()
 void Tower::ClearBullets()
 {
     m_Bullets.clear();
+}
+
+void Tower::SetPosition(const Rectf& rect) {
+    m_Tower = rect;
 }

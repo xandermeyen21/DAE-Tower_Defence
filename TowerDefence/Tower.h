@@ -11,7 +11,7 @@ class Tower
 public:
     Tower(Rectf tower, float range, float damage = 1.f);
     void Draw() const;
-    void Update(float elapsedSec, const std::vector<EnemyBase*>& enemies);
+    void Update(float elapsedSec, const std::vector<EnemyBase*>& enemies, float windowWidth, float windowHeight);
     const Rectf& GetPosition() const;
 
     void ResetToInitialStats();
@@ -39,6 +39,8 @@ public:
     void Heal(int amount) {
         m_Health = std::min(m_Health + amount, m_MaxHealth);
     }
+
+    void SetPosition(const Rectf& rect);
 
 private:
     float m_Range;

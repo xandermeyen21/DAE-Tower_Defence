@@ -18,6 +18,7 @@ public:
 
     virtual void Update(float elapsedSec);
     virtual void Update(float elapsedSec, const std::vector<Tower*>& towers) { Update(elapsedSec); }
+    virtual void Update(float targetX, float targetY, float elapsedSec, float windowWidth, float windowHeight);
     virtual void Update(float targetX, float targetY, float elapsedSec);
     virtual void Draw() const;
 

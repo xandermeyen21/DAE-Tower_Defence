@@ -50,15 +50,14 @@ void Bullet::Draw() const
     }
 }
 
-void Bullet::Update(float elapsedSec)
+void Bullet::Update(float elapsedSec, float windowWidth, float windowHeight)
 {
     if (m_IsActive)
     {
         m_Position.x += m_Direction.x * m_Speed * elapsedSec;
         m_Position.y += m_Direction.y * m_Speed * elapsedSec;
-
-       
-        if (m_Position.x < -50 || m_Position.x > 896 || m_Position.y < -50 || m_Position.y > 550)
+        if (m_Position.x < -50 || m_Position.x > windowWidth + 50 ||
+            m_Position.y < -50 || m_Position.y > windowHeight + 50)
         {
             m_IsActive = false;
         }

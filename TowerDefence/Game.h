@@ -28,6 +28,7 @@ public:
     Game(const Window& window);
     ~Game();
 
+    bool IsRunning() const;
     void Update(float elapsedSec) override;
     void Draw() const override;
 
@@ -117,4 +118,6 @@ private:
     void OnWindowResize(float newWidth, float newHeight);
     float m_AspectRatio;
     bool m_IsFullscreen;
+
+    bool m_bRunning;
 };

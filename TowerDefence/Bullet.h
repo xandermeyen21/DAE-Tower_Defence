@@ -21,7 +21,7 @@ public:
     }
     void Deactivate() { m_IsActive = false; }
     void Draw() const;
-    void Update(float elapsedSec);
+    void Update(float elapsedSec, float windowWidth, float windowHeight);
     bool IsActive() const;
     bool CheckHit(const Ellipsef& enemyShape) const;
     int GetDamage() const;
