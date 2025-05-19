@@ -70,7 +70,7 @@ void Game::Initialize()
         m_pRangeCardTexture = new Texture("Resources/RangeUpgrade.png");
         m_pRepairCardTexture = new Texture("Resources/HealthUpgrade.png");
         m_pRicocheetTexture = new Texture("Resources/RicochetUpgrade.png");
-        m_pBackgroundTexture = new Texture("Resources/Background.png");
+        m_pBackgroundTexture = new Texture("Background.png");
     }
     catch (const std::exception& e) {
         std::cerr << "Texture loading error: " << e.what() << std::endl;

@@ -86,10 +86,13 @@ void Tower::Draw() const
     utils::SetColor(Color4f(0.2f, 0.2f, 0.8f, 1.0f));
     utils::FillRect(m_Tower);
 
-    utils::SetColor(Color4f(0.5f, 0.5f, 0.9f, 0.2f));
+    utils::SetColor(Color4f(0.5f, 0.5f, 0.9f, 0.3f));
     float centerX = m_Tower.left + m_Tower.width / 2.0f;
     float centerY = m_Tower.bottom + m_Tower.height / 2.0f;
     utils::FillEllipse(centerX, centerY, m_Range, m_Range);
+
+    utils::SetColor(Color4f(0.3f, 0.3f, 1.0f, 0.7f));
+    utils::DrawEllipse(centerX, centerY, m_Range, m_Range, 2.0f);
 
     for (const Bullet& bullet : m_Bullets)
     {
