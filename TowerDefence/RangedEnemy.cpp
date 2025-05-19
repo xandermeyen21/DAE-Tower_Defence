@@ -145,10 +145,9 @@ void RangedEnemy::ShootIfAble(float targetX, float targetY, float elapsedSec)
     float dx = targetX - m_Shape.center.x;
     float dy = targetY - m_Shape.center.y;
     float distance = sqrt(dx * dx + dy * dy);
-
-    if (distance <= m_AttackRange)
+   
+    if (distance <= m_AttackRange * 1.05f)
     {
-        m_ShootCooldown -= elapsedSec;
         if (m_ShootCooldown <= 0)
         {
             m_ShootCooldown = m_ShootCooldownMax;
