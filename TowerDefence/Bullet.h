@@ -4,8 +4,8 @@
 class Bullet
 {
 public:
-    Bullet(float x, float y, float targetX, float targetY, float speed, int damage, int ricochetLeft = 0);
-   
+    Bullet(float x, float y, float targetX, float targetY, float speed, int damage, int hp = 1);
+
     Bullet& operator=(const Bullet& other)
     {
         if (this != &other)
@@ -15,7 +15,7 @@ public:
             m_Speed = other.m_Speed;
             m_Damage = other.m_Damage;
             m_IsActive = other.m_IsActive;
-            // m_Radius is const, so we don't copy it
+            m_HP = other.m_HP;
         }
         return *this;
     }
@@ -26,8 +26,12 @@ public:
     bool CheckHit(const Ellipsef& enemyShape) const;
     int GetDamage() const;
     Vector2f GetPosition() const { return m_Position; }
-    int m_RicochetLeft = 0;
     float GetSpeed() const { return m_Speed; }
+
+
+    int GetHP() const { return m_HP; }
+    void TakeDamage() { m_HP--; if (m_HP <= 0) m_IsActive = false; }
+    void SetTarget(float targetX, float targetY);
 
 private:
     Vector2f m_Position;
@@ -35,5 +39,6 @@ private:
     float m_Speed;
     int m_Damage;
     bool m_IsActive;
+    int m_HP;  
     const float m_Radius{ 5.f };
 };

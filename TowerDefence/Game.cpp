@@ -641,28 +641,39 @@ bool Game::ProcessBulletCollisions(EnemyBase* enemy)
 
     std::vector<Bullet>& bullets = m_pTower->GetBullets();
     bool enemyWasKilled = false;
-    std::vector<Bullet> newBullets;
 
-    for (auto bulletIt = bullets.begin(); bulletIt != bullets.end();)
+    for (auto& bullet : bullets)
     {
+        if (!bullet.IsActive()) continue;
+
         const auto& shape = enemy->GetShape();
-        if (bulletIt->CheckHit(shape))
+        if (bullet.CheckHit(shape))
         {
-            enemy->TakeDamage(bulletIt->GetDamage());
+          
+            enemy->TakeDamage(bullet.GetDamage());
             bool enemyKilled = !enemy->IsAlive();
 
-            if (bulletIt->m_RicochetLeft > 0)
+            if (enemyKilled) {
+                enemyWasKilled = true;
+            }
+
+            
+            bullet.TakeDamage();
+
+           
+            if (bullet.IsActive() && bullet.GetHP() > 0)
             {
                 EnemyBase* nextTarget = nullptr;
                 float minDist = std::numeric_limits<float>::max();
-                Vector2f hitPos = bulletIt->GetPosition();
+                Vector2f bulletPos = bullet.GetPosition();
 
+              
                 for (EnemyBase* other : m_pEnemies)
                 {
                     if (other != enemy && other->IsAlive())
                     {
-                        float dx = other->GetShape().center.x - hitPos.x;
-                        float dy = other->GetShape().center.y - hitPos.y;
+                        float dx = other->GetShape().center.x - bulletPos.x;
+                        float dy = other->GetShape().center.y - bulletPos.y;
                         float dist = std::sqrt(dx * dx + dy * dy);
 
                         if (dist < minDist && dist <= m_pTower->GetRange() * 1.2f)
@@ -673,52 +684,20 @@ bool Game::ProcessBulletCollisions(EnemyBase* enemy)
                     }
                 }
 
+             
                 if (nextTarget && nextTarget->IsAlive())
                 {
                     Vector2f targetPos = nextTarget->GetShape().center;
-
-                    newBullets.emplace_back(
-                        hitPos.x, hitPos.y,
-                        targetPos.x,
-                        targetPos.y,
-                        bulletIt->GetSpeed(),
-                        static_cast<int>(bulletIt->GetDamage() * 0.8f),
-                        std::min(3, bulletIt->m_RicochetLeft - 1)
-                    );
-
-                    nextTarget->TakeDamage(static_cast<int>(bulletIt->GetDamage() * 0.8f));
-                    if (!nextTarget->IsAlive()) {
-                        m_EnemiesKilled++;
-                    }
+                    bullet.SetTarget(targetPos.x, targetPos.y);
                 }
-
-                bulletIt->Deactivate();
-                bulletIt = bullets.erase(bulletIt);
-
-                if (enemyKilled) {
-                    enemyWasKilled = true;
+                else
+                {
                     
+                    bullet.Deactivate();
                 }
             }
-            else {
-                
-                bulletIt->Deactivate();
-                bulletIt = bullets.erase(bulletIt);
-
-                if (enemyKilled) {
-                    enemyWasKilled = true;
-                    
-                }
-            }
-        }
-        else {
-            
-            ++bulletIt;
         }
     }
-
-    
-    bullets.insert(bullets.end(), newBullets.begin(), newBullets.end());
 
     return enemyWasKilled;
 }
@@ -813,6 +792,7 @@ void Game::StartNextWave()
             Upgrade* selected = m_AvailableUpgrades[m_SelectedUpgrade];
             if (selected->GetType() == UpgradeType::REPAIR) {
                 m_MaxTowerHealth += static_cast<int>(selected->GetAmount());
+                m_TowerHealth += static_cast<int>(selected->GetAmount()); 
             }
             else {
                 selected->Apply(*m_pTower);
@@ -820,22 +800,29 @@ void Game::StartNextWave()
         }
     }
 
+  
     for (Upgrade* upgrade : m_AvailableUpgrades) delete upgrade;
     m_AvailableUpgrades.clear();
 
-   
-    bool nextWaveBossWave = ((m_CurrentWave + 1) % 5 == 0); 
+ 
+    bool currentWaveWasBoss = (m_CurrentWave % 5 == 0);
+    if (currentWaveWasBoss) {
+        m_BossWavesCompleted++;
+        ApplyPostBossWaveUpgrades();
+    }
 
-    
+ 
+    bool nextWaveBossWave = ((m_CurrentWave + 1) % 5 == 0);
+
     if (nextWaveBossWave) {
         AddNotification("WARNING: BOSS WAVE INCOMING!", 2.5f);
-        m_EnemiesRequiredForWave = 1; 
+        m_EnemiesRequiredForWave = 1;
     }
     else {
-        m_EnemiesRequiredForWave = 5 + (m_CurrentWave * 2); 
+        m_EnemiesRequiredForWave = 5 + (m_CurrentWave * 2);
     }
 
-   
+    
     m_CurrentWave++;
 
    
@@ -843,11 +830,11 @@ void Game::StartNextWave()
     m_EnemiesSpawnedInWave = 0;
     m_WaveInProgress = true;
 
-    
+ 
     m_EnemySpawnInterval = std::max(0.5f, 2.0f - (m_CurrentWave * 0.1f));
     m_RangedEnemyChance = std::min(40, 20 + m_CurrentWave);
 
-    
+  
     for (EnemyBase* enemy : m_pEnemies) delete enemy;
     m_pEnemies.clear();
 

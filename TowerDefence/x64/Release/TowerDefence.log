@@ -1,4 +1,9 @@
-﻿  Game.cpp
+﻿  BossEnemy.cpp
+  Bullet.cpp
+  Game.cpp
+C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\BossEnemy.cpp(133,37): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+  (compiling source file '/BossEnemy.cpp')
+  
 C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(460,16): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
   (compiling source file '/Game.cpp')
   
@@ -11,19 +16,48 @@ C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.c
 C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(491,16): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
   (compiling source file '/Game.cpp')
   
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(651,50): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(653,47): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
   (compiling source file '/Game.cpp')
   
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(689,83): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(885,21): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
   (compiling source file '/Game.cpp')
   
-C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Game.cpp(898,21): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-  (compiling source file '/Game.cpp')
+  RangedEnemy.cpp
+  Tower.cpp
+  Upgrade.cpp
+C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.43.34808\include\xmemory(732,103): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+  (compiling source file '/Tower.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.43.34808\include\xmemory(732,103):
+      the template instantiation context (the oldest one first) is
+          C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.cpp(71,23):
+          see reference to function template instantiation 'void std::vector<Bullet,std::allocator<Bullet>>::emplace_back<float&,float&,float&,float&,float,float&,int&>(float &,float &,float &,float &,float &&,float &,int &)' being compiled
+              C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\TowerDefence\Tower.cpp(71,35):
+              see the first reference to 'std::vector<Bullet,std::allocator<Bullet>>::emplace_back' in 'Tower::Update'
+          C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.43.34808\include\vector(909,24):
+          see reference to function template instantiation '_Ty &std::vector<_Ty,std::allocator<_Ty>>::_Emplace_one_at_back<float&,float&,float&,float&,float,float&,int&>(float &,float &,float &,float &,float &&,float &,int &)' being compiled
+          with
+          [
+              _Ty=Bullet
+          ]
+          C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.43.34808\include\vector(830,20):
+          see reference to function template instantiation '_Ty &std::vector<_Ty,std::allocator<_Ty>>::_Emplace_back_with_unused_capacity<float&,float&,float&,float&,float,float&,int&>(float &,float &,float &,float &,float &&,float &,int &)' being compiled
+          with
+          [
+              _Ty=Bullet
+          ]
+          C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.43.34808\include\vector(848,27):
+          see reference to function template instantiation 'void std::_Default_allocator_traits<_Alloc>::construct<_Ty,float&,float&,float&,float&,float,float&,int&>(_Alloc &,_Objty *const ,float &,float &,float &,float &,float &&,float &,int &)' being compiled
+          with
+          [
+              _Alloc=std::allocator<Bullet>,
+              _Ty=Bullet,
+              _Objty=Bullet
+          ]
   
   Generating code
-  2 of 922 functions ( 0.2%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    1 functions had inline decision re-evaluated but remain unchanged
+  189 of 907 functions (20.8%) were compiled, the rest were copied from previous compilation.
+    3 functions were new in current compilation
+    116 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   TowerDefence.vcxproj -> C:\School\Semester2\GamePlayScripting\Game\DAE-Tower_Defence\x64\Release\TowerDefence.exe
   0 File(s) copied

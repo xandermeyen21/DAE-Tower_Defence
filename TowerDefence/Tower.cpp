@@ -66,13 +66,14 @@ void Tower::Update(float elapsedSec, const std::vector<EnemyBase*>& enemies)
         {
             float enemyCenterX = nearestEnemy->GetShape().center.x;
             float enemyCenterY = nearestEnemy->GetShape().center.y;
+            int bulletHP = 1 + m_RicochetCount;
 
             m_Bullets.emplace_back(
                 towerCenterX, towerCenterY,
                 enemyCenterX, enemyCenterY,
                 200.0f, 
                 m_Damage,
-                m_RicochetCount
+                bulletHP
             );
 
             m_AttackTimer = 1.0f / m_AttackSpeed; 
@@ -156,7 +157,7 @@ void Tower::UpgradeRicochet(int amount)
     m_RicochetCount += amount;
 }
 
-void Tower::IncreaseRicochet(float amount)
+void Tower::IncreaseRicochet(int amount)
 {
     UpgradeRicochet(static_cast<int>(amount));
 }

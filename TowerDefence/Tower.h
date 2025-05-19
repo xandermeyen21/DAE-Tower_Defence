@@ -23,7 +23,7 @@ public:
     void IncreaseDamage(float amount);
     void IncreaseRange(float amount);
     void IncreaseAttackSpeed(float amount);
-    void IncreaseRicochet(float amount);
+    void IncreaseRicochet(int amount); 
 
     float GetDamage() const;
     float GetRange() const;

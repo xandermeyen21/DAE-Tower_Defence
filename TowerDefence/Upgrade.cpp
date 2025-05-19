@@ -6,6 +6,8 @@
 #include <iostream>
 #include <memory>
 #include <stdexcept>
+#include <sstream>
+#include <iomanip>
 
 Upgrade::Upgrade(UpgradeType type, const std::string& name, const std::string& description,
     float amount, std::function<void(Tower&, float)> applyEffect)
@@ -86,13 +88,13 @@ void Upgrade::CreateTextTextures()
 
 void Upgrade::Draw(float x, float y, float width, float height, bool isSelected) const
 {
-    
+  
     if (isSelected) {
         utils::SetColor(Color4f(1.0f, 0.9f, 0.3f, 0.6f));
         utils::FillRect(Rectf(x - 6, y - 6, width + 12, height + 12));
     }
 
-   
+  
     if (m_pCardTexture) {
         m_pCardTexture->Draw(Rectf(x, y, width, height));
     }
@@ -103,7 +105,7 @@ void Upgrade::Draw(float x, float y, float width, float height, bool isSelected)
         utils::FillRect(Rectf(x, y + height - 20.f, width, 20.f));
     }
 
- 
+
     if (m_pNameTexture) {
         float nameX = x + (width - m_pNameTexture->GetWidth()) / 2.0f;
         float nameY = y + height - 30.f;
@@ -112,20 +114,39 @@ void Upgrade::Draw(float x, float y, float width, float height, bool isSelected)
 
   
     Color4f typeColor;
+    switch (m_Type) {
+    case UpgradeType::DAMAGE:
+        typeColor = Color4f(1.0f, 0.3f, 0.3f, 1.0f); // Red
+        break;
+    case UpgradeType::ATTACK_SPEED:
+        typeColor = Color4f(1.0f, 0.7f, 0.3f, 1.0f); // Orange
+        break;
+    case UpgradeType::RANGE:
+        typeColor = Color4f(0.3f, 0.7f, 1.0f, 1.0f); // Blue
+        break;
+    case UpgradeType::REPAIR:
+        typeColor = Color4f(0.3f, 1.0f, 0.3f, 1.0f); // Green
+        break;
+    case UpgradeType::RICOCHET:
+        typeColor = Color4f(0.8f, 0.3f, 1.0f, 1.0f); // Purple
+        break;
+    default:
+        typeColor = Color4f(0.5f, 0.5f, 0.5f, 1.0f); // Gray
+        break;
+    }
 
+   
     utils::SetColor(typeColor);
     utils::FillRect(Rectf(x + 10, y + height - 20.f, 10.f, 10.f));
 
+    std::string amountText = "+" + std::to_string(static_cast<int>(m_Amount));
+    if (m_Type == UpgradeType::ATTACK_SPEED) {
+        
+        std::ostringstream oss;
+        oss << std::fixed << std::setprecision(1) << m_Amount;
+        amountText = "+" + oss.str();
+    }
 
-   /* if (m_pDescriptionTexture) {
-        float descX = x + (width - m_pDescriptionTexture->GetWidth()) / 2.0f;
-        float descY = y + height + 10.f; 
-        m_pDescriptionTexture->Draw(Vector2f(descX, descY));
-    }*/
-
-
-    std::string amountText;
- 
     float badgeSize = 40.f;
     float badgeX = x + width - badgeSize - 10.f;
     float badgeY = y + 10.f;
@@ -184,8 +205,10 @@ Upgrade* Upgrade::CreateRicochetUpgrade(float amount)
     return new Upgrade(
         UpgradeType::RICOCHET,
         "Ricochet",
-        "Bullets ricochet to " + std::to_string(static_cast<int>(amount)) + " more enemy",
+        "Bullets bounce to " + std::to_string(static_cast<int>(amount)) + " more enemies",
         amount,
-        [](Tower& tower, float amt) { tower.UpgradeRicochet(static_cast<int>(amt)); }
+        [](Tower& tower, float amt) {
+            tower.UpgradeRicochet(static_cast<int>(amt));
+        }
     );
 }
