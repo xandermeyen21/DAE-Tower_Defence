@@ -112,5 +112,9 @@ private:
     int m_Score;
     int m_HighScore; 
     void LoadHighScore();
-    void SaveHighScore();
+    void SaveHighScore() const;
+
+    void OnWindowResize(float newWidth, float newHeight);
+    float m_AspectRatio;
+    bool m_IsFullscreen;
 };

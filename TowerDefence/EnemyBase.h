@@ -42,6 +42,7 @@ public:
     bool HasReachedTarget() const;
 
 protected:
+    virtual Color4f GetDrawColor() const { return Color4f(0.7f, 0.2f, 0.2f, 1.0f); }
     Ellipsef m_Shape;
     float m_Health;
     float m_MaxHealth;

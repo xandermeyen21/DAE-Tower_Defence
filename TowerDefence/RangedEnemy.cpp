@@ -49,32 +49,27 @@ void RangedEnemy::Update(float targetX, float targetY, float elapsedSec)
 
 void RangedEnemy::Draw() const
 {
-   
     EnemyBase::Draw();
 
-    
+   
     if (m_IsShooting)
     {
         utils::SetColor(Color4f(1.0f, 0.0f, 0.0f, 0.7f));
         utils::FillEllipse(GetShape().center, GetShape().radiusX * 1.2f, GetShape().radiusY * 1.2f);
     }
 
-  
     utils::SetColor(Color4f(0.7f, 0.3f, 0.9f, 0.15f));
     utils::FillEllipse(GetShape().center, m_AttackRange, m_AttackRange);
 
-    
     utils::SetColor(Color4f(0.8f, 0.2f, 1.0f, 0.3f));
     utils::DrawEllipse(GetShape().center, m_AttackRange, m_AttackRange, 1.0f);
 
-    
     for (const Bullet& bullet : m_Bullets)
     {
         if (bullet.IsActive())
             bullet.Draw();
     }
 }
-
 void RangedEnemy::Update(float elapsedSec, const std::vector<Tower*>& towers)
 {
     if (!IsAlive()) return;

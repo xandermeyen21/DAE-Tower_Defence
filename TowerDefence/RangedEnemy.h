@@ -36,6 +36,8 @@ public:
     float m_ShootCooldownMax;
     float m_ShootCooldown;
 
+protected:
+    Color4f GetDrawColor() const override { return Color4f(0.8f, 0.2f, 0.8f, 1.0f); }
 private:
     bool m_IsShooting;
     float m_AttackTimer;

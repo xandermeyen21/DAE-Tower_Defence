@@ -23,6 +23,9 @@ public:
     void SetBulletDamage(float val) { m_BulletDamage = val; }
     void SetAttackSpeed(float val) { m_AttackSpeed = val; }
 
+protected:
+    Color4f GetDrawColor() const override { return Color4f(1.0f, 0.9f, 0.1f, 1.0f); }
+
 private:
     std::vector<Bullet> m_Bullets;      
 

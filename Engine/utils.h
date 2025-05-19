@@ -52,6 +52,7 @@ namespace utils
 	// Text drawing functions
 	void DrawString(const Vector2f& position, const std::string& text);
 	void DrawString(const Vector2f& position, const char* fmt, ...);
+	void DrawString(const Vector2f& position, const std::string& text, int fontType = 0);
 	bool InitializeFont();
 	void CleanupFont();
 #pragma endregion OpenGLDrawFunctionality

@@ -58,7 +58,7 @@ void EnemyBase::Update(float targetX, float targetY, float elapsedSec)
 
 void EnemyBase::Draw() const
 {
-    utils::SetColor(Color4f(0.7f, 0.2f, 0.2f, 1.0f));
+    utils::SetColor(GetDrawColor());  
     utils::FillEllipse(m_Shape.center, m_Shape.radiusX, m_Shape.radiusY);
 
     // Draw health bar above the enemy

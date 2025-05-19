@@ -153,7 +153,7 @@ void Upgrade::Draw(float x, float y, float width, float height, bool isSelected)
     utils::SetColor(typeColor);
     utils::FillEllipse(badgeX + badgeSize / 2, badgeY + badgeSize / 2, badgeSize / 2, badgeSize / 2);
     utils::SetColor(Color4f(1.0f, 1.0f, 1.0f, 1.0f));
-    utils::DrawString(Vector2f(badgeX + badgeSize / 2 - 10.f, badgeY + badgeSize / 2 + 5.f), amountText);
+    utils::DrawString(Vector2f(badgeX + badgeSize / 2 - 10.f, badgeY + badgeSize / 2 + 5.f), amountText, 0);
 }
 
 Upgrade* Upgrade::CreateDamageUpgrade(float amount)

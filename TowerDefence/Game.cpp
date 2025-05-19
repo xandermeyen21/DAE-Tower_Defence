@@ -302,18 +302,16 @@ void Game::Draw() const
 {
     ClearBackground();
 
-    
     if (m_pBackgroundTexture) {
         m_pBackgroundTexture->Draw(Rectf{ 0.0f, 0.0f, float(m_Width), float(m_Height) });
     }
 
-   
     m_pTower->Draw();
+
     for (const EnemyBase* enemy : m_pEnemies) {
         enemy->Draw();
     }
 
-   
     for (const EnemyBase* enemy : m_pEnemies) {
         if (enemy->GetType() == EnemyType::Ranged) {
             const RangedEnemy* ranged = static_cast<const RangedEnemy*>(enemy);
@@ -329,19 +327,24 @@ void Game::Draw() const
         }
     }
 
-    
-    switch (m_GameState) {
+    for (const Bullet& bullet : m_pTower->GetBullets()) {
+        if (bullet.IsActive()) bullet.Draw();
+    }
+
+    switch (m_GameState)
+    {
     case GameState::Playing:
     {
         std::stringstream ss;
         ss << "WAVE " << m_CurrentWave;
         Texture waveText(ss.str(), m_HeaderFontPath, m_HeadingFontSize, m_TitleColor);
-        waveText.Draw(Vector2f(m_Width / 2.f - waveText.GetWidth() / 2.f, m_Height - 140.f)); 
+        waveText.Draw(Vector2f(m_Width / 2.f - waveText.GetWidth() / 2.f, m_Height - 40.f));
 
         ss.str("");
         ss << "ENEMIES " << m_EnemiesKilled << " / " << m_EnemiesRequiredForWave;
         Texture enemyText(ss.str(), m_MainFontPath, m_NormalFontSize, m_NormalColor);
-        enemyText.Draw(Vector2f(m_Width / 2.f - enemyText.GetWidth() / 2.f, m_Height - 170.f)); 
+        enemyText.Draw(Vector2f(m_Width / 2.f - enemyText.GetWidth() / 2.f, m_Height - 70.f));
+
         if (m_BossWavesCompleted > 0) {
             ss.str("");
             ss << "ENEMY POWER LEVEL: " << m_BossWavesCompleted;
@@ -351,7 +354,7 @@ void Game::Draw() const
             else if (m_BossWavesCompleted == 3) powerColor = Color4f{ 1.0f, 0.5f, 0.2f, 1.0f };
             else powerColor = Color4f{ 1.0f, 0.3f, 0.2f, 1.0f };
             Texture powerText(ss.str(), m_HeaderFontPath, m_SmallFontSize, powerColor);
-            powerText.Draw(Vector2f(m_Width / 2.f - powerText.GetWidth() / 2.f, m_Height - 200.f)); 
+            powerText.Draw(Vector2f(m_Width / 2.f - powerText.GetWidth() / 2.f, m_Height - 130.f));
         }
 
         float leftPadding = 20.f;
@@ -402,13 +405,12 @@ void Game::Draw() const
 
         utils::SetColor(Color4f(0.2f, 0.2f, 0.2f, 1.0f));
         utils::FillRect(Rectf(barX, barY, barWidth, barHeight));
-
         Color4f healthColor(1.0f - healthPercent, healthPercent, 0.0f, 1.0f);
         utils::SetColor(healthColor);
         utils::FillRect(Rectf(barX, barY, barWidth * healthPercent, barHeight));
 
         if (!m_Notifications.empty()) {
-            float notifY = m_Height - 230.f; 
+            float notifY = m_Height - 160.f;
             for (const auto& notification : m_Notifications) {
                 float alpha = 1.0f;
                 if (notification.second < 1.0f) {
@@ -417,7 +419,6 @@ void Game::Draw() const
                 else if (notification.first.find("WARNING") != std::string::npos) {
                     alpha = 0.7f + 0.3f * sin(SDL_GetTicks() * 0.008f);
                 }
-
                 Color4f notifColor;
                 if (notification.first.find("WARNING") != std::string::npos) {
                     notifColor = Color4f(1.0f, 0.2f, 0.2f, alpha);
@@ -428,10 +429,8 @@ void Game::Draw() const
                 else {
                     notifColor = Color4f(1.0f, 1.0f, 1.0f, alpha);
                 }
-
                 Texture notifText(notification.first, m_HeaderFontPath, m_NormalFontSize, notifColor);
                 notifText.Draw(Vector2f(m_Width / 2.f - notifText.GetWidth() / 2.f, notifY));
-
                 notifY -= 30.f;
             }
         }
@@ -445,6 +444,7 @@ void Game::Draw() const
         break;
     }
 }
+
 
 
 
@@ -954,7 +954,7 @@ void Game::LoadHighScore() {
     }
 }
 
-void Game::SaveHighScore() {
+void Game::SaveHighScore() const {
     std::ofstream outFile("highscore.txt");
     if (outFile.is_open()) {
         outFile << m_HighScore;
@@ -999,5 +999,21 @@ void Game::CheckWaveComplete()
         m_SelectedUpgrade = 0;
         SetupUpgradeOptions();
         AddNotification("Wave " + std::to_string(m_CurrentWave) + " completed!", 2.0f);
+    }
+}
+
+void Game::OnWindowResize(float newWidth, float newHeight)
+{
+    m_Width = newWidth;
+    m_Height = newHeight;
+    m_AspectRatio = newWidth / newHeight;
+
+    if (m_pTower) {
+        float towerWidth = 40.f;
+        float towerHeight = 60.f;
+        float centerX = m_Width / 2.f - towerWidth / 2.f;
+        float centerY = m_Height / 2.f - towerHeight / 2.f + 75.0f;
+
+       
     }
 }
