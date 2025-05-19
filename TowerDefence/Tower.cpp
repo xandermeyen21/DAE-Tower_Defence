@@ -172,3 +172,19 @@ int Tower::GetRicochetCount() const
 {
     return m_RicochetCount;
 }
+
+void Tower::ResetToInitialStats()
+{
+    m_Damage = 1.f;
+    m_Range = 150.f;
+    m_AttackSpeed = 1.f;
+    m_MaxHealth = 100;
+    m_Health = 100;
+    m_RicochetCount = 0;
+    
+}
+
+void Tower::ClearBullets()
+{
+    m_Bullets.clear();
+}

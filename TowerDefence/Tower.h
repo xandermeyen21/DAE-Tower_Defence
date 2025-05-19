@@ -14,6 +14,8 @@ public:
     void Update(float elapsedSec, const std::vector<EnemyBase*>& enemies);
     const Rectf& GetPosition() const;
 
+    void ResetToInitialStats();
+    void ClearBullets();
     void UpgradeDamage(float amount);
     void UpgradeRange(float amount);
     void UpgradeAttackSpeed(float amount);

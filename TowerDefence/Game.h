@@ -43,7 +43,7 @@ private:
     void ClearBackground() const;
     void CleanupBullets();
     void GameOver() const;
-
+    void RestartGame();
     void SpawnEnemy(EnemySpawnType type);
     bool ProcessBulletCollisions(EnemyBase* enemy);
     bool ProcessEnemyAttacks(float elapsedSec);
@@ -93,6 +93,7 @@ private:
     Texture* m_pRangeCardTexture;
     Texture* m_pRepairCardTexture;
     Texture* m_pRicocheetTexture;
+    Texture* m_pBackgroundTexture;
 
     void InitializeFonts();
     int m_TitleFontSize;
@@ -108,7 +109,7 @@ private:
 
     std::string m_MainFontPath;    
     std::string m_HeaderFontPath;  
-
+    int m_Score;
     int m_HighScore; 
     void LoadHighScore();
     void SaveHighScore();
