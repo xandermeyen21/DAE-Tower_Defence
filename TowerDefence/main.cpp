@@ -35,7 +35,7 @@ int SDL_main(int argc, char** argv)
     // Create game with fullscreen dimensions
     Game* pGame{ new Game{ Window{ "Tower Defence - Meyen, Xander - 1DAE29", screenWidth, screenHeight } } };
 
-    // Use the Run method
+    // Run method will now respect the IsGameRunning() return value
     pGame->Run();
 
     delete pGame;

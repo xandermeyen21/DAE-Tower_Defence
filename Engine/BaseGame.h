@@ -52,6 +52,7 @@ public:
 		return m_Viewport;
 	}
 
+	virtual bool IsGameRunning() const { return true; }
 private:
 	// DATA MEMBERS
 	// The window properties

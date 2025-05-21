@@ -42,7 +42,7 @@ Game::Game(const Window& window)
     , m_NotificationTimer{ -1.0f }
     , m_HighScore{ 0 }
     , m_Score{ 0 }
-    , m_bRunning{ true } // Add this line
+    , m_bRunning{ true } 
 {
     Initialize();
     LoadHighScore();
@@ -53,7 +53,7 @@ Game::~Game()
     Cleanup();
 }
 
-bool Game::IsRunning() const
+bool Game::IsGameRunning() const
 {
     return m_bRunning;
 }

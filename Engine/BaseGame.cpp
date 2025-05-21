@@ -144,6 +144,13 @@ void BaseGame::Run()
 	SDL_Event e{};
 	while (!quit)
 	{
+		// Check if game is still running (added for handling Q/ESC in Game Over state)
+		if (IsGameRunning() == false)
+		{
+			quit = true;
+			continue;
+		}
+
 		// Poll next event from queue
 		while (SDL_PollEvent(&e) != 0)
 		{
